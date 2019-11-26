@@ -1,4 +1,4 @@
-install.packages("rgeos")
+# install.packages("rgeos")
 # library(devtools) # needed for Mike's data wrangler? *needed for the install_github() command
 library(rgdal) # to read shapefiles
 library(raster) # for the shapefile function (similar to wrtieOGR)
@@ -13,23 +13,20 @@ library(lubridate) # for the year() function
 library(rgeos) # required for the dissolve argument in rasterToPolygon()
 
 # Load RV data
-pathtest <- "\\\\dcnsbiona01a\\BIODataSVC\\IN"
 
-dsn2 <- "\\\\ent.dfo-mpo.ca\\ATLShares\\Science\\CESD\\HES_MSP\\R\\data\\Boundaries"
-dsn2 <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/data/Boundaries"
-ocean <- readOGR(dsn2,"ScotianShelfOceanMask_WithoutCoastalZone")
+wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R"
+setwd(wd)
 
-dsn <- "U:/GIS/Projects/MSP/HotSpotCode/Boundaries"
-oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone")
-
-data.dir <- "N:/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"  
-data.dir <- "U:/Data/Projects/BIO/MarDataWrangling/inputs/mar.wrangling"
-"R:/Science/CESD/HES_MSP/R/data/mar.wrangling"
-
+data.dir <- "./data/mar.wrangling"
 get_data('rv', data.dir = data.dir)
+# data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
+# alternate site for the data:
+# data.dir <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/data/mar.wrangling"
+
+
 
 # bring in OceanMask for clipping data and rasters
-dsn <- "U:/GIS/Projects/MSP/HotSpotCode/Boundaries"
+dsn <- "./data/Boundaries"
 oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone")
 oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
 
@@ -43,14 +40,14 @@ tmp_GSSTRATUM <- GSSTRATUM
 tmp_GSXTYPE <- GSXTYPE
 tmp_FGP_TOWS_NW2 <- FGP_TOWS_NW2 # original has 146,365 rows
 # Restore original GS tables for filtering
-GSCAT <- tmp_GSCAT
-GSDET <- tmp_GSDET
-GSINF <- tmp_GSINF
-GSMISSIONS <- tmp_GSMISSIONS
-GSSPECIES <- tmp_GSSPECIES
-GSSTRATUM <- tmp_GSSTRATUM
-GSXTYPE <- tmp_GSXTYPE
-FGP_TOWS_NW2 <- tmp_FGP_TOWS_NW2
+# GSCAT <- tmp_GSCAT
+# GSDET <- tmp_GSDET
+# GSINF <- tmp_GSINF
+# GSMISSIONS <- tmp_GSMISSIONS
+# GSSPECIES <- tmp_GSSPECIES
+# GSSTRATUM <- tmp_GSSTRATUM
+# GSXTYPE <- tmp_GSXTYPE
+# FGP_TOWS_NW2 <- tmp_FGP_TOWS_NW2
 
 # - Make oversize grid ----------------------
 # make grid of all SUMMER samples to get min and max extent
@@ -81,9 +78,8 @@ proj4string(grd) <- proj4string(grd) <- CRS("+init=epsg:26920") # define grd pro
 # - END Make oversize grid ----------------------
 
 # Get list of species from other data table
-fish <- read.csv("Spreadsheets/FifteenSpecies.csv", header = TRUE)
+fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
 speciescode <- unique(fish[,14])
-speciesname <- unique(fish[,14:16])
 
 # Reduce number of species for testing processing
 speciescode <- speciescode[7:9]
@@ -102,9 +98,7 @@ yeare <- c(1977, 1985)
 #------ END Set year variables -----------------
 
 
-
-
-# ---------- BEGIN Test Loop 2 ----------------------####
+# ---------- BEGIN Loops ----------------------####
 # Restore original GS tables for filtering
 GSCAT <- tmp_GSCAT
 GSDET <- tmp_GSDET
@@ -170,9 +164,9 @@ for(i in 1:length(speciescode)) {
     proj4string(allCatch)<- CRS("+init=epsg:4326")
     allCatchUTM<-spTransform(allCatch,CRS("+init=epsg:26920"))
     
-    # Export the shapefile
-    print(paste("Loop ",count, " - exporting shapefile",sep = ""))
-    writeOGR(allCatchUTM,"U:/GIS/Projects/MSP/HotSpotCode/Output/Test",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
+    # Export the shapefile - NOTE, this was done to compare with ArcGIS processing
+    # print(paste("Loop ",count, " - exporting shapefile",sep = ""))
+    # writeOGR(allCatchUTM,"U:/GIS/Projects/MSP/HotSpotCode/Output/Test",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
     
     # Interpolate the sample data (TOTWGT) using the large extent grid
     # Using the same values for Power and Search Radius as Anna's script (idp and maxdist)
@@ -200,7 +194,8 @@ for(i in 1:length(speciescode)) {
     raster_list[[y]] <- reclass_r
     
     # Export the raster
-    dir <- "U:/GIS/Projects/MSP/HotSpotCode/Output/Test/"
+    # dir <- "U:/GIS/Projects/MSP/HotSpotCode/Output/Test/"
+    dir <- "./Persistance/Output"
     rtif <- paste(dir,Time1,"SP4_",speciescode[i],"rclass.tif",sep = "")
     tif <- paste(dir,Time1,"SP4_",speciescode[i],".tif",sep = "")
     # writeRaster(r.m,tif)
@@ -226,14 +221,15 @@ for(i in 1:length(speciescode)) {
 }
 end_time <- Sys.time()
 end_time - start_time
+# ---------- END Loops ----------------------####
 
-# Rename each raster in raster_list2
+# Rename each raster in raster_list2 and export as a .tif
 start_time <- Sys.time()
 for(i in 1:length(speciescode)){
   names(raster_list2[[i]]) <- paste("SP_",speciescode[i],sep = "")
-  tif <- paste(dir,names(raster_list2[[i]]),"_SUM4.tif",sep = "")
+  tif <- paste(dir,"/",names(raster_list2[[i]]),"_SUM.tif",sep = "")
   writeRaster(raster_list2[[i]],tif, overwrite = TRUE)
-  poly <- rasterToPolygons(raster_list2[[i]], fun=function(x){x==1}, n=4, na.rm=TRUE, digits=12, dissolve=TRUE)
+  # poly <- rasterToPolygons(raster_list2[[i]], fun=function(x){x==1}, n=4, na.rm=TRUE, digits=12, dissolve=TRUE)
   # writeOGR(poly,"U:/GIS/Projects/MSP/HotSpotCode/Output/Test",paste("TestSP_",speciescode[i],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
 }
 end_time <- Sys.time()
@@ -241,30 +237,3 @@ end_time - start_time
 
 
 
-# ----------END  Test Loop----------------------####
-
-
-# Links for some of the script parts below
-
-# Gulf of Mexico
-https://nceas.github.io/oss-lessons/spatial-data-gis-law/4-tues-spatial-analysis-in-r.html
-
-# California
-https://rspatial.org/raster/analysis/4-interpolation.html
-
-# Texas
-https://mgimond.github.io/Spatial/interpolation-in-r.html
-
-# Creating a shapefile from DataFrame (easiest way)
-https://gis.stackexchange.com/questions/214062/create-a-shapefile-from-dataframe-in-r-keeping-attribute-table
-
-# -------------- working with raster extents---------------------
-
-ext1 <- extent(raster_list[[1]])
-ext2 <- extent(raster_list[[2]])
-ext3 <- extent(raster_list[[3]])
-raster_list[[7]] <- setExtent(raster_list[[2]],ext)
-raster_list[[8]] <- setExtent(raster_list[[2]],ext, keepres = TRUE)
-raster_list[[9]] <- setExtent(raster_list[[2]],raster_list[[1]], keepres = TRUE)
-raster_list[[10]] <- setExtent(raster_list[[2]],raster_list[[1]], keepres = TRUE, snap = TRUE)
-raster_list[[11]] <- setExtent(raster_list[[2]],raster_list[[1]], snap = TRUE)
