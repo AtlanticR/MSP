@@ -13,6 +13,15 @@ library(lubridate) # for the year() function
 library(rgeos) # required for the dissolve argument in rasterToPolygon()
 
 # Load RV data
+pathtest <- "\\\\dcnsbiona01a\\BIODataSVC\\IN"
+
+dsn2 <- "\\\\ent.dfo-mpo.ca\\ATLShares\\Science\\CESD\\HES_MSP\\R\\data\\Boundaries"
+dsn2 <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/data/Boundaries"
+ocean <- readOGR(dsn2,"ScotianShelfOceanMask_WithoutCoastalZone")
+
+dsn <- "U:/GIS/Projects/MSP/HotSpotCode/Boundaries"
+oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone")
+
 data.dir <- "N:/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"  
 data.dir <- "U:/Data/Projects/BIO/MarDataWrangling/inputs/mar.wrangling"
 "R:/Science/CESD/HES_MSP/R/data/mar.wrangling"
