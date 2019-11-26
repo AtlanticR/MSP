@@ -6,10 +6,12 @@ data <- data[,c("LATITUDE", "LONGITUDE", "YEAR", "FISHSET_ID", "SET_NO", "COMARE
                 "DEP1", "VESS_SPD1", "WAT_TMP1")]
 data <- write.csv(data, "data/fs7010_20191028_1430_trim.csv", row.names=FALSE)
 
-library(dplyr)
-
-data1 <- data%>%
-         group_by(COMMON, NAFAREA_ID)%>%
-         summarise(suma=sum(EST_NUM_CAUGHT,na.rm=T))%>%glimpse
-
-head(data1)
+# library(dplyr)
+# 
+# data1 <- data %>%
+#         filter(COMMON %in% c("AMERICAN LOBSTER","CUSK"))%>%
+#         group_by(COMMON,NAFAREA_ID)%>%
+#         summarise(mean=mean(EST_NUM_CAUGHT,na.rm=T)) 
+# 
+# 
+# head(data1)
