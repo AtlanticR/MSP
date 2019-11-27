@@ -1,16 +1,11 @@
-# install.packages("rgeos")
-# library(devtools) # needed for Mike's data wrangler? *needed for the install_github() command
+
 library(rgdal) # to read shapefiles
-library(raster) # for the shapefile function (similar to wrtieOGR)
+library(raster) # for the shapefile function (similar to writeOGR)
 library(dplyr) # all-purpose data manipulation (loaded after raster package since both have a select() function)
 library(gstat) # for IDW function
 library(sp) #Classes and methods for spatial data
-library(sf) # package for GIS in R, loading shapefiles, projections, etc
-library(tmap) # for simple mapping functions (from the Texas example)
-library(rasterVis) # another Raster plotting package
 library(Mar.datawrangling)
-library(lubridate) # for the year() function
-library(rgeos) # required for the dissolve argument in rasterToPolygon()
+library(rgeos) # required for the dissolve argument in rasterToPolygon() according to help file
 
 # Load RV data
 
@@ -19,10 +14,8 @@ setwd(wd)
 
 data.dir <- "./data/mar.wrangling"
 get_data('rv', data.dir = data.dir)
-# data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
 # alternate site for the data:
-# data.dir <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/data/mar.wrangling"
-
+# data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
 
 
 # bring in OceanMask for clipping data and rasters
@@ -38,16 +31,8 @@ tmp_GSMISSIONS <- GSMISSIONS
 tmp_GSSPECIES <- GSSPECIES
 tmp_GSSTRATUM <- GSSTRATUM
 tmp_GSXTYPE <- GSXTYPE
-tmp_FGP_TOWS_NW2 <- FGP_TOWS_NW2 # original has 146,365 rows
-# Restore original GS tables for filtering
-# GSCAT <- tmp_GSCAT
-# GSDET <- tmp_GSDET
-# GSINF <- tmp_GSINF
-# GSMISSIONS <- tmp_GSMISSIONS
-# GSSPECIES <- tmp_GSSPECIES
-# GSSTRATUM <- tmp_GSSTRATUM
-# GSXTYPE <- tmp_GSXTYPE
-# FGP_TOWS_NW2 <- tmp_FGP_TOWS_NW2
+tmp_FGP_TOWS_NW2 <- FGP_TOWS_NW2
+
 
 # - Make oversize grid ----------------------
 # make grid of all SUMMER samples to get min and max extent
@@ -85,7 +70,7 @@ speciescode <- unique(fish[,14])
 speciescode <- speciescode[7:9]
 speciescode <- speciescode[7] # Redfish
 
-#------ BEGIN Set year variables -----------------
+#------ Set year variables -----------------
 # Single date range
 yearb <- 2012
 yeare <- 2015
