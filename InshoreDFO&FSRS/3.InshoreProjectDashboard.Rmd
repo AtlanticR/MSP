@@ -186,9 +186,9 @@ plot_ly(data = shared_data) %>%
 <!--          group_by(COMMON,NAFAREA_ID)%>% -->
 <!--          summarise(Mean=mean(EST_NUM_CAUGHT,na.rm=T)) %>% -->
 <!--               add_markers(x = ~NAFAREA_ID, y = ~Mean, -->
-<!--               color = ~NAFAREA_ID,  -->
+<!--               color = ~NAFAREA_ID, -->
 <!--               colors = viridis::viridis(3), -->
-<!--               type = "bar") %>%  -->
+<!--               type = "bar") %>% -->
 <!--   highlight(persisten = FALSE, off = "plotly_relayout") -->
 <!-- ``` -->
 
@@ -199,9 +199,9 @@ plot_ly(data = shared_data) %>%
 <!--          group_by(COMMON,NAFAREA_ID)%>% -->
 <!--          summarise(Suma=sum(EST_NUM_CAUGHT,na.rm=T)) %>% -->
 <!--               add_markers(x = ~NAFAREA_ID, y = ~Suma, -->
-<!--               color = ~NAFAREA_ID,  -->
+<!--               color = ~NAFAREA_ID, -->
 <!--               colors = viridis::viridis(3), -->
-<!--               type = "bar") %>%  -->
+<!--               type = "bar") %>% -->
 <!--   highlight(persisten = FALSE, off = "plotly_relayout") -->
 <!-- ``` -->
 
