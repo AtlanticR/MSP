@@ -65,6 +65,8 @@ proj4string(grd) <- proj4string(grd) <- CRS("+init=epsg:26920") # define grd pro
 # Get list of species from other data table
 fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
 speciescode <- unique(fish[,14])
+# get names and Scinames of species as well
+# speciescode <- unique(fish[,14:16])
 
 # Reduce number of species for testing processing
 speciescode <- speciescode[7:9]
@@ -200,7 +202,7 @@ for(i in 1:length(speciescode)) {
     Time <- Time + 1
   }
   s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
-  s2 <- s > 39
+  s2 <- s > 47 # Anna's original value was 39 but I've got another time period so increased it to 47
   raster_list2[[i]] <- s2
   count <- count + 1
 }
