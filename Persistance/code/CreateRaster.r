@@ -6,6 +6,7 @@ library(gstat) # for IDW function
 library(sp) #Classes and methods for spatial data
 library(Mar.datawrangling)
 library(rgeos) # required for the dissolve argument in rasterToPolygon() according to help file
+library(moments) # required for skewness calculation
 
 # Load RV data
 
@@ -99,10 +100,12 @@ FGP_TOWS_NW2 <- tmp_FGP_TOWS_NW2
 
 count <- 1
 start_time <- Sys.time()
-raster_list2 <- list()
+raster_list2 <- list() # create list to hold rasters
+skew_listFinal <- list() # create list to hold skewness values
 for(i in 1:length(speciescode)) {
   Time <- 1
   raster_list <- list() # Create an empty list
+  skew_list1 <- list() # create list to hold skewness values
   for (y in 1:length(yearb)) {
     yearb1 <- yearb[y]
     yeare1 <- yeare[y]
@@ -162,6 +165,8 @@ for(i in 1:length(speciescode)) {
     # Convert IDW output to raster object then clip to Scotian Shelf
     r       <- raster(test.idw)
     r.m     <- mask(r, oceanMaskUTM)
+    skew1 <- paste(Time1, speciescode[i],round(cellStats(r.m,stat = 'skew'),3),sep=":\t")
+    skew_list1[[y]] <- skew1
     # create a quantile table (based on deciles for this particular grid)
     rq <- quantile(r.m,prob = seq(0, 1, length = 10))
     reclass_df =c(0, rq[1], 1,
@@ -182,7 +187,7 @@ for(i in 1:length(speciescode)) {
     
     # Export the raster
     # dir <- "U:/GIS/Projects/MSP/HotSpotCode/Output/Test/"
-    dir <- "./Persistance/Output"
+    dir <- "./Persistance/Output/"
     rtif <- paste(dir,Time1,"SP4_",speciescode[i],"rclass.tif",sep = "")
     tif <- paste(dir,Time1,"SP4_",speciescode[i],".tif",sep = "")
     # writeRaster(r.m,tif)
@@ -204,8 +209,11 @@ for(i in 1:length(speciescode)) {
   s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
   s2 <- s > 47 # Anna's original value was 39 but I've got another time period so increased it to 47
   raster_list2[[i]] <- s2
+  skew_listFinal[[i]] <- skew_list1
   count <- count + 1
 }
+
+write.table(as.data.frame(skew_listFinal),"R:/Science/CESD/HES_MSP/R/Persistance/Output/Skewness.csv",sep=",")
 end_time <- Sys.time()
 end_time - start_time
 # ---------- END Loops ----------------------####
