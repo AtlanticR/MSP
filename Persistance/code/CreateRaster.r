@@ -64,10 +64,14 @@ proj4string(grd) <- proj4string(grd) <- CRS("+init=epsg:26920") # define grd pro
 # - END Make oversize grid ----------------------
 
 # Get list of species from other data table
-fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
-speciescode <- unique(fish[,14])
+# fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
+species <- read.csv("./data/Spreadsheets/ThirtyFiveSpecies.csv", header = TRUE)
+# filter out snow crab.  snow crab was not recorded until 1981
+species <- filter(species, CODE != 2526)
+speciescode <- unique(species[,1])
+
 # get names and Scinames of species as well
-# speciescode <- unique(fish[,14:16])
+# speciescode <- unique(fish[,1:3])
 
 # Reduce number of species for testing processing
 speciescode <- speciescode[7:9]
@@ -102,15 +106,17 @@ count <- 1
 start_time <- Sys.time()
 raster_list2 <- list() # create list to hold rasters
 skew_listFinal <- list() # create list to hold skewness values
+presence_listFinal <- list() # create a list to hold presence values (row counts)
 for(i in 1:length(speciescode)) {
   Time <- 1
   raster_list <- list() # Create an empty list
   skew_list1 <- list() # create list to hold skewness values
+  presence_list1 <- list() # create a list to hold presence values (row counts)
   for (y in 1:length(yearb)) {
     yearb1 <- yearb[y]
     yeare1 <- yeare[y]
     Time1 <- paste("T", Time, "_", sep = "")
-    print(paste("Loop ",count, sep = ""))
+    print(paste("Loop ",count, "Time ", Time1, sep = ""))
     # filter data
     clip_by_poly(db='rv', clip.poly = oceanMask) # clip data to the extent of the Ocean Mask
     GSMISSIONS <- GSMISSIONS[GSMISSIONS$YEAR >= yearb1 & GSMISSIONS$YEAR < yeare1 & GSMISSIONS$SEASON=="SUMMER",]
@@ -148,6 +154,12 @@ for(i in 1:length(speciescode)) {
     allCatch$STDNO <- allCatch$TOTNO*1.75/allCatch$DIST
     allCatch$STDWGT <- allCatch$TOTWGT*1.75/allCatch$DIST
     
+    countAllSample <- nrow(allCatch)
+    countPresence <- nrow(filter(allCatch,STDWGT > 0))
+    
+    presence <- paste(Time1, speciescode[i],countAllSample,countPresence,sep=":\t")
+    presence_list1[[y]] <- presence
+    
     # create spatial object out of allCatch with name of species
     # write to shapefile
     coordinates(allCatch) <- ~LONGITUDE+LATITUDE
@@ -156,7 +168,8 @@ for(i in 1:length(speciescode)) {
     
     # Export the shapefile - NOTE, this was done to compare with ArcGIS processing
     # print(paste("Loop ",count, " - exporting shapefile",sep = ""))
-    # writeOGR(allCatchUTM,"U:/GIS/Projects/MSP/HotSpotCode/Output/Test",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
+    dsn = "U:/GIS/Projects/MSP/Persistance/Output/"
+    writeOGR(allCatchUTM,"U:/GIS/Projects/MSP/Persistance/Output",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
     
     # Interpolate the sample data (TOTWGT) using the large extent grid
     # Using the same values for Power and Search Radius as Anna's script (idp and maxdist)
@@ -186,12 +199,12 @@ for(i in 1:length(speciescode)) {
     raster_list[[y]] <- reclass_r
     
     # Export the raster
-    # dir <- "U:/GIS/Projects/MSP/HotSpotCode/Output/Test/"
+    # dir <- "U:/GIS/Projects/MSP/HotSpotCode/Output/"
     dir <- "./Persistance/Output/"
     rtif <- paste(dir,Time1,"SP4_",speciescode[i],"rclass.tif",sep = "")
     tif <- paste(dir,Time1,"SP4_",speciescode[i],".tif",sep = "")
-    # writeRaster(r.m,tif)
-    # writeRaster(reclass_r,rtif)
+    writeRaster(r.m,tif)
+    writeRaster(reclass_r,rtif)
     
     cleanup('rv')
     # Restore original GS tables for filtering
@@ -210,10 +223,12 @@ for(i in 1:length(speciescode)) {
   s2 <- s > 47 # Anna's original value was 39 but I've got another time period so increased it to 47
   raster_list2[[i]] <- s2
   skew_listFinal[[i]] <- skew_list1
+  presence_listFinal[[i]] <- presence_list1
   count <- count + 1
 }
 
 write.table(as.data.frame(skew_listFinal),"R:/Science/CESD/HES_MSP/R/Persistance/Output/Skewness.csv",sep=",")
+write.table(as.data.frame(presence_listFinal),"R:/Science/CESD/HES_MSP/R/Persistance/Output/Presence.csv",sep=",")
 end_time <- Sys.time()
 end_time - start_time
 # ---------- END Loops ----------------------####
@@ -225,7 +240,7 @@ for(i in 1:length(speciescode)){
   tif <- paste(dir,"/",names(raster_list2[[i]]),"_SUM.tif",sep = "")
   writeRaster(raster_list2[[i]],tif, overwrite = TRUE)
   # poly <- rasterToPolygons(raster_list2[[i]], fun=function(x){x==1}, n=4, na.rm=TRUE, digits=12, dissolve=TRUE)
-  # writeOGR(poly,"U:/GIS/Projects/MSP/HotSpotCode/Output/Test",paste("TestSP_",speciescode[i],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
+  # writeOGR(poly,"U:/GIS/Projects/MSP/HotSpotCode/Output",paste("TestSP_",speciescode[i],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
 }
 end_time <- Sys.time()
 end_time - start_time
