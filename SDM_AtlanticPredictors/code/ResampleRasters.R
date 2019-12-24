@@ -45,9 +45,10 @@ prjFun <- function(x) {
 
   names(s) <- names(x)
 }
+plot(new)
 
 new1 <- new[new < -2.5] <- NA # this didn't work to make NA all the values below -2.5
-s <- calc(new, fun=function(x){ x[x < -2.5] <- NA; return(x)} ) # this doesn't go in function
+s <- calc(tem1, fun=function(x){ x[x < -2.5] <- NA; return(x)} ) # this doesn't go in function
 
 test <- -2.4
 rastList1 <- lapply(rastList,raster)
