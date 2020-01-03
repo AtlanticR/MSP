@@ -1,27 +1,29 @@
 
-###########################################################################
-###########################################################################
+###########################################################################################
+###########################################################################################
 ### 
-### This code is a recreation in R of ImportantHabitat.py by Anna Serdynska
-### from 2012
+### This code is a recreation in R of ImportantHabitat.py by Anna Serdynska from 2012
 ### Original purpose:
-### "To create important habitat layers for various fish species from 
-### DFO's RV survey data"
+### "To create important habitat layers for various fish species from DFO's RV survey data"
 ### 
+### Author: Philip Greyson
+### Date: December 2020
 ### 
+### Using RV survey data clipped to the Scotian Shelf this process interpolates surfaces of
+### standardized catch weight (STDWGT) for six time periods, reclassifies the surfaces into
+### deciles, sums the six surfaces together and then creates a summary surface for each 
+### species out of the top 20 percent (sum > 48 out of possible 60).
 ### 
-
-### This code uses the IDW interpolation method followed by 
-### DATA INPUT AND INITIALIZATION ###
+### Skewness and presence metrics are calculated for each species.
+### The resultant raster, interpreted as a way of categorizing the persistance of a species
+### through different management regimes, is exported.
 ### 
-###########################################################################
-###########################################################################
-
-
+###########################################################################################
+###########################################################################################
 
 
 library(rgdal) # to read shapefiles
-library(raster) # for the shapefile function (similar to writeOGR)
+library(raster) # for the various raster functions
 library(dplyr) # all-purpose data manipulation (loaded after raster package since both have a select() function)
 library(gstat) # for IDW function
 library(sp) #Classes and methods for spatial data
@@ -172,6 +174,7 @@ for(i in 1:length(speciescode)) {
     # Fill NA records with zero
     allCatch$TOTNO[is.na(allCatch$TOTNO)] <- 0
     allCatch$TOTWGT[is.na(allCatch$TOTWGT)] <- 0
+    # Standardize all catch numbers and weights to a distance of 1.75 nm
     allCatch$STDNO <- allCatch$TOTNO*1.75/allCatch$DIST
     allCatch$STDWGT <- allCatch$TOTWGT*1.75/allCatch$DIST
     
@@ -192,7 +195,7 @@ for(i in 1:length(speciescode)) {
     dsn = "U:/GIS/Projects/MSP/Persistance/Output/"
     writeOGR(allCatchUTM,"U:/GIS/Projects/MSP/Persistance/Output",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
     
-    # Interpolate the sample data (TOTWGT) using the large extent grid
+    # Interpolate the sample data (STDWGT) using the large extent grid
     # Using the same values for Power and Search Radius as Anna's script (idp and maxdist)
     test.idw <- gstat::idw(STDWGT ~ 1, allCatchUTM, newdata=grd, idp=2.0, maxdist = 16668)
     
@@ -241,7 +244,7 @@ for(i in 1:length(speciescode)) {
     Time <- Time + 1
   }
   s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
-  s2 <- s > 47 # Anna's original value was 39 but I've got another time period so increased it to 47
+  s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
   raster_list2[[i]] <- s2
   skew_listFinal[[i]] <- skew_list1
   presence_listFinal[[i]] <- presence_list1
