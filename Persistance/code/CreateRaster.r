@@ -1,4 +1,25 @@
 
+###########################################################################
+###########################################################################
+### 
+### This code is a recreation in R of ImportantHabitat.py by Anna Serdynska
+### from 2012
+### Original purpose:
+### "To create important habitat layers for various fish species from 
+### DFO's RV survey data"
+### 
+### 
+### 
+
+### This code uses the IDW interpolation method followed by 
+### DATA INPUT AND INITIALIZATION ###
+### 
+###########################################################################
+###########################################################################
+
+
+
+
 library(rgdal) # to read shapefiles
 library(raster) # for the shapefile function (similar to writeOGR)
 library(dplyr) # all-purpose data manipulation (loaded after raster package since both have a select() function)
