@@ -1,5 +1,5 @@
 library(rgdal) # to read shapefiles
-library(raster) # for the shapefile function (similar to writeOGR)
+library(raster) # for the various raster functions
 library(dplyr) # all-purpose data manipulation (loaded after raster package since both have a select() function)
 library(gstat) # for IDW function
 library(sp) #Classes and methods for spatial data
@@ -34,18 +34,21 @@ sal <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Sal_JulyMean_2012_1
 tem <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Temp_JulyMean_2012_14.tif' 
 
 rastList <- c(bath,sst,chl,sal,tem)
+rastList <- c(bath)
 
 tem1 <- raster(tem)
 new <- prjFun(tem1)
-prjFun <- function(x) {
-  # raster(x)
-  crs(x) <- prj
-  x2 <- crop(x,oceanMaskMAR)
-  mask(x2,oceanMaskMAR)
-
-  names(s) <- names(x)
+prjFun <- function(y) {
+  # Ry <- raster(y)
+  crs(y) <- prj
+  Ry <- crop(y,oceanMaskMAR)
+  Ry <- mask(Ry,oceanMaskMAR)
+  
+  #names(Ry) <- names(y)
 }
 plot(new)
+
+rastList2 <- lapply(rastList,prjFun)
 
 new1 <- new[new < -2.5] <- NA # this didn't work to make NA all the values below -2.5
 s <- calc(tem1, fun=function(x){ x[x < -2.5] <- NA; return(x)} ) # this doesn't go in function
