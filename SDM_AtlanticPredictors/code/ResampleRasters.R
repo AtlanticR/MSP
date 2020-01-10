@@ -24,7 +24,8 @@ oceanMaskMAR <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone")
 oceanMaskATL <- readOGR() # NEED TO CONVERT GDB FC to shapefile
 oceanMaskUTM <- spTransform(oceanMaskMAR,CRS("+init=epsg:26920"))
 
-prj <- CRS("+init=epsg:4326")
+prj <- CRS("+init=epsg:4326") # EPSG code for WGS84
+prjUTM <- CRS("+init=epsg:26920") # EPSG code for NAD83 UTM Zone 20
 
 
 bath <- 'R:/Science/CESD/HES_MSP/R/data/Projects/SDM_Pacific/predictors/bathy.asc'
@@ -33,6 +34,7 @@ chl <- 'R:/Science/CESD/HES_MSP/R/data/Projects/SDM_Pacific/predictors/mean_jul_
 sal <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Sal_JulyMean_2012_14.tif' 
 tem <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Temp_JulyMean_2012_14.tif' 
 
+rastList <- list(bath,sst,chl,sal,tem)
 rastList <- c(bath,sst,chl,sal,tem)
 rastList <- c(bath)
 
@@ -41,8 +43,9 @@ new <- prjFun(tem1)
 prjFun <- function(y) {
   # Ry <- raster(y)
   crs(y) <- prj
-  Ry <- crop(y,oceanMaskMAR)
-  Ry <- mask(Ry,oceanMaskMAR)
+  #crop(y,rastList1[[1]])
+  #Ry <- crop(y,oceanMaskMAR)
+  #Ry <- mask(Ry,oceanMaskMAR)
   
   #names(Ry) <- names(y)
 }
@@ -59,6 +62,15 @@ rastList2 <- lapply(rastList1,prjFun)
 plot(rastList2[[1]])
 plot(rastList2[[2]])
 plot(rastList2[[3]])
+plot(rastList2[[4]])
+plot(rastList2[[5]])
+
+plot(rastList2[[1]])
+plot(rastList2[[2]])
+plot(rastList2[[3]])
+plot(rastList2[[4]])
+plot(rastList2[[5]])
+
 # The cropping and masking isn't working as it should
 CRS("+init=epsg:4326")
 rastList2 <- lapply(rastList1,crop, oceanMaskATL)
@@ -74,3 +86,38 @@ plot(mask_sstR)
 
 mask2_sstR <- mask(crop_sstR,oceanMaskMAR)
 plot(mask2_sstR)
+
+
+Get resolution of finest grid (chl - 0.0104)
+Project that to UTM, get resolution
+Then project all others to that resolution and projection (projectRaster)
+
+
+# get raster resolution of all rasters
+lapply(rastList1,res)
+# create a blank raster using projectExtent()
+# then projectRaster()
+extent1 <- extent(rastList1[[1]])
+lapply(rastList1,extent)
+rastList3 <- lapply(rastList1,crop,extent1)
+
+plot(rastList3[[1]])
+plot(rastList3[[2]])
+plot(rastList3[[3]])
+plot(rastList3[[4]])
+plot(rastList3[[5]])
+
+plot(rastList1[[1]])
+
+  lapply(rastList1,names)
+
+
+
+# Crop all to the extent of bathy (it's the smallest raster)
+
+s <- crop(rastList1[[2]],extent(rastList1[[1]]))
+extent(s)
+extent(rastList1[[1]])
+
+rastList <- c(bath,sst,chl,sal,tem)
+rastList[[1]]
