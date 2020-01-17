@@ -69,17 +69,24 @@ rastList2[[5]] <- round(calc(rastList2[[5]], fun=function(x){ x[x < -2.5] <- NA;
 resampFun <- function(y) {
   y <- y >-9999
   #table(as.vector(y))
-  rasterToPolygons(y,na.rm = TRUE, dissolve = TRUE)
-  writeOGR(poly,dsn,paste("Poly_",rastList2[[i]],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
+  poly <- rasterToPolygons(y,na.rm = TRUE, dissolve = TRUE)
+  # writeOGR(poly,dsn,paste("Poly_",names(y),sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
 }
 
 
+polyList3 <- lapply(rastList2,resampFun)
+names(polyList3) <- rastNames
+
+writeOGR(poly,dsn,paste("Poly_",names(polyList3[i]),sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
+
+i = 2
+names(rastList2) <- rastNames
 
 start_time <- Sys.time()
 for(i in 1:5){
-  rast <- rastList2[[i]] > -9999
-  poly <- rasterToPolygons(rast,na.rm = TRUE, dissolve = TRUE)
-  writeOGR(poly,dsn,paste("Poly_",rastList2[[i]],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
+  #rast <- rastList2[[i]] > -9999
+  poly <- polyList3[[i]]
+  writeOGR(poly,dsn,paste("Poly_",names(rastList2[i]),sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
 }
 end_time <- Sys.time()
 end_time - start_time
