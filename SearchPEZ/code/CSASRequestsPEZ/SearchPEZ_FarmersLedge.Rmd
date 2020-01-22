@@ -30,21 +30,24 @@ library(kableExtra)
 library(rgdal)
 library(maps)
 library(lubridate)
+library(RCurl)
 #source("C:/RProjects/SearchPEZ/code/.Rprofile") #Catalina's path to access Oracle passwords
 ```
 ```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
-source("//dcnsbiona01a/BIODataSvc/IN/MSP/Projects/Aquaculture/SearchPEZ/code/site_map.r")
-source("//dcnsbiona01a/BIODataSvc/IN/MSP/Projects/Aquaculture/SearchPEZ/code/plot_wsdb.r")
-source("//dcnsbiona01a/BIODataSvc/IN/MSP/Projects/Aquaculture/SearchPEZ/code/filter_wsdb.r")
+# Here code reads from HES_MSP. However, code is in Catalina's computer and pushed to  https://github.com/AtlanticR/MSP/tree/master/SearchPEZ/code 
+source("//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/code/site_map.r")
+source("//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/code/plot_wsdb.r")
+source("//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/code/filter_wsdb.r")
 #source("//dcnsbiona01a/BIODataSvc/IN/MSP/Projects/Aquaculture/SearchPEZ/code/remove_landPoints.r")
 ```
 
 ```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
-mspPath <- "//dcnsbiona01a/BIODataSvc/IN/MSP"
-data.dir <- "//dcnsbiona01a/BIODataSvc/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
-dataPath <- file.path("//dcnsbiona01a/BIODataSvc/IN/MSP/Projects/Aquaculture/SearchPEZ/outputs",paste0(AquaSiteName,PEZversion))
+mspPath <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ"
+data.dir <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/inputs/mar.wrangling"
+dataPath <- file.path("//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/outputs",paste0(AquaSiteName,PEZversion))
 setwd(dataPath)
-polyPath <- "//dcnsbiona01a/BIODataSvc/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/polygons"
+polyPath <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/inputs/polygons"
+wsdbFile <- file.path("//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/inputs","WSDB_GLazin_AllSpecies_2018.csv")
 ```
 ```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
 landGDB <- "//dcnsbiona01a/BIODataSvc/IN/MSP/Projects/BaseGISData/Boundaries/Coast50K/Coastline50k.gdb"
@@ -241,7 +244,6 @@ Most sightings are collected on an opportunistic basis and observations may come
 Map below shows location of marine mammals sightings recorded in the Fisheries and Oceans whale sightings database. Map includes SARA and COSEWIC species within the region of interest. The yellow polygon shows the locations of the proposed aquaculture site. The blue polygon displays the PEZ used for this synthesis. 
 
 ```{r read wsdb and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
-wsdbFile <- file.path("//dcnsbiona01a/BIODataSvc/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs","WSDB_GLazin_AllSpecies_2018.csv")
 wsdb <- read.csv(wsdbFile)
 wsdb <- wsdb[which(year(as.Date(wsdb$WS_DATE,"%d-%b-%Y"))>=minYear),]
 #wsdb <- remove_landPoints(wsdb,land)

@@ -11,6 +11,9 @@
 *.tiff
 *.tif
 auto*
+*.docx
+*.doc
+
 
 *.rdata
 *.csv
