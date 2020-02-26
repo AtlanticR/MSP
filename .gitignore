@@ -10,9 +10,18 @@
 *.pdf
 *.tiff
 *.tif
+*.tfw
 auto*
 *.docx
 *.doc
+*.jpg
+*.xlsx
+*.xls
+*.txt
+*.zip
+*.msg
+log
+*.db
 
 
 *.rdata
@@ -43,6 +52,8 @@ auto*
 *.sbn
 *.sbx
 *.xml
+*.ovr
+*.lock
 
 
 
