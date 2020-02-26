@@ -76,6 +76,8 @@ plot(rastList2[[3]])
 plot(rastList2[[4]])
 plot(rastList2[[5]])
 
+summary(rastList2[[1]])
+
 dsn <-  "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SDM_PacificMARCollaboration/DataInput"
 
 start_time <- Sys.time()
@@ -106,9 +108,10 @@ tif <- paste(dsn,"/",names(rastList2[5]),"_1.tif",sep = "")
 writeRaster(rastList2[[5]],tif,overwrite = TRUE)
 
 
+
 # Create a stack of the rasters and export as a single tif file (5 bands)
 st <- stack(rastList2)  # works!!!
-tif2="C:/Temp/Stack.tif"
+tif2=paste(dsn,"/Stack_1.tif",sep = "")
 writeRaster(st,tif2)
 
 
@@ -125,7 +128,7 @@ get_data('rv', data.dir = data.dir, quiet = TRUE)
 # data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
 
 
-yearb <- 2012
+yearb <- 1970
 yeare <- 2019
 clip_by_poly(db='rv', clip.poly = oceanMaskMAR) # clip data to the extent of the Ocean Mask
 GSMISSIONS <- GSMISSIONS[GSMISSIONS$YEAR >= yearb & GSMISSIONS$YEAR < yeare & GSMISSIONS$SEASON=="SUMMER",]
@@ -171,7 +174,7 @@ summary(allCatch$Pres)
 table(allCatch$Pres)
 names(allCatch)
 # Export the data as CSV
-filename <- "Species200"
+filename <- "Species200_All"
 fullpath <- paste(dsn,"/",filename,".csv",sep = "")
 write.csv(allCatch, fullpath)
 

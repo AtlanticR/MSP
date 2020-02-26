@@ -44,7 +44,7 @@ get_data('rv', data.dir = data.dir)
 
 # bring in OceanMask for clipping data and rasters
 dsn <- "./data/Boundaries"
-oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone")
+oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
 oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
 
 # Make copies of all the GS tables
