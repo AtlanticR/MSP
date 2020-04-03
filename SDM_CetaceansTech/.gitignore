@@ -1,0 +1,99 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Rprofile
+
+
+
+*~
+*.pdf
+*.tiff
+*.tif
+*.png
+*.tfw
+auto*
+*.docx
+*.doc
+*.jpg
+*.xlsx
+*.xls
+*.txt
+*.zip
+*.msg
+log
+*.db
+
+
+*.rdata
+*.csv
+*.pptx
+
+*.dcf
+*.html
+
+
+
+## Core latex/pdflatex auxiliary files:
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+
+
+## shape files:
+*.dbf
+*.prj
+*.shp
+*.shx
+*.cpg
+*.sbn
+*.sbx
+*.xml
+*.ovr
+*.lock
+
+
+
+
+## Intermediate documents:
+*.dvi
+# these rules might exclude image files for figures etc.
+# *.ps
+# *.eps
+# *.pdf
+
+## Bibliography auxiliary files (bibtex/biblatex/biber):
+*.bbl
+*.bcf
+*.blg
+*-blx.aux
+*-blx.bib
+*.run.xml
+
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
+
+## Auxiliary and intermediate files from other packages:
+
+# algorithms
+*.alg
+*.loa
+
+# amsthm
+*.thm
+
+# beamer
+*.nav
+*.snm
+*.vrb
+
+# glossaries
+*.acn
+*.acr

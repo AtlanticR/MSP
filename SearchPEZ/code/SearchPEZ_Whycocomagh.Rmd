@@ -15,8 +15,8 @@ output:
 
 ```{r Define Aquaculture Site, echo=FALSE, include=FALSE, cache=FALSE}
 rm(list=ls(all=TRUE))
-AquaSiteName <- "FarmersLedge"
-PEZversion <- "4748m"
+AquaSiteName <- "Whycocomagh"
+PEZversion <- "5km"
 
 #make sure you delete all shp.xml files in the folder to be able to run this code
 minYear <- 2002
@@ -30,8 +30,6 @@ library(kableExtra)
 library(rgdal)
 library(maps)
 library(lubridate)
-library(RCurl)
-#source("C:/RProjects/SearchPEZ/code/.Rprofile") #Catalina's path to access Oracle passwords
 ```
 ```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
 # Here code reads from HES_MSP. However, code is in Catalina's computer and pushed to  https://github.com/AtlanticR/MSP/tree/master/SearchPEZ/code 
@@ -77,38 +75,8 @@ site_map(PEZ_poly,site,land,40)
 
 # **Regional Databases**
 
-```{r PEZ search, echo=FALSE, include=FALSE, cache=FALSE}
-#This chunk of code should be run to do a re-extraction of data or to extract data using a new polygon.
-#Note taht you need 64-bit ODBC driver to be able to extract MARFIS data. Mike provided data to Catalina on Sept 2019 and waiting to get Oracle 64 bit to do extraction myself.
 
-# get_data(db = 'rv', data.dir = data.dir)
-# GSINF = clip_by_poly(df = GSINF
-#                       , lat.field = "LATITUDE"
-#                       , lon.field = "LONGITUDE"
-#                       , clip.poly = PEZ_poly)
-# self_filter()
-# save_data(db='rv')
-# cleanup('rv')
-# 
-# get_data('isdb', data.dir=data.dir)
-# ISSETPROFILE_WIDE = clip_by_poly(df = ISSETPROFILE_WIDE
-#                              , lat.field = "LATITUDE"
-#                              , lon.field = "LONGITUDE"
-#                              , clip.poly = PEZ_poly)
-# self_filter()
-# save_data(db='isdb')
-# cleanup('isdb')
-# 
-# get_data('marfis', data.dir = data.dir)
-# PRO_SPC_INFO = clip_by_poly(df = PRO_SPC_INFO
-#                       , lat.field = "LATITUDE"
-#                       , lon.field = "LONGITUDE"
-#                       , clip.poly = PEZ_poly)
-# self_filter()
-# save_data(db='marfis')
-# cleanup('marfis')
-```
-```{r read csv extracted with previous chunck, echo=FALSE, include=FALSE, cache=FALSE}
+```{r read csv extracted with get_data.r, echo=FALSE, include=FALSE, cache=FALSE}
 fl <- list.files(dataPath,".csv")
 marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
 marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
