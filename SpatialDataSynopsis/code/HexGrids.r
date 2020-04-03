@@ -35,7 +35,7 @@ library(sf)
 # Load RV data
 
 
-
+wd <- "C:/Temp/BarndoorSkate"
 wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R"
 setwd(wd)
 
@@ -61,6 +61,7 @@ HexGrid <- readOGR(gridDSN,grid)
 
 # allCatchAlbers is the point file
 # HexGrid is the polygon
+# over() is an SP function
 
 HexGrid2 <- over(HexGrid, allCatchUTM, fn = mean)
 HexGrid3 <- over(HexGrid, allCatchAlbers)
@@ -212,6 +213,7 @@ speciescode <- unique(species[,1])
 speciescode <- speciescode[7:9]
 speciescode <- speciescode[7] # Redfish
 speciescode <- speciescode[1] # Cod
+speciescode <- speciescode[22] # Barndoor skate
 
 
 #------ Set year variables -----------------
