@@ -30,22 +30,39 @@ library(sp) #Classes and methods for spatial data
 library(Mar.datawrangling)
 library(rgeos) # required for the dissolve argument in rasterToPolygon() according to help file
 library(moments) # required for skewness calculation
+library(sf) #Simple Features (similar to library(sp))
 
 # Load RV data
+# Network Address
+# wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R"
 
-wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/MSP"
+# home location
+wd <- "E:/BIO/20200306/GIT/MSP"
 setwd(wd)
 
-data.dir <- "./data/mar.wrangling"
+# Network location of datawrangling data
+# data.dir <- "./data/mar.wrangling"
+
+# on my home directory I have to go up one dir and across to /data/
+data.dir <- "../data/mar.wrangling"
 get_data('rv', data.dir = data.dir)
 # alternate site for the data:
 # data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
 
+source("./SpatialDataSynopsis/code/Functions.r")
 
-# bring in OceanMask for clipping data and rasters
-dsn <- "./data/Boundaries"
-oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone")
-oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
+# bring in OceanMask for clipping data and rasters and project to UTM
+# Network Path
+# dsn <- "./data/Boundaries"
+
+dsn <- "../data/Boundaries"
+oceanMask <- read_sf(dsn, "ScotianShelfOceanMask_WithoutCoastalZone_Edit")
+# add in an sp() version of oceanMask since the clip_by_poly() function 
+# in marwrangling is using sp()
+oceanMasksp <- as(oceanMask,"Spatial")
+oceanMasksp <- sf:::as_Spatial(oceanMask$geometry)
+
+oceanMaskUTM <- st_transform(oceanMask, crs = 26920)
 
 # Make copies of all the GS tables
 tmp_GSCAT <- GSCAT
@@ -67,17 +84,27 @@ self_filter(keep_nullsets = FALSE,quiet = TRUE)
 # Keep only the columns necessary
 # ("MISSION" "SETNO" "SDATE" "LATITUDE" "LONGITUDE")
 GSINF_all <- dplyr::select(GSINF,1:3,33:34)
-# Convert to the Spatial Object
-coordinates(GSINF_all) <- ~LONGITUDE+LATITUDE
-proj4string(GSINF_all) <- CRS("+init=epsg:4326") # Define coordinate system (WGS84)
-GSINF_allUTM <- spTransform(GSINF_all,CRS("+init=epsg:26920")) # Project to UTM
+GSINF_allsp <- dplyr::select(GSINF,1:3,33:34)
+names(GSINF_all)
+# Convert to the sf (Simple Feature) Object
+GSINF_all <- st_as_sf(GSINF_all, coords = c("LONGITUDE", "LATITUDE"), crs=4326)
+GSINF_allUTM <- st_transform(GSINF_all, crs = 26920) # Project to UTM
+
+# convert GSINF_allUTM from sf object to sp Spatial Points Data Frame
+GSINF_allUTMsp <-  as(GSINF_allUTM, 'Spatial')
+
+# I think this worked.
+# wait, I think this made a polygon grid!
+
+# when the internet is back on I have to search for how to make a raster in SF
+grd2 <- st_make_grid(GSINF_allUTM,cellsize = 2490, square = TRUE)
 
 
 # Create an emtpy grid from the samples, 100,000 cells
 # It's necessary to create an empty grid of all samples initially so that the individual
 # date range grids have the same extents
 # If the extents aren't identical the SUM function won't work
-grd <- as.data.frame(spsample(GSINF_allUTM, "regular", n=100000))
+grd <- as.data.frame(spsample(GSINF_allUTMsp, "regular", n=100000))
 
 names(grd)       <- c("X", "Y")
 coordinates(grd) <- c("X", "Y")
@@ -86,9 +113,20 @@ fullgrid(grd)    <- TRUE  # Create SpatialGrid object
 proj4string(grd) <- proj4string(grd) <- CRS("+init=epsg:26920") # define grd projection (UTM Zone 20)
 # - END Make oversize grid ----------------------
 
+
+# Export both grd and grd2 to compare
+str(grd)
+str(grd2)
+grd2_r <- raster(grd2)
+
+
 # Get list of species from other data table
 # fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
-species <- read.csv("./data/Spreadsheets/ThirtyFiveSpecies.csv", header = TRUE)
+# Network address
+#species <- read.csv("./data/Spreadsheets/ThirtyFiveSpecies.csv", header = TRUE)
+
+# Home data location
+species <- read.csv("../data/Spreadsheets/ThirtyFiveSpecies.csv", header = TRUE)
 # filter out snow crab.  snow crab was not recorded until 1981
 species <- filter(species, CODE != 2526)
 speciescode <- unique(species[,1])
@@ -97,7 +135,7 @@ speciescode <- unique(species[,1])
 # speciescode <- unique(fish[,1:3])
 
 # Reduce number of species for testing processing
-speciescode <- speciescode[7:9]
+speciescode <- speciescode[c(1,33)]
 speciescode <- speciescode[7] # Redfish
 
 #------ Set year variables -----------------
@@ -141,7 +179,7 @@ for(i in 1:length(speciescode)) {
     Time1 <- paste("T", Time, "_", sep = "")
     print(paste("Loop ",count, "Time ", Time1, sep = ""))
     # filter data
-    clip_by_poly(db='rv', clip.poly = oceanMask) # clip data to the extent of the Ocean Mask
+    clip_by_poly(db='rv', clip.poly = oceanMasksp) # clip data to the extent of the Ocean Mask
     GSMISSIONS <- GSMISSIONS[GSMISSIONS$YEAR >= yearb1 & GSMISSIONS$YEAR < yeare1 & GSMISSIONS$SEASON=="SUMMER",]
     GSXTYPE <- GSXTYPE[GSXTYPE$XTYPE==1,]
     self_filter(keep_nullsets = FALSE,quiet = TRUE) # 659 in GSCAT
@@ -193,7 +231,7 @@ for(i in 1:length(speciescode)) {
     # Export the shapefile - NOTE, this was done to compare with ArcGIS processing
     # print(paste("Loop ",count, " - exporting shapefile",sep = ""))
     dsn = "U:/GIS/Projects/MSP/Persistance/Output/"
-    writeOGR(allCatchUTM,"U:/GIS/Projects/MSP/Persistance/Output",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
+    # writeOGR(allCatchUTM,"U:/GIS/Projects/MSP/Persistance/Output",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
     
     # Interpolate the sample data (STDWGT) using the large extent grid
     # Using the same values for Power and Search Radius as Anna's script (idp and maxdist)
@@ -271,3 +309,33 @@ end_time - start_time
 
 
 
+# Excess code
+
+
+
+
+# using SP package, read in a shapefile
+# bring in OceanMask for clipping data and rasters
+dsn <- "./data/Boundaries"
+oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
+oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
+
+
+
+
+
+# using SP package to create a SPATIAL OBJECT
+# Convert to the Spatial Object
+coordinates(GSINF_allsp) <- ~LONGITUDE+LATITUDE
+proj4string(GSINF_allsp) <- CRS("+init=epsg:4326") # Define coordinate system (WGS84)
+GSINF_allUTMsp <- spTransform(GSINF_allsp,CRS("+init=epsg:26920")) # Project to UTM
+
+# Test section
+
+fileConn<-file("output.txt")
+writeLines(c("Hello","World"), fileConn)
+close(fileConn)
+
+txt <- "Hallo\nWorld\n"
+writeLines(txt, "c:/temp/outfile.txt")
+txt <- "Second\tTest"
