@@ -28,8 +28,8 @@ library(GISTools)
 
 #   Analysis of spatial correlation between maps obtained using different settings          
 ################################################################################################################
-SP<-"North_Atlantic_Right_Whale"
-Season<-"Summer"
+SP<-"Harbour_Porpoise"
+Season<-"Autumn"
 
 #Bias1km
 SP_Season_bias1km_nosub <- raster(paste0(SP, "/", Season, "/Bias_1km/No_subsample/HSMap_cumulative_bias_1km_", SP, "_", Season, ".tif"))
