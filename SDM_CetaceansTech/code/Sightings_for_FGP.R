@@ -9,7 +9,7 @@ MarMamm_FGP$ID <- mapvalues(MarMamm_FGP$ID,
 
 MarMamm_FGP <- MarMamm_FGP[MarMamm_FGP$Species %in% 
                              c('Blue Whale', 'Fin Whale', 'Sei Whale', 'Minke Whale',
-                               'Humpback Whale', "Sowerby's Beaked Whale", 'Killer Whale', 'Pilot Whale',
+                               'Humpback Whale', "Sperm Whale", "Sowerby's Beaked Whale", 'Killer Whale', 'Pilot Whale',
                                'Atlantic White-sided Dolphin', 'Bottlenose Dolphin', 'Common Dolphin', 
                                "Risso's Dolphin", 'Striped Dolphin', 'White-beaked Dolphin',
                                'Harbour Porpoise'), ]
