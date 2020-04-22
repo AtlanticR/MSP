@@ -37,7 +37,7 @@ library(Mar.datawrangling) # required to access RV data
 # wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R"
 
 # home location
-wd <- "E:/BIO/20200306/GIT/R/MSP"
+wd <- "C:/BIO/20200306/GIT/R/MSP"
 setwd(wd)
 
 # on my home directory I have to go up one dir and across to /data/
@@ -51,7 +51,8 @@ get_data('rv', data.dir = data.dir)
 # alternate site for the data:
 # data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
 
-source("./SpatialDataSynopsis/code/src/Functions.r")
+source("./SpatialDataSynopsis/code/src/MkGrid_fn.r")
+source("./SpatialDataSynopsis/code/src/InterpolateRV_fn.r")
 
 
 # using SP package, read in a shapefile
@@ -59,7 +60,20 @@ source("./SpatialDataSynopsis/code/src/Functions.r")
 dsn <- "../data/Boundaries"
 oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
 oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
-# plot(oceanMask)
+
+# bring in land layer
+land10m <- readOGR(dsn,"ne_10m_land_Clip")
+land10mUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
+# plot(oceanMask, ext = oceanMask)
+
+png(filename="./SpatialDataSynopsis/Output/name.png")
+plot(oceanMask)
+plot(land10m, add = TRUE, col = "grey")
+zoom(oceanMask, ext = oceanMask )
+dev.off()
+
+spplot(land10m, 'scalerank', add = TRUE)
+summary(land10m)
 
 # Make copies of all the GS tables
 tmp_GSCAT <- GSCAT
