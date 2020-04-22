@@ -30,6 +30,7 @@ library(sp) #Classes and methods for spatial data
 library(rgeos) # required for the dissolve argument in rasterToPolygon() according to help file
 library(moments) # required for skewness calculation
 library(Mar.datawrangling) # required to access RV data
+library(maps)
 
 
 # Load RV data
@@ -51,8 +52,9 @@ get_data('rv', data.dir = data.dir)
 # alternate site for the data:
 # data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
 
-source("./SpatialDataSynopsis/code/src/MkGrid_fn.r")
-source("./SpatialDataSynopsis/code/src/InterpolateRV_fn.r")
+source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
+source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
+source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
 
 
 # using SP package, read in a shapefile
@@ -66,14 +68,7 @@ land10m <- readOGR(dsn,"ne_10m_land_Clip")
 land10mUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
 # plot(oceanMask, ext = oceanMask)
 
-png(filename="./SpatialDataSynopsis/Output/name.png")
-plot(oceanMask)
-plot(land10m, add = TRUE, col = "grey")
-zoom(oceanMask, ext = oceanMask )
-dev.off()
-
-spplot(land10m, 'scalerank', add = TRUE)
-summary(land10m)
+CRS_ras <- CRS("+init=epsg:4326") # WGS84
 
 # Make copies of all the GS tables
 tmp_GSCAT <- GSCAT
@@ -120,9 +115,10 @@ speciescode <- unique(species[,1])
 # speciescode <- unique(fish[,1:3])
 
 # Reduce number of species for testing processing
-speciescode <- speciescode[7:9] # pollock, redfish, halibut
+# speciescode <- speciescode[7:9] # pollock, redfish, halibut
 
-speciescode <- speciescode[7] # Redfish
+# speciescode <- speciescode[7] # Redfish
+speciescode <- speciescode[22] # barndoor skate
 
 #------ Set year variables -----------------
 # Single date range
@@ -193,13 +189,7 @@ for(i in 1:length(speciescode)) {
     # this merge() creates a full set of all MISSION/SETNO and SPECIES combinations
     Combined <- merge(GSINF2,SpecOnly)
     GSCAT2 <- dplyr::select(GSCAT,1:3,5:6)
-# -- THIS SECTION NOT NEEDED ANYMORE AFTER MIKE'S UPDATE TO HIS CODE ####
-    # SUM TOTNO and TOTWGT on MISSION and SETNO to get rid of the different size classes
-    # GSCAT2 <- aggregate(GSCAT2[,4:5], by=list(GSCAT2$MISSION, GSCAT2$SETNO, GSCAT2$SPEC), FUN=sum)
-    # Column names after aggregate() function need to be re-established
-    # names(GSCAT2)[1:3] <- c("MISSION","SETNO","SPEC")
-    
-# -- END ---THIS SECTION NOT NEEDED ANYMORE AFTER MIKE'S UPDATE TO HIS CODE ####
+
     # names(Combined)
     # Merge Combined and GSCAT2 on MISSION and SETNO
     allCatch <- merge(Combined, GSCAT2, all.x=T, by = c("MISSION", "SETNO", "SPEC"))
@@ -235,6 +225,14 @@ for(i in 1:length(speciescode)) {
     # Interpolate the sample data (STDWGT) using the large extent grid
     # Using the same values for Power and Search Radius as Anna's script (idp and maxdist)
     test.idw <-  Grid_fn(allCatchUTM, grd, 2.0, 16668)
+    rasDD <- projectRaster(test.idw, crs=CRS_ras) #change test.idw from UTM to wgs84
+    dir <- "./SpatialDataSynopsis/Output/"
+    pngName <- paste(dir,Time1,"SP_",speciescode[i],".png",sep = "")
+    
+    png(filename = pngName)
+    
+    site_map(oceanMask,land10m,rasDD,40)
+    dev.off()
 
     raster_list[[y]] <- test.idw
     cleanup('rv')

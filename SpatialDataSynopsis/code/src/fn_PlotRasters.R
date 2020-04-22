@@ -16,19 +16,22 @@
 # Written for MSP, Gordana Lazin, September 13, 2019
 
 
-site_map <- function(studyArea,site,land,buf) {
-  
+#site_map <- function(studyArea,site,land,buf) {
+site_map <- function(studyArea,land,IDWraster,buf) {
   # buf is in km, and now converted to degrees
-  buf=buf/100
+  buf <- buf/100
   #png("pez_and_site.png", width=1616, height=1410)
   
   # bounding box
-  bb=as.data.frame(summary(studyArea)$bbox)
+  # bb=as.data.frame(summary(studyArea)$bbox)
+  bb <- as.data.frame(bbox(IDWraster))
+
   
   # buffer around bounding box
   #buf=0.05
   
   # longitude and latitude limits for the map
+  
   lonLim=c(bb$min[1]-buf, bb$max[1]+buf)
   latLim=c(bb$min[2]-buf, bb$max[2]+buf)
   
@@ -38,16 +41,13 @@ site_map <- function(studyArea,site,land,buf) {
   
   # ADD LAND
   map(land,fill=TRUE,col="lightgrey",add=T) 
-  
-  # ADD SITE
-  map(site,fill=TRUE,col="yellow",add=T)
-  
+  # Add RASTER layer
+  plot(IDWraster, add=TRUE)
+
   # ADD AXES
   map.axes(las=1, cex.axis=0.8)
   
   # add axis labels - does not want to add y label???
   title(xlab="Longitude [deg]",ylab="Latitude [deg]")
-  
-  
-  
+
 }

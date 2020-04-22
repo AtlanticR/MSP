@@ -35,6 +35,8 @@ Grid_fn <- function(data, grid, power, dist ) {
   writeRaster(r.m,tif, overwrite = TRUE)
   writeRaster(reclass_r,rtif, overwrite = TRUE)
   
+  
+  
   return(reclass_r)
   
 }
