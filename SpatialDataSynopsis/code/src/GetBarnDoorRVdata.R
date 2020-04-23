@@ -9,6 +9,7 @@ library(gridExtra)
 # home location
 # wd <- "C:/BIO/20200306/GIT/R/MSP"
 # setwd(wd)
+# data.dir <- "../data/mar.wrangling"
 
 # on my home directory I have to go up one dir and across to /data/
 data.dir <- "C:/RProjects/MSP/data"
@@ -22,17 +23,13 @@ yearb <- 1999
 yeare <- 2020
 
 #------ END Set year variables -----------------
-i <- 1
-y <- 1
 
-yearb1 <- yearb[y]
-yeare1 <- yeare[y]
 # Filter down samples to specific year range, SUMMER, 
-GSMISSIONS <- GSMISSIONS[GSMISSIONS$YEAR >= yearb1 & GSMISSIONS$YEAR < yeare1 & GSMISSIONS$SEASON=="SUMMER",]
+GSMISSIONS <- GSMISSIONS[GSMISSIONS$YEAR >= yearb & GSMISSIONS$YEAR < yeare & GSMISSIONS$SEASON=="SUMMER",]
 GSXTYPE <- GSXTYPE[GSXTYPE$XTYPE==1,]
 self_filter(keep_nullsets = FALSE,quiet = TRUE) # 659 in GSCAT
 GSINF2 <- GSINF # make copy of GSINF to use for a full set of samples
-GSSPECIES <- GSSPECIES[GSSPECIES$CODE %in% speciescode[i],] # WORKS
+GSSPECIES <- GSSPECIES[GSSPECIES$CODE %in% speciescode[1],] # WORKS
 self_filter(keep_nullsets = FALSE,quiet = TRUE)
 # Keep only the columns necessary
 # ("MISSION" "SETNO" "SDATE" "STRAT" "DIST" "DEPTH" "BOTTOM_TEMPERATURE" "BOTTOM_SALINITY" "LATITUDE" "LONGITUDE")
