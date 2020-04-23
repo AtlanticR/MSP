@@ -30,12 +30,10 @@ Grid_fn <- function(data, grid, power, dist ) {
   # Export the raster
   # dir <- "U:/GIS/Projects/MSP/HotSpotCode/Output/"
   dir <- "./SpatialDataSynopsis/Output/"
-  rtif <- paste(dir,Time1,"SP4_",speciescode[i],"rclass.tif",sep = "")
-  tif <- paste(dir,Time1,"SP4_",speciescode[i],".tif",sep = "")
+  rtif <- paste(dir,Time1,"SP_",speciescode[i],"rclass.tif",sep = "")
+  tif <- paste(dir,Time1,"SP_",speciescode[i],".tif",sep = "")
   writeRaster(r.m,tif, overwrite = TRUE)
-  writeRaster(reclass_r,rtif, overwrite = TRUE)
-  
-  
+  writeRaster(reclass_r,rtif, overwrite = TRUE, datatype = "INT1U")
   
   return(reclass_r)
   

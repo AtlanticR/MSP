@@ -31,6 +31,7 @@ library(rgeos) # required for the dissolve argument in rasterToPolygon() accordi
 library(moments) # required for skewness calculation
 library(Mar.datawrangling) # required to access RV data
 library(maps)
+library(ggplotify) # to convert plots to grobs (as.grob function)
 
 
 # Load RV data
@@ -122,8 +123,8 @@ speciescode <- speciescode[22] # barndoor skate
 
 #------ Set year variables -----------------
 # Single date range
-# yearb <- 2012
-# yeare <- 2015
+# yearb <- 2014
+# yeare <- 2020
 # All sample years (1970 - 2018)
 yearb <- c(1970, 1978, 1986, 1994, 2007, 2012)
 yeare <- c(1978, 1986, 1994, 2007, 2012, 2019)
@@ -231,7 +232,7 @@ for(i in 1:length(speciescode)) {
     
     png(filename = pngName)
     
-    site_map(oceanMask,land10m,rasDD,40)
+    plot1 <- as.grob(site_map(oceanMask,land10m,rasDD,40))
     dev.off()
 
     raster_list[[y]] <- test.idw

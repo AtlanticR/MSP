@@ -22,9 +22,11 @@ site_map <- function(studyArea,land,IDWraster,buf) {
   buf <- buf/100
   #png("pez_and_site.png", width=1616, height=1410)
   
-  # bounding box
-  # bb=as.data.frame(summary(studyArea)$bbox)
+  # bounding box from the raster extent
   bb <- as.data.frame(bbox(IDWraster))
+  
+  # bounding box from the land file
+  bb <- as.data.frame(summary(land)$bbox)
 
   
   # buffer around bounding box
@@ -32,17 +34,20 @@ site_map <- function(studyArea,land,IDWraster,buf) {
   
   # longitude and latitude limits for the map
   
-  lonLim=c(bb$min[1]-buf, bb$max[1]+buf)
-  latLim=c(bb$min[2]-buf, bb$max[2]+buf)
+  lonLim <- c(bb$min[1]-buf, bb$max[1]+buf)
+  latLim <- c(bb$min[2]-buf, bb$max[2]+buf)
   
   # par(oma = c(0, 0, 0, 0))
   # plot studyArea on the map with buffer around polygon, specified in buf
-  map(studyArea,fill=T, col="deepskyblue",xlim=lonLim, ylim=latLim)
+  # map(studyArea,fill=FALSE,xlim=lonLim, ylim=latLim)
   
   # ADD LAND
-  map(land,fill=TRUE,col="lightgrey",add=T) 
+  map(land,fill=TRUE,col="lightgrey",xlim=lonLim, ylim=latLim) 
   # Add RASTER layer
   plot(IDWraster, add=TRUE)
+  
+  # plot studyArea on the map with buffer around polygon, specified in buf
+  map(studyArea,fill=FALSE, col="deepskyblue", add = TRUE)
 
   # ADD AXES
   map.axes(las=1, cex.axis=0.8)
