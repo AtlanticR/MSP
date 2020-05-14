@@ -32,6 +32,8 @@ library(moments) # required for skewness calculation
 library(Mar.datawrangling) # required to access RV data
 library(maps)
 library(ggplotify) # to convert plots to grobs (as.grob function)
+library(grid)
+library(ggplot2)
 
 
 # Load RV data
@@ -145,9 +147,6 @@ GSMISSIONS <- tmp_GSMISSIONS
 GSSPECIES <- tmp_GSSPECIES
 GSSTRATUM <- tmp_GSSTRATUM
 GSXTYPE <- tmp_GSXTYPE
-
-
-
 
 # ---------- BEGIN Loops ----------------------####
 
