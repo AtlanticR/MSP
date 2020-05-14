@@ -77,7 +77,15 @@ p <- ggplot(biomass, aes(x=year, y=tt)) +
     theme_ipsum() +
     theme(axis.text.x=element_text(angle=60, hjust=1))
 
+p <- ggplot(biomass, aes(x=year, y=tt)) +
+  geom_line(color="#69b3a2", size=1) + 
+  xlab("") +
+  ylab("Total biomass") +
+  theme_ipsum() +
+  theme(axis.text.x=element_text(angle=60, hjust=1))
+
 grid.arrange(p, p, ncol = 1)
+
 
 
 
