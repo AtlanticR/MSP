@@ -36,6 +36,7 @@ library(grid)
 library(ggplot2)
 
 
+
 # Load RV data
 # Network Address
 # wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R"
@@ -58,6 +59,7 @@ get_data('rv', data.dir = data.dir)
 source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
 source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
 source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
+source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
 
 
 # using SP package, read in a shapefile
@@ -127,6 +129,10 @@ speciescode <- speciescode[22] # barndoor skate
 # Single date range
 # yearb <- 2014
 # yeare <- 2020
+# Single date range
+# yearb <- 2000
+# yeare <- 2020
+
 # All sample years (1970 - 2018)
 yearb <- c(1970, 1978, 1986, 1994, 2007, 2012)
 yeare <- c(1978, 1986, 1994, 2007, 2012, 2019)
@@ -218,24 +224,28 @@ for(i in 1:length(speciescode)) {
     # Network location
     # dsn = "U:/GIS/Projects/MSP/Persistance/Output/"
     # Home location
-    # dsn = "E:/BIO/20200306/GIS/Projects/MSP/Persistance/Output/"
+    dsn = "./SpatialDataSynopsis/Output"
     
-    # writeOGR(allCatchUTM,"U:/GIS/Projects/MSP/Persistance/Output",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
+    # writeOGR(allCatchUTM,"./SpatialDataSynopsis/Output/",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
+    writeOGR(allCatchUTM,dsn,paste(Time1,"SP",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
     
     # Interpolate the sample data (STDWGT) using the large extent grid
     # Using the same values for Power and Search Radius as Anna's script (idp and maxdist)
     test.idw <-  Grid_fn(allCatchUTM, grd, 2.0, 16668)
     rasDD <- projectRaster(test.idw, crs=CRS_ras) #change test.idw from UTM to wgs84
     dir <- "./SpatialDataSynopsis/Output/"
-    pngName <- paste(dir,Time1,"SP_",speciescode[i],".png",sep = "")
+ #   pngName <- paste(dir,Time1,"SP_",speciescode[i],".png",sep = "")
     
-    png(filename = pngName)
+#    png(filename = pngName)
     
-    plot1 <- as.grob(site_map(oceanMask,land10m,rasDD,40))
-    dev.off()
-
-    raster_list[[y]] <- test.idw
-    cleanup('rv')
+ #  plot1 <- as.grob(site_map(oceanMask,land10m,rasDD,40))
+#    dev.off()
+# This is the UTM version of the raster
+    # For plotting use the WGS84 VERSION
+#    raster_list[[y]] <- test.idw
+    raster_list[[y]] <- rasDD
+    
+    # cleanup('rv')
     # Restore original GS tables for filtering
     GSCAT <- tmp_GSCAT
     GSDET <- tmp_GSDET
@@ -255,8 +265,8 @@ for(i in 1:length(speciescode)) {
   # s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
   s2 <- s > 32 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
   raster_list2[[i]] <- s2
-  skew_listFinal[[i]] <- skew_list1
-  presence_listFinal[[i]] <- presence_list1
+  # skew_listFinal[[i]] <- skew_list1
+  # presence_listFinal[[i]] <- presence_list1
   count <- count + 1
 }
 
@@ -278,3 +288,16 @@ for(i in 1:length(speciescode)){
 }
 end_time <- Sys.time()
 end_time - start_time
+
+par(mfrow=c(2,4))
+plot1 <- site_map(oceanMask,land10m,HexGridDD, raster_list,40) #studyArea,land,hex, IDWraster,buf
+
+
+
+for(i in 1:length(raster_list)){
+  names(raster_list[[i]]) <- paste("T_",i,sep = "")
+  tif <- paste(dir,names(raster_list[[i]]),".tif",sep = "")
+  writeRaster(raster_list[[i]],tif, overwrite = TRUE)
+  # poly <- rasterToPolygons(raster_list2[[i]], fun=function(x){x==1}, n=4, na.rm=TRUE, digits=12, dissolve=TRUE)
+  # writeOGR(poly,"U:/GIS/Projects/MSP/HotSpotCode/Output",paste("TestSP_",speciescode[i],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
+}
