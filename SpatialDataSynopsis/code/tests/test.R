@@ -18,7 +18,6 @@ for(x in SpatialOutputsFiles)
 SpatialOutputs <- setMinMax(SpatialOutputs)
 CRS_ras <- CRS("+init=epsg:26920")
 SpatialOutputs <- projectRaster(SpatialOutputs, crs=CRS_ras)
-plot(SpatialOutputs)
 
 # F U N C T I O N S 
 # Calculate the x,y extents for all maps
@@ -36,7 +35,6 @@ getLims <- function( Layer ) {
   return(lims)
 }
 
-
 # Plot the predicted layers
 MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   
@@ -47,8 +45,8 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   for(p in preds){
     
     # legend text
-    if(grepl("DD4", p, ignore.case = T)) legend.title <- "Summed Rank"
-    if(grepl("DD7", p, ignore.case = T))  legend.title <- "Summed Rank Test"
+    if(grepl("T", p, ignore.case = T)) legend.title <- "Ranked Areas"
+    if(grepl("T", p, ignore.case = T))  legend.title <- "Sum Biomass per Grid cell"
     if ( !exists("legend.title") ) legend.title <- p
     
     # Get raster from stack
@@ -88,47 +86,6 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
 plot(SpatialOutputs)
 lims <- getLims( Layer = SpatialOutputs )
 MapLayers (layers=SpatialOutputs, lims=lims, legendPos="bottomright")
-
-
-# R A N D O M     S T U F F 
-#************************************************************************************
-# Layer2 <- raster("SpatialDataSynopsis/code/tests/Data/outputs/T4_SP200_DD4.tif") 
-# Layer2 <- setMinMax(Layer2)
-# str(Layer2)
-# CRS_ras <- CRS("+init=epsg:26920")
-# Layer2UTM <- projectRaster(Layer2, crs=CRS_ras) #change rasterDD from WGS to UTM
-# lims <- getLims( Layer = Layer2UTM )
-# 
-# plot( land[[1]], col = "grey80", border = NA, xlim = lims$x , ylim = lims$y )
-# box( lty = 'solid', col = 'black')
-# plot( Layer2, maxpixels=5000000, add=TRUE, col=pal, legend=FALSE )
-# plot( Layer2, maxpixels=5000000, add=TRUE, legend=FALSE )
-# plot(Layer2, col=pal, horizontal=TRUE,
-#      legend.only=TRUE, smallplot=smallplot, 
-#      axis.args=list(cex.axis=.7, padj=-2, tck=-.5),
-#      legend.args=list(text=legend.title, side=1, font=1, line=1.5, cex=.8))
-# 
-# # objects
-# pal <- rev(brewer.pal( 8, "Spectral" ))
-# smallplot <- c(.08, .48, .14, .16)
-# if( legendPos == "bottomleft") smallplot <- c(.08, .48, .14, .16)
-# legend.title <- "2014-2019"
-# 
-# #plot
-# pdf(file="C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/plot.pdf",
-#      height=6, width=5.25*diff(lims$x)/diff(lims$y)+1 )
-# par( mar=c(1,1,1,1) )
-# plot( land[[1]], col = "grey80", border = NA, xlim = lims$x , ylim = lims$y )
-# box( lty = 'solid', col = 'black')
-# plot( Layer, maxpixels=5000000, add=TRUE, col=pal, legend=FALSE )
-# plot(Layer, col=pal, horizontal=TRUE,
-#      legend.only=TRUE, smallplot=smallplot,
-#      axis.args=list(cex.axis=.7, padj=-2, tck=-.5),
-#      legend.args=list(text=legend.title, side=1, font=1, line=1.5, cex=.8))
-# dev.off()
-
-
-
 
 
 
