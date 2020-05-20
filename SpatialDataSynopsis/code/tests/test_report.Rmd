@@ -1,0 +1,31 @@
+---
+title: "Spatial Data Synopsis"
+author: "MSP"
+date: "May 20, 2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE, echo=FALSE, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(magick)
+library(pdftools)
+```
+
+## Barndoor Skate
+```{r read_figures, include=FALSE, echo=FALSE, include=FALSE, cache=FALSE}
+f1 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_T1_SP_200rclass2.pdf', density = 72)
+f2 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_T2_SP_200rclass2.pdf', density = 72)
+f3 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_T3_SP_200rclass2.pdf', density = 72)
+f4 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_T4_SP_200rclass2.pdf', density = 72)
+f5 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_HexGridT1.pdf', density = 72)
+f6 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_HexGridT2.pdf', density = 72)
+f7 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_HexGridT3.pdf', density = 72)
+f8 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_HexGridT4.pdf', density = 72)
+img <- c(f1, f2, f3, f4, f5, f6, f7, f8)
+```
+```{r Fig1, fig.height=11, fig.width=8, echo=FALSE}
+image_append(image_scale(c(image_append(img[c(1,2,3,4)], stack = TRUE))))
+image_append(image_scale(c(image_append(img[c(5,6,7,8)], stack = TRUE))))
+```
