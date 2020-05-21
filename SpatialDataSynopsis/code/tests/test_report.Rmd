@@ -1,7 +1,7 @@
 ---
 title: "Spatial Data Synopsis"
 author: "MSP"
-date: "May 20, 2020"
+date: "May 21, 2020"
 output:
   pdf_document: default
   html_document: default
@@ -15,17 +15,29 @@ library(pdftools)
 
 ## Barndoor Skate
 ```{r read_figures, include=FALSE, echo=FALSE, include=FALSE, cache=FALSE}
-f1 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_T1_SP_200rclass2.pdf', density = 72)
-f2 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_T2_SP_200rclass2.pdf', density = 72)
-f3 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_T3_SP_200rclass2.pdf', density = 72)
-f4 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_T4_SP_200rclass2.pdf', density = 72)
-f5 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_HexGridT1.pdf', density = 72)
-f6 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_HexGridT2.pdf', density = 72)
-f7 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_HexGridT3.pdf', density = 72)
-f8 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_HexGridT4.pdf', density = 72)
-img <- c(f1, f2, f3, f4, f5, f6, f7, f8)
+f1 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_rclass_SP200_T1.pdf', density = 72)
+f2 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_rclass_SP200_T2.pdf', density = 72)
+f3 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_rclass_SP200_T3.pdf', density = 72)
+f4 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_rclass_SP200_T4.pdf', density = 72)
+f5 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexsum_SP200_T1.pdf', density = 72)
+f6 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexsum_SP200_T2.pdf', density = 72)
+f7 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexsum_SP200_T3.pdf', density = 72)
+f8 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexsum_SP200_T4.pdf', density = 72)
+f9 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexcv_SP200_T1.pdf', density = 72)
+f10 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexcv_SP200_T2.pdf', density = 72)
+f11 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexcv_SP200_T3.pdf', density = 72)
+f12 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexcv_SP200_T4.pdf', density = 72)
+f13 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexsd_SP200_T1.pdf', density = 72)
+f14 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexsd_SP200_T2.pdf', density = 72)
+f15 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexsd_SP200_T3.pdf', density = 72)
+f16 <- image_read_pdf('C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/Map_hexsd_SP200_T4.pdf', density = 72)
+img <- c(f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16)
 ```
 ```{r Fig1, fig.height=11, fig.width=8, echo=FALSE}
 image_append(image_scale(c(image_append(img[c(1,2,3,4)], stack = TRUE))))
 image_append(image_scale(c(image_append(img[c(5,6,7,8)], stack = TRUE))))
+```
+```{r Fig2, fig.height=11, fig.width=8, echo=FALSE}
+image_append(image_scale(c(image_append(img[c(9,10,11,12)], stack = TRUE))))
+image_append(image_scale(c(image_append(img[c(13,14,15,16)], stack = TRUE))))
 ```
