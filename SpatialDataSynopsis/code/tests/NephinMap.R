@@ -16,8 +16,13 @@ for(x in SpatialOutputsFiles)
   SpatialOutputs = stack(c(SpatialOutputs, raster(predname)))
 }
 SpatialOutputs <- setMinMax(SpatialOutputs)
+
 CRS_ras <- CRS("+init=epsg:26920")
 SpatialOutputs <- projectRaster(SpatialOutputs, crs=CRS_ras)
+
+# SpatialOutputs <- stack("SpatialDataSynopsis/code/tests/Data/outputs/Multi.tif")
+# nlayers(stack2)
+# plot(stack2[[2]])
 
 # F U N C T I O N S 
 # Calculate the x,y extents for all maps
@@ -45,8 +50,10 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   for(p in preds){
     
     # legend text
-    if(grepl("T", p, ignore.case = T)) legend.title <- "Ranked Areas"
-    if(grepl("T", p, ignore.case = T))  legend.title <- "Sum Biomass per Grid cell"
+    if(grepl("hexcv", p, ignore.case = T)) legend.title <- "CV Biomass per grid cell"
+    if(grepl("hexsd", p, ignore.case = T))  legend.title <- "SD Biomass per grid cell"
+    if(grepl("hexsum", p, ignore.case = T))  legend.title <- "Sum Biomass per grid cell"
+    if(grepl("rclass", p, ignore.case = T))  legend.title <- "Ranked Areas"
     if ( !exists("legend.title") ) legend.title <- p
     
     # Get raster from stack
@@ -57,6 +64,8 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
       pal <- c("#fee8c8","#fdd49e","#fdbb84","#fc8d59","#ef6548","#d7301f","#b30000","#7f0000")
     } else {
       pal <- rev(brewer.pal( 8, "Spectral" ))
+      #pal <- c("#D53E4F", "#F46D43", "#FDAE61", "#FEE08B", "#E6F598", "#ABDDA4", "#66C2A5", "#3288BD")  
+      pal <- c("#DEEBF7", "#66C2A5", "#ABDDA4", "#E6F598", "#FEE08B", "#FDAE61", "#F46D43","#D53E4F")  
     }
     
     # Legend position
@@ -83,7 +92,7 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   } # end for loop through PredSDM Layers
 } # end MapLayers function
 
-plot(SpatialOutputs)
+#plot(SpatialOutputs)
 lims <- getLims( Layer = SpatialOutputs )
 MapLayers (layers=SpatialOutputs, lims=lims, legendPos="bottomright")
 
