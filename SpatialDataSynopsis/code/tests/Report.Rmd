@@ -1,0 +1,20 @@
+---
+title: "Spatial Data Synopsis"
+author: "MSP"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE, echo=FALSE, cache=FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("C:/RProjects/MSP/SpatialDataSynopsis/code/tests/MapCollage.R")
+library(magick)
+library(pdftools)
+```
+
+## Barndoor Skate
+```{r Fig1, fig.height=11, fig.width=8, echo=FALSE, message=FALSE, cache=FALSE, warning = FALSE}
+MapCollage("SP200")
+```
