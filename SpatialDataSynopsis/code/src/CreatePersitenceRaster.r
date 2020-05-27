@@ -60,6 +60,7 @@ source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
 source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
 source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
 source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
+source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
 
 
 # using SP package, read in a shapefile
@@ -74,15 +75,15 @@ land10mUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
 # plot(oceanMask, ext = oceanMask)
 
 CRS_ras <- CRS("+init=epsg:4326") # WGS84
-
+SaveTmpTables()
 # Make copies of all the GS tables
-tmp_GSCAT <- GSCAT
-tmp_GSDET <- GSDET
-tmp_GSINF <- GSINF
-tmp_GSMISSIONS <- GSMISSIONS
-tmp_GSSPECIES <- GSSPECIES
-tmp_GSSTRATUM <- GSSTRATUM
-tmp_GSXTYPE <- GSXTYPE
+# tmp_GSCAT <- GSCAT
+# tmp_GSDET <- GSDET
+# tmp_GSINF <- GSINF
+# tmp_GSMISSIONS <- GSMISSIONS
+# tmp_GSSPECIES <- GSSPECIES
+# tmp_GSSTRATUM <- GSSTRATUM
+# tmp_GSXTYPE <- GSXTYPE
 
 
 
@@ -123,7 +124,7 @@ speciescode <- unique(species[,1])
 # speciescode <- speciescode[7:9] # pollock, redfish, halibut
 
 # speciescode <- speciescode[7] # Redfish
-speciescode <- speciescode[22] # barndoor skate
+speciescode <- speciescode[c(1,22)] # barndoor skate
 
 #------ Set year variables -----------------
 # Single date range
@@ -144,23 +145,25 @@ yeare <- c(2005, 2009, 2014, 2020)
 # yearb <- c(1970, 1978)
 # yeare <- c(1977, 1985)
 #------ END Set year variables -----------------
-
+RestoreTables()
 # Restore original GS tables for filtering
-GSCAT <- tmp_GSCAT
-GSDET <- tmp_GSDET
-GSINF <- tmp_GSINF
-GSMISSIONS <- tmp_GSMISSIONS
-GSSPECIES <- tmp_GSSPECIES
-GSSTRATUM <- tmp_GSSTRATUM
-GSXTYPE <- tmp_GSXTYPE
+# GSCAT <- tmp_GSCAT
+# GSDET <- tmp_GSDET
+# GSINF <- tmp_GSINF
+# GSMISSIONS <- tmp_GSMISSIONS
+# GSSPECIES <- tmp_GSSPECIES
+# GSSTRATUM <- tmp_GSSTRATUM
+# GSXTYPE <- tmp_GSXTYPE
 
 # ---------- BEGIN Loops ----------------------####
 
 count <- 1
 start_time <- Sys.time()
-raster_list2 <- list() # create list to hold rasters
+raster_list2 <- list() # create list to hold SUM rasters
+raster_list3 <- list() # create list to hold species rasters
 skew_listFinal <- list() # create list to hold skewness values
 presence_listFinal <- list() # create a list to hold presence values (row counts)
+stackRas <- raster(grd)
 for(i in 1:length(speciescode)) {
   Time <- 1
   raster_list <- list() # Create an empty list
@@ -219,7 +222,7 @@ for(i in 1:length(speciescode)) {
     allCatchUTM<-spTransform(allCatch,CRS("+init=epsg:26920"))
     
     # Export the shapefile - NOTE, this was done to compare with ArcGIS processing
-    # print(paste("Loop ",count, " - exporting shapefile",sep = ""))
+    print(paste("Loop ",count, " - exporting shapefile",sep = ""))
     
     # Network location
     # dsn = "U:/GIS/Projects/MSP/Persistance/Output/"
@@ -227,12 +230,12 @@ for(i in 1:length(speciescode)) {
     dsn = "./SpatialDataSynopsis/Output"
     
     # writeOGR(allCatchUTM,"./SpatialDataSynopsis/Output/",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
-    writeOGR(allCatchUTM,dsn,paste(Time1,"SP",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
+    # writeOGR(allCatchUTM,dsn,paste(Time1,"SP",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
     
     # Interpolate the sample data (STDWGT) using the large extent grid
     # Using the same values for Power and Search Radius as Anna's script (idp and maxdist)
-    test.idw <-  Grid_fn(allCatchUTM, grd, 2.0, 16668)
-    rasDD <- projectRaster(test.idw, crs=CRS_ras) #change test.idw from UTM to wgs84
+    Gridlist <-  Grid_fn(allCatchUTM, grd, 2.0, 16668)
+    rasDD <- projectRaster(Gridlist$raster, crs=CRS_ras) #change test.idw from UTM to wgs84
     dir <- "./SpatialDataSynopsis/Output/"
  #   pngName <- paste(dir,Time1,"SP_",speciescode[i],".png",sep = "")
     
@@ -242,19 +245,21 @@ for(i in 1:length(speciescode)) {
 #    dev.off()
 # This is the UTM version of the raster
     # For plotting use the WGS84 VERSION
-#    raster_list[[y]] <- test.idw
-    raster_list[[y]] <- rasDD
+    raster_list[[y]] <- Gridlist$raster
+    skew_listFinal[[i]] <- Gridlist$skew
+    #raster_list[[y]] <- rasDD
+    stackRas <- addLayer(stackRas,Gridlist$raster)
     
-    # cleanup('rv')
+    RestoreTables()
     # Restore original GS tables for filtering
-    GSCAT <- tmp_GSCAT
-    GSDET <- tmp_GSDET
-    GSINF <- tmp_GSINF
-    GSMISSIONS <- tmp_GSMISSIONS
-    GSSPECIES <- tmp_GSSPECIES
-    GSSTRATUM <- tmp_GSSTRATUM
-    GSXTYPE <- tmp_GSXTYPE
-
+    # GSCAT <- tmp_GSCAT
+    # GSDET <- tmp_GSDET
+    # GSINF <- tmp_GSINF
+    # GSMISSIONS <- tmp_GSMISSIONS
+    # GSSPECIES <- tmp_GSSPECIES
+    # GSSTRATUM <- tmp_GSSTRATUM
+    # GSXTYPE <- tmp_GSXTYPE
+    raster_list3 <- append(raster_list3, raster_list)
     Time <- Time + 1
   }
   
@@ -265,11 +270,11 @@ for(i in 1:length(speciescode)) {
   # s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
   s2 <- s > 32 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
   raster_list2[[i]] <- s2
-  # skew_listFinal[[i]] <- skew_list1
-  # presence_listFinal[[i]] <- presence_list1
+  skew_listFinal[[i]] <- skew_list1
+  presence_listFinal[[i]] <- presence_list1
   count <- count + 1
 }
-
+# stackRas <- dropLayer(stackRas,1)
 write.table(as.data.frame(skew_listFinal),"./SpatialDataSynopsis/Output/Skewness.csv",sep=",")
 write.table(as.data.frame(presence_listFinal),"./SpatialDataSynopsis/Output/Presence.csv",sep=",")
 end_time <- Sys.time()
@@ -292,12 +297,21 @@ end_time - start_time
 par(mfrow=c(2,4))
 plot1 <- site_map(oceanMask,land10m,HexGridDD, raster_list,40) #studyArea,land,hex, IDWraster,buf
 
+# Test of writing tifs from Stack
+for(i in 1:nlayers(stackRas)){
+  names(stackRas[[i]]) <- paste("SP_",speciescode[i],sep = "")
+  tif <- paste(dir,names(stackRas[[i]]),"_SUM.tif",sep = "")
+  writeRaster(stackRas[[i]],tif, overwrite = TRUE)
+}
+
+writeRaster(stackRas,"./SpatialDataSynopsis/Output/Multi.tif",format = "GTiff", bylayer = FALSE)
 
 
 for(i in 1:length(raster_list)){
-  names(raster_list[[i]]) <- paste("T_",i,sep = "")
+  names(raster_list[[i]]) <- paste("Reclass2_SP200_","T",i,sep = "")
+  rtif <- paste(dir,"SP",speciescode[i],"_rclass_T",Time,".tif",sep = "")
   tif <- paste(dir,names(raster_list[[i]]),".tif",sep = "")
-  writeRaster(raster_list[[i]],tif, overwrite = TRUE)
+  writeRaster(raster_list[[i]],tif, overwrite = TRUE, datatype = "INT1U")
   # poly <- rasterToPolygons(raster_list2[[i]], fun=function(x){x==1}, n=4, na.rm=TRUE, digits=12, dissolve=TRUE)
   # writeOGR(poly,"U:/GIS/Projects/MSP/HotSpotCode/Output",paste("TestSP_",speciescode[i],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
 }
