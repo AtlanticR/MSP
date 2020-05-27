@@ -1,0 +1,25 @@
+[general]
+creator=R package 'raster'
+created=2020-05-27 11:45:31
+[georeference]
+nrows=293
+ncols=341
+xmin=116109.992843586
+ymin=4573535.01860876
+xmax=965230.713434456
+ymax=5303131.41489358
+projection=+init=epsg:26920 +proj=utm +zone=20 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0
+[data]
+datatype=FLT4S
+byteorder=little
+nbands=4
+bandorder=BIL
+minvalue=0:0:0:0
+maxvalue=21.9:33.3:48.6602941176471:51.6686685288641
+nodatavalue=-3.4e+38
+[legend]
+legendtype=
+values=
+color=
+[description]
+layername=SP200_hexsum_T1:SP200_hexsum_T2:SP200_hexsum_T3:SP200_hexsum_T4

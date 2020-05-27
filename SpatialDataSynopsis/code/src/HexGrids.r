@@ -32,11 +32,19 @@ library(rgeos) # required for the dissolve argument in rasterToPolygon() accordi
 library(moments) # required for skewness calculation
 library(sf)
 
+
+
 # Load RV data
 
 # home location
 wd <- "C:/BIO/20200306/GIT/R/MSP"
 setwd(wd)
+
+source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
+source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
+source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
+source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
+source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
 
 # wd <- "C:/Temp/BarndoorSkate"
 # wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R"
@@ -44,6 +52,8 @@ setwd(wd)
 
 data.dir <- "../data/mar.wrangling"
 get_data('rv', data.dir = data.dir)
+
+SaveTmpTables()
 
 # bring in OceanMask for clipping data and rasters
 dsn <- "../data/Boundaries"
@@ -59,16 +69,48 @@ grid <- "HexGrid_400Mil_UTM_ScotianShelf"
 HexGrid <- readOGR(gridDSN,grid)
 HexGridUTM <- spTransform(HexGrid,CRS("+init=epsg:26920"))
 HexGridUTM_sf <- st_as_sf(HexGridUTM)
+
+shpList <- list(c("ClipHexagons100SqKm", "ClipHexagons200SqKm", "ClipHexagons25SqKm", "ClipHexagons300SqKm", 
+             "ClipHexagons_Oceans10sqkm", "HexGrid_400Mil_UTM_ScotianShelf"))
+
+spList <- c("Hex100", "Hex200", "Hex25", "Hex300", "Hex10", "Hex400")
+
+For i in 1:length(shpList) {
+  tmpshp <- readOGR(gridDSN,shpList[[1]][i])
+  # How do I rename tmpshp to have one of the names in spList
+  
+}
+
+outList=list()
+for(i in 1:length(shpList)) {
+  # outList[[i]] <- readOGR(gridDSN,shpList[[1]][i])
+  assign(spList[i],readOGR(gridDSN,shpList[[1]][i]))
+  # How do I rename tmpshp to have one of the names in spList
+} 
+names(outList)=spList
+
+names(shpList)=spList
+
+
+
+# Bring in all grids
+HexGrid100 <- readOGR(gridDSN, "ClipHexagons100SqKm")
+HexGrid100_sf <- st_as_sf(HexGrid100)
+HexGrid200 <- readOGR(gridDSN, "ClipHexagons200SqKm")
+HexGrid200_sf <- st_as_sf(HexGrid200)
+HexGrid25 <- readOGR(gridDSN, "ClipHexagons25SqKm")
+HexGrid25_sf <- st_as_sf(HexGrid25)
+HexGrid300 <- readOGR(gridDSN, "ClipHexagons300SqKm")
+HexGrid300_sf <- st_as_sf(HexGrid300)
+HexGrid10 <- readOGR(gridDSN, "ClipHexagons_Oceans10sqkm")
+HexGrid10_sf <- st_as_sf(HexGrid10)
+HexGrid400 <- readOGR(gridDSN, "HexGrid_400Mil_UTM_ScotianShelf")
+HexGrid400_sf <- st_as_sf(HexGrid400)
+
 # prjString <- crs(HexGrid)
-SaveTmpTables()
-# Make copies of all the GS tables
-# tmp_GSCAT <- GSCAT
-# tmp_GSDET <- GSDET
-# tmp_GSINF <- GSINF
-# tmp_GSMISSIONS <- GSMISSIONS
-# tmp_GSSPECIES <- GSSPECIES
-# tmp_GSSTRATUM <- GSSTRATUM
-# tmp_GSXTYPE <- GSXTYPE
+# save_tables('rv') # new command within Mar.datawrangler that puts a new set of 
+#table in a new environment ('dw')
+
 
 # Get list of species from other data table
 # fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
@@ -244,12 +286,28 @@ HexList[[2]] <- rasterize(HexGridUTM, grd, 'T2_WgtTot')
 HexList[[3]] <- rasterize(HexGridUTM, grd, 'T3_WgtTot')
 HexList[[4]] <- rasterize(HexGridUTM, grd, 'T4_WgtTot')
 
+stackRas <- stack(HexList[[1]],HexList[[2]],HexList[[3]],HexList[[4]])
+
+names(stackRas) <- c('SP200_hexsum_T1', 'SP200_hexsum_T2', 'SP200_hexsum_T3','SP200_hexsum_T4')
+
+writeRaster(stackRas,"./SpatialDataSynopsis/Output/Multi2.tif",format = "GTiff", bylayer = FALSE)
+
 stackRas <- addLayer(stackRas,HexList[[1]])
 stackRas <- addLayer(stackRas,HexList[[2]])
 stackRas <- addLayer(stackRas,HexList[[3]])
 stackRas <- addLayer(stackRas,HexList[[4]])
 
-plot(rp)
+stack2 <- stack("./SpatialDataSynopsis/Output/Multi2.tif")
+names(stack2) <- c('SP200_hexsum_T1', 'SP200_hexsum_T2', 'SP200_hexsum_T3','SP200_hexsum_T4')
+names(stack2)
+
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/Multi3.grd", format="raster")
+stack3 <- stack("./SpatialDataSynopsis/Output/Multi3.grd")
+names(stack3)
+
+
+
+plot(stack3)
 
 tif <- "./SpatialDataSynopsis/Output/SP200_hexsum_T1.tif"
 writeRaster(HexList[[1]],tif, overwrite = TRUE)

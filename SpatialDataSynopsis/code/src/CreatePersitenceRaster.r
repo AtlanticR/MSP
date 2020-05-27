@@ -76,14 +76,7 @@ land10mUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
 
 CRS_ras <- CRS("+init=epsg:4326") # WGS84
 SaveTmpTables()
-# Make copies of all the GS tables
-# tmp_GSCAT <- GSCAT
-# tmp_GSDET <- GSDET
-# tmp_GSINF <- GSINF
-# tmp_GSMISSIONS <- GSMISSIONS
-# tmp_GSSPECIES <- GSSPECIES
-# tmp_GSSTRATUM <- GSSTRATUM
-# tmp_GSXTYPE <- GSXTYPE
+
 
 
 
