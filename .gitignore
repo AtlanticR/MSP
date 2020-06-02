@@ -25,7 +25,10 @@ log
 *.db
 *.grd
 *.gri
+<<<<<<< HEAD
 
+=======
+>>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
 
 *.rdata
 *.csv

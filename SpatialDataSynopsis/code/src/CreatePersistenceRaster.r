@@ -1,4 +1,3 @@
-
 ###########################################################################################
 ###########################################################################################
 ### 
@@ -192,7 +191,7 @@ for(i in 1:length(speciescode)) {
     # this merge() creates a full set of all MISSION/SETNO and SPECIES combinations
     Combined <- merge(GSINF2,SpecOnly)
     GSCAT2 <- dplyr::select(GSCAT,1:3,5:6)
-
+    
     # names(Combined)
     # Merge Combined and GSCAT2 on MISSION and SETNO
     allCatch <- merge(Combined, GSCAT2, all.x=T, by = c("MISSION", "SETNO", "SPEC"))
@@ -231,13 +230,13 @@ for(i in 1:length(speciescode)) {
     Gridlist <-  Grid_fn(allCatchUTM, grd, 2.0, 16668)
     rasDD <- projectRaster(Gridlist$raster, crs=CRS_ras) #change test.idw from UTM to wgs84
     dir <- "./SpatialDataSynopsis/Output/"
- #   pngName <- paste(dir,Time1,"SP_",speciescode[i],".png",sep = "")
+    #   pngName <- paste(dir,Time1,"SP_",speciescode[i],".png",sep = "")
     
-#    png(filename = pngName)
+    #    png(filename = pngName)
     
- #  plot1 <- as.grob(site_map(oceanMask,land10m,rasDD,40))
-#    dev.off()
-# This is the UTM version of the raster
+    #  plot1 <- as.grob(site_map(oceanMask,land10m,rasDD,40))
+    #    dev.off()
+    # This is the UTM version of the raster
     # For plotting use the WGS84 VERSION
     raster_list[[y]] <- Gridlist$raster
     skew_listFinal[[i]] <- Gridlist$skew
@@ -251,7 +250,7 @@ for(i in 1:length(speciescode)) {
   }
   
   # line for 6 time periods
-#  s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
+  #  s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
   # line for four time periods
   s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]])
   # s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)

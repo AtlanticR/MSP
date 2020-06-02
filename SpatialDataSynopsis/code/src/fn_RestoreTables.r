@@ -15,6 +15,7 @@ RestoreTables <- function(){
   }
   )
   return(NULL)
+<<<<<<< HEAD
 }
 
 
@@ -29,3 +30,6 @@ RestoreTables <- function(){
 #   GSSTRATUM <- tmp_GSSTRATUM
 #   GSXTYPE <- tmp_GSXTYPE
 # }
+=======
+}
+>>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79

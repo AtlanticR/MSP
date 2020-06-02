@@ -1,4 +1,3 @@
-
 ###########################################################################################
 ###########################################################################################
 ### 
@@ -74,7 +73,11 @@ HexGridUTM <- spTransform(HexGrid,CRS("+init=epsg:26920"))
 HexGridUTM_sf <- st_as_sf(HexGridUTM)
 
 shpList <- list(c("ClipHexagons100SqKm", "ClipHexagons200SqKm", "ClipHexagons25SqKm", "ClipHexagons300SqKm", 
+<<<<<<< HEAD
              "ClipHexagons_Oceans10sqkm", "HexGrid_400Mil_UTM_ScotianShelf"))
+=======
+                  "ClipHexagons_Oceans10sqkm", "HexGrid_400Mil_UTM_ScotianShelf"))
+>>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
 
 spList <- c("Hex100", "Hex200", "Hex25", "Hex300", "Hex10", "Hex400")
 
@@ -231,7 +234,7 @@ for(i in 1:length(speciescode)) {
     Join1 <- allCatchUTM_sf2 %>% dplyr::select(STDWGT, GRID_ID)
     Join1$geometry <- NULL
     
-  
+    
     
     Join2 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=sum)
     Join3 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=mean)
@@ -260,18 +263,22 @@ for(i in 1:length(speciescode)) {
     restore_tables('rv',clean = FALSE)
     Time <- Time + 1
   }
-#  s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
-#  s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
-
+  #  s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
+  #  s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
+  
   count <- count + 1
   # HexGridUTM_sf$Sum <- sum(c(HexGridUTM_sf$T1_Wgt,HexGridUTM_sf$T2_Wgt,HexGridUTM_sf$T3_Wgt,HexGridUTM_sf$T4_Wgt))
-
+  
   # this summing of columns is not working
-
+  
   
   HexGridUTM_sf_TIB <- as_tibble(HexGridUTM_sf)
   HexGridNew <- HexGridUTM_sf_TIB %>% mutate(SumFinal = select(., c(T1_WgtTot,T2_WgtTot,T3_WgtTot,T4_WgtTot)) %>% 
+<<<<<<< HEAD
                                                                  rowSums(na.rm = TRUE))
+=======
+                                               rowSums(na.rm = TRUE))
+>>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
   HexGridUTM_sf <- HexGridNew %>% st_as_sf(crs = 26920)
 }
 
@@ -570,5 +577,3 @@ plot(as.data.frame(table(Hex$STDWGT)))
 
 
 st_write(Hex, dsn = gridDSN, driver = "ESRI Shapefile")
-
-# -------- END Test with objects created below and the HexGrid ------------####
