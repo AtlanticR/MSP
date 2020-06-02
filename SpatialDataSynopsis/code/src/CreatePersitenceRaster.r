@@ -60,7 +60,7 @@ source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
 source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
 source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
 source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
-source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
+# source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
 
 
 # using SP package, read in a shapefile
@@ -70,12 +70,13 @@ oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
 oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
 
 # bring in land layer
-land10m <- readOGR(dsn,"ne_10m_land_Clip")
-land10mUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
+# land10m <- readOGR(dsn,"ne_10m_land_Clip")
+# land10mUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
+load("../data/Boundaries/land.RData")
 # plot(oceanMask, ext = oceanMask)
 
 CRS_ras <- CRS("+init=epsg:4326") # WGS84
-SaveTmpTables()
+save_tables('rv')
 
 
 
@@ -138,7 +139,7 @@ yeare <- c(2005, 2009, 2014, 2020)
 # yearb <- c(1970, 1978)
 # yeare <- c(1977, 1985)
 #------ END Set year variables -----------------
-RestoreTables()
+restore_tables('rv',clean = FALSE)
 # Restore original GS tables for filtering
 # GSCAT <- tmp_GSCAT
 # GSDET <- tmp_GSDET
@@ -243,15 +244,8 @@ for(i in 1:length(speciescode)) {
     #raster_list[[y]] <- rasDD
     stackRas <- addLayer(stackRas,Gridlist$raster)
     
-    RestoreTables()
-    # Restore original GS tables for filtering
-    # GSCAT <- tmp_GSCAT
-    # GSDET <- tmp_GSDET
-    # GSINF <- tmp_GSINF
-    # GSMISSIONS <- tmp_GSMISSIONS
-    # GSSPECIES <- tmp_GSSPECIES
-    # GSSTRATUM <- tmp_GSSTRATUM
-    # GSXTYPE <- tmp_GSXTYPE
+    restore_tables('rv',clean = FALSE)
+    
     raster_list3 <- append(raster_list3, raster_list)
     Time <- Time + 1
   }

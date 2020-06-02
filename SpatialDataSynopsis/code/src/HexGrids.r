@@ -53,13 +53,16 @@ source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
 data.dir <- "../data/mar.wrangling"
 get_data('rv', data.dir = data.dir)
 
-SaveTmpTables()
+save_tables('rv')
 
 # bring in OceanMask for clipping data and rasters
 dsn <- "../data/Boundaries"
 oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
 oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
-land <- readOGR(dsn, "ne_10m_land_Clip")
+
+# this command is superceded by the next command
+# land <- readOGR(dsn, "ne_10m_land_Clip")
+load("../data/Boundaries/land.RData")
 
 
 
@@ -106,6 +109,8 @@ HexGrid10 <- readOGR(gridDSN, "ClipHexagons_Oceans10sqkm")
 HexGrid10_sf <- st_as_sf(HexGrid10)
 HexGrid400 <- readOGR(gridDSN, "HexGrid_400Mil_UTM_ScotianShelf")
 HexGrid400_sf <- st_as_sf(HexGrid400)
+HexGrid1000 <- readOGR(gridDSN, "ClipHexagons1000SqKm")
+HexGrid1000_sf <- st_as_sf(HexGrid1000)
 
 # prjString <- crs(HexGrid)
 # save_tables('rv') # new command within Mar.datawrangler that puts a new set of 
@@ -146,6 +151,12 @@ yearb <- c(2000, 2005, 2009, 2014)
 yeare <- c(2005, 2009, 2014, 2020)
 #------ END Set year variables -----------------
 
+HexGridUTM_sf <- HexGrid10_sf
+HexGridUTM_sf <- HexGrid25_sf
+HexGridUTM_sf <- HexGrid100_sf
+HexGridUTM_sf <- HexGrid200_sf
+HexGridUTM_sf <- HexGrid300_sf
+HexGridUTM_sf <- HexGrid1000_sf
 
 # ---------- BEGIN Loops ----------------------####
 
@@ -246,7 +257,7 @@ for(i in 1:length(speciescode)) {
     # This doesn't work.  the dplyr::mutate function doesn't recognise the variable column names
     # HexGridUTM_sf <- HexGridUTM_sf %>% mutate(colname6 = colname4/colname3)
     
-    RestoreTables()
+    restore_tables('rv',clean = FALSE)
     Time <- Time + 1
   }
 #  s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
@@ -289,6 +300,27 @@ HexList[[4]] <- rasterize(HexGridUTM, grd, 'T4_WgtTot')
 stackRas <- stack(HexList[[1]],HexList[[2]],HexList[[3]],HexList[[4]])
 
 names(stackRas) <- c('SP200_hexsum_T1', 'SP200_hexsum_T2', 'SP200_hexsum_T3','SP200_hexsum_T4')
+names(stackRas) <- c('SP200_hex400sum_T1', 'SP200_hex400sum_T2', 'SP200_hex400sum_T3','SP200_hex400sum_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex400sum.grd", format="raster")
+
+names(stackRas) <- c('SP200_hex10sum_T1', 'SP200_hex10sum_T2', 'SP200_hex10sum_T3','SP200_hex10sum_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex10sum.grd", format="raster")
+
+names(stackRas) <- c('SP200_hex25sum_T1', 'SP200_hex25sum_T2', 'SP200_hex25sum_T3','SP200_hex25sum_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex25sum.grd", format="raster")
+
+names(stackRas) <- c('SP200_hex100sum_T1', 'SP200_hex100sum_T2', 'SP200_hex100sum_T3','SP200_hex100sum_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex100sum.grd", format="raster")
+
+names(stackRas) <- c('SP200_hex200sum_T1', 'SP200_hex200sum_T2', 'SP200_hex200sum_T3','SP200_hex200sum_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex200sum.grd", format="raster")
+
+names(stackRas) <- c('SP200_hex300sum_T1', 'SP200_hex300sum_T2', 'SP200_hex300sum_T3','SP200_hex300sum_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex300sum.grd", format="raster")
+
+names(stackRas) <- c('SP200_hex1000sum_T1', 'SP200_hex1000sum_T2', 'SP200_hex1000sum_T3','SP200_hex1000sum_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex1000sum.grd", format="raster")
+
 
 writeRaster(stackRas,"./SpatialDataSynopsis/Output/Multi2.tif",format = "GTiff", bylayer = FALSE)
 
