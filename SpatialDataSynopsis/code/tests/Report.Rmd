@@ -35,14 +35,10 @@ a <- map(spp, ~MapCollage(.x) )
 #print(a[[2]])
 ```
 
-
-
-
-=======
 ```
 
 ## Barndoor Skate
 ```{r Fig1, fig.height=11, fig.width=8, echo=FALSE, message=FALSE, cache=FALSE, warning = FALSE}
 MapCollage("SP200")
 ```
->>>>>>> fb225fafac0cbd4c99389a99b9abdce8769c53f4
+
