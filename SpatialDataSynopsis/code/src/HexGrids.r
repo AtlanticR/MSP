@@ -31,10 +31,7 @@ library(rgeos) # required for the dissolve argument in rasterToPolygon() accordi
 library(moments) # required for skewness calculation
 library(sf)
 
-
-
 # Load RV data
-
 # home location
 wd <- "C:/BIO/20200306/GIT/R/MSP"
 setwd(wd)
@@ -43,7 +40,7 @@ source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
 source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
 source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
 source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
-source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
+# source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
 
 # wd <- "C:/Temp/BarndoorSkate"
 # wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R"
@@ -63,8 +60,6 @@ oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
 # land <- readOGR(dsn, "ne_10m_land_Clip")
 load("../data/Boundaries/land.RData")
 
-
-
 # bring in Hex grid for analysis
 gridDSN <- "../data/Zones"
 grid <- "HexGrid_400Mil_UTM_ScotianShelf"
@@ -73,11 +68,7 @@ HexGridUTM <- spTransform(HexGrid,CRS("+init=epsg:26920"))
 HexGridUTM_sf <- st_as_sf(HexGridUTM)
 
 shpList <- list(c("ClipHexagons100SqKm", "ClipHexagons200SqKm", "ClipHexagons25SqKm", "ClipHexagons300SqKm", 
-<<<<<<< HEAD
              "ClipHexagons_Oceans10sqkm", "HexGrid_400Mil_UTM_ScotianShelf"))
-=======
-                  "ClipHexagons_Oceans10sqkm", "HexGrid_400Mil_UTM_ScotianShelf"))
->>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
 
 spList <- c("Hex100", "Hex200", "Hex25", "Hex300", "Hex10", "Hex400")
 
@@ -94,9 +85,7 @@ for(i in 1:length(shpList)) {
   # How do I rename tmpshp to have one of the names in spList
 } 
 names(outList)=spList
-
 names(shpList)=spList
-
 
 
 # Bring in all grids
@@ -274,11 +263,8 @@ for(i in 1:length(speciescode)) {
   
   HexGridUTM_sf_TIB <- as_tibble(HexGridUTM_sf)
   HexGridNew <- HexGridUTM_sf_TIB %>% mutate(SumFinal = select(., c(T1_WgtTot,T2_WgtTot,T3_WgtTot,T4_WgtTot)) %>% 
-<<<<<<< HEAD
                                                                  rowSums(na.rm = TRUE))
-=======
-                                               rowSums(na.rm = TRUE))
->>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
+
   HexGridUTM_sf <- HexGridNew %>% st_as_sf(crs = 26920)
 }
 
