@@ -44,6 +44,8 @@ getLims <- function( Layer ) {
   return(lims)
 }
 
+# a minor change
+
 # Plot the predicted layers
 MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   
