@@ -514,22 +514,6 @@ as.data.frame(table(points2$GRID_ID))
 
 head(points2)
 
-dsn <- "R:/Science/CESD/HES_MSP/R/data/Spreadsheets"
-
-BSkate <- readOGR(dsn,"Species200_All")
-names(BSkate)
-
-Catch <- st_as_sf(BSkate)
-Catch <- dplyr::select(Catch,3,13)
-names(BSkate)
-
-Catch <- st_as_sf(BSkate)
-names(Catch)
-
-points <- st_join(Catch, left = TRUE, Hex["GRID_ID"])
-points$count <- 1
-
-names(points)
 
 # SUM TOTNO and TOTWGT on MISSION and SETNO to get rid of the different size classes
 points2 <- stats::aggregate(points[,c(2,5)], by=list(points$GRID_ID), FUN=sum)
@@ -555,7 +539,6 @@ spplot(HexGrid4, zcol="STDWGT")
 Hex <- st_as_sf(HexGrid4)
 
 
-gridDSN <- "R:/Science/CESD/HES_MSP/R/Persistance/Output/HexGridJoin2.shp"
 
 plot(Hex$STDWGT)
 as.data.frame(table(Hex$STDWGT))
