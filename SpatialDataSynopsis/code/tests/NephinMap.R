@@ -50,8 +50,6 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   for(p in preds){
     
     # legend text
-    if(grepl("hexcv", p, ignore.case = T)) legend.title <- "CV Biomass per grid cell"
-    if(grepl("hexsd", p, ignore.case = T))  legend.title <- "SD Biomass per grid cell"
     if(grepl("hexsum", p, ignore.case = T))  legend.title <- "Sum Biomass per grid cell"
     if(grepl("rclass", p, ignore.case = T))  legend.title <- "Ranked Areas"
     if ( !exists("legend.title") ) legend.title <- p
