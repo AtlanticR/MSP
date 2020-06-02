@@ -11,7 +11,7 @@ load("../data/Boundaries/land.RData")
 rasterdir <- "./SpatialDataSynopsis/Output/"
 SpatialOutputsFiles <- list.files(path = paste(rasterdir, sep=""), 
                                  pattern = "\\.grd$", full.names = F)
-                                 pattern = "\\.grd$", full.names = F)
+
 SpatialOutputs = c()
 for(x in SpatialOutputsFiles)
 {
