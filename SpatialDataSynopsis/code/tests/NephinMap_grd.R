@@ -9,15 +9,24 @@ load("../data/Boundaries/land.RData")
 
 # R E A D   S T A C K   S P A T I A L   O U T P U T S
 rasterdir <- "./SpatialDataSynopsis/Output/"
-SpatialOutputsFiles <- list.files(path = paste(rasterdir, sep=""), 
+SpatialOutputFiles <- list.files(path = paste(rasterdir, sep=""), 
                                  pattern = "\\.grd$", full.names = F)
 
-SpatialOutputs = c()
-for(x in SpatialOutputsFiles)
-{
-  predname <- paste(rasterdir, x, sep="")
+SpatialOutputs <-  c()
+SpatialOutputList <- list()
+
+#for(x in SpatialOutputsFiles) {
+
+for (i in 1:length(SpatialOutputsFiles)) {
+  predname <- paste(rasterdir, SpatialOutputFiles[i], sep="")
   SpatialOutputs <- stack(predname)
+  SpatialOutputList[[i]] <- SpatialOutputs
+  RasName = substr(SpatialOutputsFiles[i],1,nchar(SpatialOutputsFiles[i])-4)
+  names(SpatialOutputList)[i] <- RasName
 }
+
+
+
 names(SpatialOutputs)
 SpatialOutputs <- setMinMax(SpatialOutputs)
 
@@ -99,5 +108,11 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
 #plot(SpatialOutputs)
 
 lims <- getLims( Layer = SpatialOutputs )
-MapLayers (layers=SpatialOutputs, lims=lims, legendPos="bottomright")
+
+
+for (i in 1:length(SpatialOutputList)) {
+    MapLayers (layers=SpatialOutputList[i], lims=lims, legendPos="bottomright")
+}
+
+MapLayers (layers=SpatialOutputList[1], lims=lims, legendPos="bottomright")
 
