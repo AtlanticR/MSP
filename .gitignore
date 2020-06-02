@@ -23,6 +23,8 @@ auto*
 *.msg
 log
 *.db
+*.grd
+*.gri
 
 
 *.rdata
