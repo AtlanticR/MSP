@@ -2,8 +2,7 @@ Grid_fn <- function(data, grid, power, dist ) {
   # Interpolate the sample data (STDWGT) using the large extent grid
   # Using the same values for Power and Search Radius as Anna's script (idp and maxdist)
   test.idw <- gstat::idw(data$STDWGT ~ 1, data, newdata=grid, idp= power, maxdist = dist)
-  
-  
+   
   # Convert IDW output to raster object then clip to Scotian Shelf
   r       <- raster(test.idw)
   r.m     <- mask(r, oceanMaskUTM)
@@ -40,8 +39,6 @@ Grid_fn <- function(data, grid, power, dist ) {
   # Export the raster
   # dir <- "U:/GIS/Projects/MSP/HotSpotCode/Output/"
   dir <- "./SpatialDataSynopsis/Output/"
-<<<<<<< HEAD
-
   rtif <- paste(dir,"SP",speciescode[i],"_rclass_T",Time,".tif",sep = "")
   # tif <- paste(dir,Time1,"SP_",speciescode[i],"_2.tif",sep = "")
   # writeRaster(r.m,tif, overwrite = TRUE)
@@ -49,16 +46,12 @@ Grid_fn <- function(data, grid, power, dist ) {
   
   returnList <- list("rawRaster"= r,"raster" = reclass_r, "count" = VATcount, "skew" = skew_list1)
   
-=======
-  
   rtif <- paste(dir,"SP",speciescode[i],"_rclass_T",Time,".tif",sep = "")
   # tif <- paste(dir,Time1,"SP_",speciescode[i],"_2.tif",sep = "")
   # writeRaster(r.m,tif, overwrite = TRUE)
   # writeRaster(reclass_r,rtif, overwrite = TRUE, datatype = "INT1U")
   
   returnList <- list("rawRaster"= r,"raster" = reclass_r, "count" = VATcount, "skew" = skew_list1)
-  
->>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
   return(returnList)
   
 }
