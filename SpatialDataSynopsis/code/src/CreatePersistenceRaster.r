@@ -47,10 +47,6 @@ setwd(wd)
 # on my home directory I have to go up one dir and across to /data/
 data.dir <- "../data/mar.wrangling"
 get_data('rv', data.dir = data.dir)
-# this FGP_TOWS_NW2 table isn't needed
-# rm(FGP_TOWS_NW2)
-# Wait, can't remove it.  both get_data() and self_filter() require that table to exist
-
 
 # alternate site for the data:
 # data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
@@ -91,7 +87,6 @@ self_filter(keep_nullsets = FALSE,quiet = TRUE)
 GSINF_all <- dplyr::select(GSINF,1:3,33:34)
 #names(GSINF_all)
 
-
 # Convert to the SpatialPointsFeature
 # using SP package to create a SPATIAL OBJECT
 # Convert to the Spatial Object
@@ -117,7 +112,8 @@ speciescode <- unique(species[,1])
 # speciescode <- speciescode[7:9] # pollock, redfish, halibut
 
 # speciescode <- speciescode[7] # Redfish
-speciescode <- speciescode[c(1,22)] # barndoor skate
+speciescode <- speciescode[c(1,22)] # cod and barndoor skate
+speciescode <- speciescode[c(22)] # barndoor skate
 
 #------ Set year variables -----------------
 # Single date range
@@ -139,14 +135,6 @@ yeare <- c(2005, 2009, 2014, 2020)
 # yeare <- c(1977, 1985)
 #------ END Set year variables -----------------
 restore_tables('rv',clean = FALSE)
-# Restore original GS tables for filtering
-# GSCAT <- tmp_GSCAT
-# GSDET <- tmp_GSDET
-# GSINF <- tmp_GSINF
-# GSMISSIONS <- tmp_GSMISSIONS
-# GSSPECIES <- tmp_GSSPECIES
-# GSSTRATUM <- tmp_GSSTRATUM
-# GSXTYPE <- tmp_GSXTYPE
 
 # ---------- BEGIN Loops ----------------------####
 
