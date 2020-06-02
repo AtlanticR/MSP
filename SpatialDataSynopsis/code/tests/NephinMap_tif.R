@@ -20,10 +20,6 @@ SpatialOutputs <- setMinMax(SpatialOutputs)
 CRS_ras <- CRS("+init=epsg:26920")
 SpatialOutputs <- projectRaster(SpatialOutputs, crs=CRS_ras)
 
-# SpatialOutputs <- stack("SpatialDataSynopsis/code/tests/Data/outputs/Multi.tif")
-# nlayers(stack2)
-# plot(stack2[[2]])
-
 # F U N C T I O N S 
 # Calculate the x,y extents for all maps
 getLims <- function( Layer ) {
