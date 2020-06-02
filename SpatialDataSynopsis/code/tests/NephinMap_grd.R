@@ -10,7 +10,11 @@ load("../data/Boundaries/land.RData")
 # R E A D   S T A C K   S P A T I A L   O U T P U T S
 rasterdir <- "./SpatialDataSynopsis/Output/"
 SpatialOutputsFiles <- list.files(path = paste(rasterdir, sep=""), 
+<<<<<<< HEAD
                                  pattern = "\\.grd$", full.names = F)
+=======
+                                  pattern = "\\.grd$", full.names = F)
+>>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
 
 SpatialOutputs = c()
 for(x in SpatialOutputsFiles)
@@ -33,17 +37,31 @@ SpatialOutputs <- setMinMax(SpatialOutputs)
 getLims <- function( Layer ) {
   # convert raster for extents
   {
+<<<<<<< HEAD
   ras_spdf <- as(Layer[[1]], "SpatialPixelsDataFrame")
   # Get the vertical and horizontal limits
   ext <- extent( ras_spdf )
   # Get x and y limits
   adj <- round(ext@xmin*0.01)
   lims <- list( x=c(ext@xmin-adj, ext@xmax+adj), y=c(ext@ymin-adj, ext@ymax+adj) )
+=======
+    ras_spdf <- as(Layer[[1]], "SpatialPixelsDataFrame")
+    # Get the vertical and horizontal limits
+    ext <- extent( ras_spdf )
+    # Get x and y limits
+    adj <- round(ext@xmin*0.01)
+    lims <- list( x=c(ext@xmin-adj, ext@xmax+adj), y=c(ext@ymin-adj, ext@ymax+adj) )
+>>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
   }
   # return
   return(lims)
 }
 
+<<<<<<< HEAD
+=======
+# a minor change
+
+>>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
 # Plot the predicted layers
 MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   
@@ -100,6 +118,7 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
 
 lims <- getLims( Layer = SpatialOutputs )
 
+<<<<<<< HEAD
 MapLayers (layers=SpatialOutputs, lims=lims, legendPos="bottomright")
 
 
@@ -107,3 +126,6 @@ MapLayers (layers=SpatialOutputs, lims=lims, legendPos="bottomright")
 
 
 
+=======
+MapLayers (layers=SpatialOutputs, lims=lims, legendPos="bottomright")
+>>>>>>> 80d769c9bf90ed7c23263d4a4379838e60ac4c79
