@@ -17,11 +17,11 @@ SpatialOutputList <- list()
 
 #for(x in SpatialOutputsFiles) {
 
-for (i in 1:length(SpatialOutputsFiles)) {
+for (i in 1:length(SpatialOutputFiles)) {
   predname <- paste(rasterdir, SpatialOutputFiles[i], sep="")
   SpatialOutputs <- stack(predname)
   SpatialOutputList[[i]] <- SpatialOutputs
-  RasName = substr(SpatialOutputsFiles[i],1,nchar(SpatialOutputsFiles[i])-4)
+  RasName = substr(SpatialOutputFiles[i],1,nchar(SpatialOutputFiles[i])-4)
   names(SpatialOutputList)[i] <- RasName
 }
 
@@ -53,6 +53,7 @@ getLims <- function( Layer ) {
   return(lims)
 }
 
+
 # Plot the predicted layers
 MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   
@@ -71,6 +72,9 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
     
     # Get raster from stack
     Layer <- layers[[p]]
+    # Get raster name
+    Title <- names(Layer)
+    print(Title1)
     
     #colours
     if ( legend.title == "Standard deviation") {
@@ -92,7 +96,8 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
     pdf( file=file.path(rasterdir, paste0(prefix, p, ".pdf")),
          height=6, width=5.25*diff(lims$x)/diff(lims$y)+1 )
     par( mar=c(1,1,1,1) )
-    plot( land, col = "grey80", border = NA, xlim = lims$x , ylim = lims$y )
+    plot( land, col = "grey80", border = NA, xlim = lims$x , ylim = lims$y,
+          main = Title)
     box( lty = 'solid', col = 'black')
     plot( Layer, maxpixels=5000000, add=TRUE, col=pal, legend=FALSE )
     plot(Layer, col=pal, horizontal=TRUE,
@@ -110,9 +115,11 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
 lims <- getLims( Layer = SpatialOutputs )
 
 
+start_time <- Sys.time()
 for (i in 1:length(SpatialOutputList)) {
-    MapLayers (layers=SpatialOutputList[i], lims=lims, legendPos="bottomright")
+  print(paste("Loop ",i,nlayers(SpatialOutputList[[i]]), names(SpatialOutputList[i]),sep = " "))
+  RasStack <- stack(SpatialOutputList[[i]])
+  MapLayers (layers=RasStack, lims=lims, legendPos="bottomright")
 }
-
-MapLayers (layers=SpatialOutputList[1], lims=lims, legendPos="bottomright")
-
+end_time <- Sys.time()
+end_time - start_time

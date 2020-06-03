@@ -293,27 +293,26 @@ HexList[[4]] <- rasterize(HexGridUTM, grd, 'T4_WgtTot')
 stackRas <- stack(HexList[[1]],HexList[[2]],HexList[[3]],HexList[[4]])
 
 names(stackRas) <- c('SP200_hexsum_T1', 'SP200_hexsum_T2', 'SP200_hexsum_T3','SP200_hexsum_T4')
-names(stackRas) <- c('SP200_hex400sum_T1', 'SP200_hex400sum_T2', 'SP200_hex400sum_T3','SP200_hex400sum_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex400sum.grd", format="raster")
+names(stackRas) <- c('SP200_hexsum400_T1', 'SP200_hexsum400_T2', 'SP200_hexsum400_T3','SP200_hexsum400_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum400.grd", format="raster")
 
-names(stackRas) <- c('SP200_hex10sum_T1', 'SP200_hex10sum_T2', 'SP200_hex10sum_T3','SP200_hex10sum_T4')
+names(stackRas) <- c('SP200_hexsum10_T1', 'SP200_hexsum10_T2', 'SP200_hexsum10_T3','SP200_hexsum10_T4')
 myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex10sum.grd", format="raster")
 
-names(stackRas) <- c('SP200_hex25sum_T1', 'SP200_hex25sum_T2', 'SP200_hex25sum_T3','SP200_hex25sum_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex25sum.grd", format="raster")
+names(stackRas) <- c('SP200_hexsum25_T1', 'SP200_hexsum25_T2', 'SP200_hexsum25_T3','SP200_hexsum25_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum25.grd", format="raster")
 
-names(stackRas) <- c('SP200_hex100sum_T1', 'SP200_hex100sum_T2', 'SP200_hex100sum_T3','SP200_hex100sum_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex100sum.grd", format="raster")
+names(stackRas) <- c('SP200_hexsum100_T1', 'SP200_hexsum100_T2', 'SP200_hexsum100_T3','SP200_hexsum100_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum100.grd", format="raster")
 
-names(stackRas) <- c('SP200_hex200sum_T1', 'SP200_hex200sum_T2', 'SP200_hex200sum_T3','SP200_hex200sum_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex200sum.grd", format="raster")
+names(stackRas) <- c('SP200_hexsum200_T1', 'SP200_hexsum200_T2', 'SP200_hexsum200_T3','SP200_hexsum200_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum200.grd", format="raster")
 
-names(stackRas) <- c('SP200_hex300sum_T1', 'SP200_hex300sum_T2', 'SP200_hex300sum_T3','SP200_hex300sum_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex300sum.grd", format="raster")
+names(stackRas) <- c('SP200_hexsum300_T1', 'SP200_hexsum300_T2', 'SP200_hexsum300_T3','SP200_hexsum300_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum300.grd", format="raster")
 
-names(stackRas) <- c('SP200_hex1000sum_T1', 'SP200_hex1000sum_T2', 'SP200_hex1000sum_T3','SP200_hex1000sum_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex1000sum.grd", format="raster")
-
+names(stackRas) <- c('SP200_hexsum1000_T1', 'SP200_hexsum1000_T2', 'SP200_hexsum1000_T3','SP200_hexsum1000_T4')
+myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum1000.grd", format="raster")
 
 writeRaster(stackRas,"./SpatialDataSynopsis/Output/Multi2.tif",format = "GTiff", bylayer = FALSE)
 
