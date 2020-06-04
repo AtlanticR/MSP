@@ -67,46 +67,10 @@ HexGrid <- readOGR(gridDSN,grid)
 HexGridUTM <- spTransform(HexGrid,CRS("+init=epsg:26920"))
 HexGridUTM_sf <- st_as_sf(HexGridUTM)
 
-shpList <- list(c("ClipHexagons100SqKm", "ClipHexagons200SqKm", "ClipHexagons25SqKm", "ClipHexagons300SqKm", 
-             "ClipHexagons_Oceans10sqkm", "HexGrid_400Mil_UTM_ScotianShelf"))
-
-spList <- c("Hex100", "Hex200", "Hex25", "Hex300", "Hex10", "Hex400")
-
-For i in 1:length(shpList) {
-  tmpshp <- readOGR(gridDSN,shpList[[1]][i])
-  # How do I rename tmpshp to have one of the names in spList
-  
-}
-
-outList=list()
-for(i in 1:length(shpList)) {
-  # outList[[i]] <- readOGR(gridDSN,shpList[[1]][i])
-  assign(spList[i],readOGR(gridDSN,shpList[[1]][i]))
-  # How do I rename tmpshp to have one of the names in spList
-} 
-names(outList)=spList
-names(shpList)=spList
-
-
-# Bring in all grids
-HexGrid100 <- readOGR(gridDSN, "ClipHexagons100SqKm")
-HexGrid100_sf <- st_as_sf(HexGrid100)
-HexGrid200 <- readOGR(gridDSN, "ClipHexagons200SqKm")
-HexGrid200_sf <- st_as_sf(HexGrid200)
-HexGrid25 <- readOGR(gridDSN, "ClipHexagons25SqKm")
-HexGrid25_sf <- st_as_sf(HexGrid25)
-HexGrid300 <- readOGR(gridDSN, "ClipHexagons300SqKm")
-HexGrid300_sf <- st_as_sf(HexGrid300)
-HexGrid10 <- readOGR(gridDSN, "ClipHexagons_Oceans10sqkm")
-HexGrid10_sf <- st_as_sf(HexGrid10)
-HexGrid400 <- readOGR(gridDSN, "HexGrid_400Mil_UTM_ScotianShelf")
-HexGrid400_sf <- st_as_sf(HexGrid400)
-HexGrid1000 <- readOGR(gridDSN, "ClipHexagons1000SqKm")
-HexGrid1000_sf <- st_as_sf(HexGrid1000)
 
 # prjString <- crs(HexGrid)
-# save_tables('rv') # new command within Mar.datawrangler that puts a new set of 
-#table in a new environment ('dw')
+save_tables('rv') # new command within Mar.datawrangler that puts a new set of 
+# table in a new environment ('dw')
 
 
 # Get list of species from other data table
@@ -143,12 +107,6 @@ yearb <- c(2000, 2005, 2009, 2014)
 yeare <- c(2005, 2009, 2014, 2020)
 #------ END Set year variables -----------------
 
-HexGridUTM_sf <- HexGrid10_sf
-HexGridUTM_sf <- HexGrid25_sf
-HexGridUTM_sf <- HexGrid100_sf
-HexGridUTM_sf <- HexGrid200_sf
-HexGridUTM_sf <- HexGrid300_sf
-HexGridUTM_sf <- HexGrid1000_sf
 
 # ---------- BEGIN Loops ----------------------####
 
@@ -205,35 +163,25 @@ for(i in 1:length(speciescode)) {
     countAllSample <- nrow(allCatch)
     countPresence <- nrow(filter(allCatch,STDWGT > 0))
     
-    # create spatial object out of allCatch with name of species
-    # write to shapefile
-    
-    # make an SF spatial file
-    
-    # coordinates(allCatch) <- ~LONGITUDE+LATITUDE
-    # proj4string(allCatch)<- CRS("+init=epsg:4326")
-    # 
-    # allCatchAlbers <- spTransform(allCatch,"+proj=aea +lat_1=50 +lat_2=70 +lat_0=40 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0")
-    # allCatchUTM<-spTransform(allCatch,CRS("+init=epsg:26920")) # Canada Equal Area Albers Conformal
-    # 
-    # HexGrid2 <- sp::over(allCatchUTM,HexGridUTM[,"GRID_ID"], fn = NULL)
-    
+    # Join the RV point file to the GRID_ID of the HexGrid.
     allCatchUTM_sf2 <- st_join(allCatchUTM_sf, left = FALSE, HexGridUTM_sf["GRID_ID"])
-    
+    # make a table of just the STDWGT and GRID_ID column
     Join1 <- allCatchUTM_sf2 %>% dplyr::select(STDWGT, GRID_ID)
-    Join1$geometry <- NULL
+    Join1$geometry <- NULL # I'm not sure this step is needed
     
-    
-    
+    # Summarize the data (aggregate() function) to calculate the SUM, MEAN, and COUNT
+    # of the points within each grid cell
     Join2 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=sum)
     Join3 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=mean)
-    # Join4 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=sd)
     Join5 <- count(Join1,GRID_ID)
-    colname2 <- paste("T",y,"_WgtTot",sep = "")
+    # Join4 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=sd)
+    
+    # Make new column names for these summaries including the time period and species
+    colname2 <- paste("Sp",i,"_T",y,"_WgtTot",sep = "")
     colname3 <- paste("T",y,"_WgtMean",sep = "")
     # colname4 <- paste("T",y,"_WgtSD",sep = "")
     colname5 <- paste("T",y,"_Ct",sep = "")
-    # colname6 <- paste("T",y,"_CV",sep = "")
+
     names(Join2)[1:2] <- c("GRID_ID",colname2)
     names(Join3)[1:2] <- c("GRID_ID",colname3)
     # names(Join4)[1:2] <- c("GRID_ID",colname4)
@@ -246,9 +194,6 @@ for(i in 1:length(speciescode)) {
     
     # mutate(HexGridUTM_sf, !!colname6 := !!colname4/!!colname3)
     
-    # This doesn't work.  the dplyr::mutate function doesn't recognise the variable column names
-    # HexGridUTM_sf <- HexGridUTM_sf %>% mutate(colname6 = colname4/colname3)
-    
     restore_tables('rv',clean = FALSE)
     Time <- Time + 1
   }
@@ -256,11 +201,7 @@ for(i in 1:length(speciescode)) {
   #  s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
   
   count <- count + 1
-  # HexGridUTM_sf$Sum <- sum(c(HexGridUTM_sf$T1_Wgt,HexGridUTM_sf$T2_Wgt,HexGridUTM_sf$T3_Wgt,HexGridUTM_sf$T4_Wgt))
-  
-  # this summing of columns is not working
-  
-  
+
   HexGridUTM_sf_TIB <- as_tibble(HexGridUTM_sf)
   HexGridNew <- HexGridUTM_sf_TIB %>% mutate(SumFinal = select(., c(T1_WgtTot,T2_WgtTot,T3_WgtTot,T4_WgtTot)) %>% 
                                                                  rowSums(na.rm = TRUE))
@@ -292,256 +233,3 @@ HexList[[4]] <- rasterize(HexGridUTM, grd, 'T4_WgtTot')
 
 stackRas <- stack(HexList[[1]],HexList[[2]],HexList[[3]],HexList[[4]])
 
-names(stackRas) <- c('SP200_hexsum_T1', 'SP200_hexsum_T2', 'SP200_hexsum_T3','SP200_hexsum_T4')
-names(stackRas) <- c('SP200_hexsum400_T1', 'SP200_hexsum400_T2', 'SP200_hexsum400_T3','SP200_hexsum400_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum400.grd", format="raster")
-
-names(stackRas) <- c('SP200_hexsum10_T1', 'SP200_hexsum10_T2', 'SP200_hexsum10_T3','SP200_hexsum10_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hex10sum.grd", format="raster")
-
-names(stackRas) <- c('SP200_hexsum25_T1', 'SP200_hexsum25_T2', 'SP200_hexsum25_T3','SP200_hexsum25_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum25.grd", format="raster")
-
-names(stackRas) <- c('SP200_hexsum100_T1', 'SP200_hexsum100_T2', 'SP200_hexsum100_T3','SP200_hexsum100_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum100.grd", format="raster")
-
-names(stackRas) <- c('SP200_hexsum200_T1', 'SP200_hexsum200_T2', 'SP200_hexsum200_T3','SP200_hexsum200_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum200.grd", format="raster")
-
-names(stackRas) <- c('SP200_hexsum300_T1', 'SP200_hexsum300_T2', 'SP200_hexsum300_T3','SP200_hexsum300_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum300.grd", format="raster")
-
-names(stackRas) <- c('SP200_hexsum1000_T1', 'SP200_hexsum1000_T2', 'SP200_hexsum1000_T3','SP200_hexsum1000_T4')
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/SP200_hexsum1000.grd", format="raster")
-
-writeRaster(stackRas,"./SpatialDataSynopsis/Output/Multi2.tif",format = "GTiff", bylayer = FALSE)
-
-stackRas <- addLayer(stackRas,HexList[[1]])
-stackRas <- addLayer(stackRas,HexList[[2]])
-stackRas <- addLayer(stackRas,HexList[[3]])
-stackRas <- addLayer(stackRas,HexList[[4]])
-
-stack2 <- stack("./SpatialDataSynopsis/Output/Multi2.tif")
-names(stack2) <- c('SP200_hexsum_T1', 'SP200_hexsum_T2', 'SP200_hexsum_T3','SP200_hexsum_T4')
-names(stack2)
-
-myRaster <- writeRaster(stackRas,"./SpatialDataSynopsis/Output/Multi3.grd", format="raster")
-stack3 <- stack("./SpatialDataSynopsis/Output/Multi3.grd")
-names(stack3)
-
-
-
-plot(stack3)
-
-tif <- "./SpatialDataSynopsis/Output/SP200_hexsum_T1.tif"
-writeRaster(HexList[[1]],tif, overwrite = TRUE)
-
-tif <- "./SpatialDataSynopsis/Output/SP200_hexsum_T2.tif"
-writeRaster(HexList[[2]],tif, overwrite = TRUE)
-
-tif <- "./SpatialDataSynopsis/Output/SP200_hexsum_T3.tif"
-writeRaster(HexList[[3]],tif, overwrite = TRUE)
-
-tif <- "./SpatialDataSynopsis/Output/SP200_hexsum_T4.tif"
-writeRaster(HexList[[4]],tif, overwrite = TRUE)
-
-tif <- "./SpatialDataSynopsis/Output/SP10_hexsum_T1.tif"
-writeRaster(HexList[[1]],tif, overwrite = TRUE)
-
-tif <- "./SpatialDataSynopsis/Output/SP10_hexsum_T2.tif"
-writeRaster(HexList[[2]],tif, overwrite = TRUE)
-
-tif <- "./SpatialDataSynopsis/Output/SP10_hexsum_T3.tif"
-writeRaster(HexList[[3]],tif, overwrite = TRUE)
-
-tif <- "./SpatialDataSynopsis/Output/SP10_hexsum_T4.tif"
-writeRaster(HexList[[4]],tif, overwrite = TRUE)
-
-
-for(i in 1:length(HexList)){
-  names(HexList[[i]]) <- paste("T_",i,sep = "")
-  tif <- paste(dir,names(HexList[[i]]),".tif",sep = "")
-  writeRaster(HexList[[i]],tif, overwrite = TRUE)
-  # poly <- rasterToPolygons(raster_list2[[i]], fun=function(x){x==1}, n=4, na.rm=TRUE, digits=12, dissolve=TRUE)
-  # writeOGR(poly,"U:/GIS/Projects/MSP/HotSpotCode/Output",paste("TestSP_",speciescode[i],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
-}
-
-
-# write out the HexGrid, calculate CV in Arc, bring back in:
-dir
-
-writeOGR(HexGridUTM,"./SpatialDataSynopsis/Output","HexGridDD_SP200_New",driver = "ESRI Shapefile",overwrite_layer = TRUE)
-
-writeOGR(HexGridUTM,dir,"HexGridDD_SP200_New",driver = "ESRI Shapefile")
-write.csv(HexGridUTM_sf,file = "./SpatialDataSynopsis/Hexsf.csv", sep = ",")
-HexCV <- read.csv("./SpatialDataSynopsis/Output/HexCV.csv", header = TRUE)
-
-HexGridUTM_sfNew <- filecsv %>% st_as_sf(crs = 26920)
-names(filecsv)
-
-HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,HexCV, by = "GRID_ID")
-
-HexGridDD <- spTransform(HexGridUTM,CRS("+init=epsg:4326"))
-
-
-# Get extents of all rasters
-rasterObjects <- c(HexList[[1]],HexList[[2]],HexList[[3]],rfake, r, grd)
-
-SpatialOutputs = c()
-
-for(x in rasterObjects) {
-  predname <-  x
-  exts <- extent(x)
-  SpatialOutputs <-  stack(c(SpatialOutputs, raster(predname)))
-  
-}
-
-SpatialOutputs
-
-
-SpatialOutputs <- setMinMax(SpatialOutputs)
-
-
-# - Export as JPEGs
-
-jpeg(filename = file.path(rasterdir, paste0(prefix, p, ".jpg")),
-     width = 1200, height = 960, res = 250)
-
-
-
-# send HexGridDD to fn_PlotAll.r
-# with the other necessary files.
-
-end_time <- Sys.time()
-end_time - start_time
-# ---------- END Loops ----------------------####
-
-# Rename each raster in raster_list2 and export as a .tif
-start_time <- Sys.time()
-for(i in 1:length(speciescode)){
-  names(raster_list2[[i]]) <- paste("SP_",speciescode[i],sep = "")
-  tif <- paste(dir,"/",names(raster_list2[[i]]),"_SUM.tif",sep = "")
-  writeRaster(raster_list2[[i]],tif, overwrite = TRUE)
-  # poly <- rasterToPolygons(raster_list2[[i]], fun=function(x){x==1}, n=4, na.rm=TRUE, digits=12, dissolve=TRUE)
-  # writeOGR(poly,"U:/GIS/Projects/MSP/HotSpotCode/Output",paste("TestSP_",speciescode[i],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
-}
-end_time <- Sys.time()
-end_time - start_time
-
-dsn <- "./SpatialDataSynopsis/Output/"
-
-HexGridDD$T1_WgtTot[is.na(HexGridDD$T1_WgtTot)] <- 0
-
-
-plot(HexGridDD[HexGridDD$T1_WgtTot > 0,], add = TRUE, col = 'red',border = 'red')
-
-
-writeOGR(HexGridDD,dsn,"HexGridDD_SP200_New",driver = "ESRI Shapefile")
-writeOGR(allCatchUTM,"./SpatialDataSynopsis/Output/",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
-
-
-# --- Test of summing columns ---------#
-a<-as.data.frame(c(2000:2005))
-a$Col1<-c(1:6)
-a$Col2<-seq(2,12,2)
-
-colnames(a)<-c("year","Col1","Col2")
-
-for (i in 1:2){
-  a[[paste("Var_", i, sep="")]]<-i*a[[paste("Col", i, sep="")]]
-}
-a
-
-# Tidyverse solution
-a %>%
-  mutate(Total = select(., Var_1:Var_2) %>% rowSums(na.rm = TRUE))
-
-a %>% mutate(a,Total = Var_1+Var_2)
-
-test %>%
-  mutate(Total = select(., Var_1:Var_2) %>% rowSums(na.rm = TRUE))
-test %>% mutate(SumFinal = select(., TOTWGT:TOTNO) %>% rowSums(na.rm = TRUE))
-
-
-
-# -------- Test with objects created below and the HexGrid ------------####
-
-# allCatchAlbers is the point file
-# HexGrid is the polygon
-# over() is an SP function
-
-HexGrid2 <- sp::over(HexGrid, allCatchUTM, fn = sum)
-HexGrid3 <- sp::over(HexGrid, allCatchAlbers)
-summary(HexGrid2)
-summary(HexGrid3)
-head(HexGrid2)
-head(HexGrid)
-
-table(HexGrid2$MISSION)
-HexTable <- as.data.frame(table(HexGrid3$STDWGT))
-
-plot(HexGrid)
-plot(allCatchAlbers, col = "red", add = TRUE)
-
-crs(HexGrid)
-crs(allCatchAlbers)
-
-
-# Using the join functions in sf
-# from https://ryanpeek.github.io/2019-04-29-spatial-joins-in-R/
-
-Hex <- st_as_sf(HexGrid)
-Catch <- st_as_sf(allCatchUTM)
-
-points <- st_join(Catch, left = TRUE, Hex["GRID_ID"])
-head(points)
-plot(points$STDWGT)
-
-# Keep only the columns necessary
-# ("SDTWGT",GRID_ID)
-points <- dplyr::select(points,13:14)
-head(points)
-
-#Add a column to get counts
-points$count <- 1
-
-points[,c(1,4)]
-plot(points2)
-
-as.data.frame(table(points2$count))
-as.data.frame(table(points2$GRID_ID))
-
-head(points2)
-
-
-# SUM TOTNO and TOTWGT on MISSION and SETNO to get rid of the different size classes
-points2 <- stats::aggregate(points[,c(2,5)], by=list(points$GRID_ID), FUN=sum)
-names(points2)[1] <- c("GRID_ID")
-head(points2)
-typeof(points2)
-
-
-head(points2)
-# Column names after aggregate() function need to be re-established
-names(points2)[1] <- c("GRID_ID")
-plot(points2)
-# names(Combined)
-# Merge Combined and GSCAT2 on MISSION and SETNO
-HexGrid4 <- merge(HexGrid, points2, all.x=T, by = c("GRID_ID"))
-plot(HexGrid4$count)
-
-
-head(HexGrid4)
-
-spplot(HexGrid4, zcol="STDWGT")
-
-Hex <- st_as_sf(HexGrid4)
-
-
-
-plot(Hex$STDWGT)
-as.data.frame(table(Hex$STDWGT))
-plot(as.data.frame(table(Hex$STDWGT)))
-
-
-st_write(Hex, dsn = gridDSN, driver = "ESRI Shapefile")

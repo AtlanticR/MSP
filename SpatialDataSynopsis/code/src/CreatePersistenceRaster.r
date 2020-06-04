@@ -153,7 +153,7 @@ for(i in 1:length(speciescode)) {
   for (y in 1:length(yearb)) {
     yearb1 <- yearb[y]
     yeare1 <- yeare[y]
-    Time1 <- paste("T", Time, "_", sep = "")
+    Time1 <- paste("T", Time, sep = "")
     print(paste("Loop ",count, "Time ", Time1, sep = ""))
     # filter data
     clip_by_poly(db='rv', clip.poly = oceanMask) # clip data to the extent of the Ocean Mask
@@ -220,10 +220,18 @@ for(i in 1:length(speciescode)) {
     dir <- "./SpatialDataSynopsis/Output/"
     # This is the UTM version of the raster
     # For plotting use the WGS84 VERSION
+    # Gridlist$raster is the reclassed raster
+    # perhaps rename the output of Grid_fn to make that clearer
+  
     raster_list[[y]] <- Gridlist$raster
     skew_listFinal[[i]] <- Gridlist$skew
     #raster_list[[y]] <- rasDD
-    stackRas <- addLayer(stackRas,Gridlist$raster)
+    # why am I creating a stack of the rasters but also adding 
+    # each raster to a list
+    # AND then adding that list to another list (raster_list3???)
+    tmpRas <- Gridlist$raster
+    names(tmpRas) <- paste("SP",speciescode[i],"_",Time1,sep = "")
+    stackRas <- addLayer(stackRas,tmpRas)
     
     restore_tables('rv',clean = FALSE)
     
@@ -267,11 +275,16 @@ plot1 <- site_map(oceanMask,land10m,HexGridDD, raster_list,40) #studyArea,land,h
 
 # Test of writing tifs from Stack
 for(i in 1:nlayers(stackRas)){
-  names(stackRas[[i]]) <- paste("SP_",speciescode[i],sep = "")
+  #names(stackRas[[i]]) <- paste("SP_",speciescode[i],sep = "")
   tif <- paste(dir,names(stackRas[[i]]),"_SUM.tif",sep = "")
-  writeRaster(stackRas[[i]],tif, overwrite = TRUE)
+  writeRaster(stackRas[[i]],tif, overwrite = TRUE,datatype = "INT1U")
 }
 
+# Write the entire stack out as a .grd file
+writeRaster(stackRas,"./SpatialDataSynopsis/Output/TwoSp_InterpReclass.grd", format="raster")
+RasStack <- stack("./SpatialDataSynopsis/Output/TwoSp_InterpReclass.grd")
+
+# Write it out as a multiband tif
 writeRaster(stackRas,"./SpatialDataSynopsis/Output/Multi.tif",format = "GTiff", bylayer = FALSE)
 
 
