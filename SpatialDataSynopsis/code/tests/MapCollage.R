@@ -6,7 +6,7 @@ library(pdftools)
 MapCollage <- function(speciesNumber) {
 
   # directory where the pdf images are
-  inDir <- "C:/RProjects/MSP/SpatialDataSynopsis/code/tests/Data/outputs/"
+  inDir <- "C:/RProjects/MSP/SpatialDataSynopsis/Output/"
   
   # list all pdf files in that folder
   fl=list.files(inDir,pattern=".pdf",full.names = T)
