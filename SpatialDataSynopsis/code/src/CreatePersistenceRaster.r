@@ -203,7 +203,7 @@ for(i in 1:length(speciescode)) {
     allCatchUTM<-spTransform(allCatch,CRS("+init=epsg:26920"))
     
     # Export the shapefile - NOTE, this was done to compare with ArcGIS processing
-    print(paste("Loop ",count, " - exporting shapefile",sep = ""))
+    # print(paste("Loop ",count, " - exporting shapefile",sep = ""))
     
     # Network location
     # dsn = "U:/GIS/Projects/MSP/Persistance/Output/"
@@ -218,12 +218,6 @@ for(i in 1:length(speciescode)) {
     Gridlist <-  Grid_fn(allCatchUTM, grd, 2.0, 16668)
     rasDD <- projectRaster(Gridlist$raster, crs=CRS_ras) #change test.idw from UTM to wgs84
     dir <- "./SpatialDataSynopsis/Output/"
-    #   pngName <- paste(dir,Time1,"SP_",speciescode[i],".png",sep = "")
-    
-    #    png(filename = pngName)
-    
-    #  plot1 <- as.grob(site_map(oceanMask,land10m,rasDD,40))
-    #    dev.off()
     # This is the UTM version of the raster
     # For plotting use the WGS84 VERSION
     raster_list[[y]] <- Gridlist$raster

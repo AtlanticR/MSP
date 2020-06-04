@@ -5,6 +5,7 @@ library(rgdal)
 library(RColorBrewer)
 library(maps)
 
+# Load a generic land base into Environment
 load("../data/Boundaries/land.RData")
 
 # R E A D   S T A C K   S P A T I A L   O U T P U T S
@@ -15,8 +16,9 @@ SpatialOutputFiles <- list.files(path = paste(rasterdir, sep=""),
 SpatialOutputs <-  c()
 SpatialOutputList <- list()
 
-#for(x in SpatialOutputsFiles) {
-
+# Import each .grd file into a stack()
+# Add each stack into a list
+# name each stack with the name of the .grd file
 for (i in 1:length(SpatialOutputFiles)) {
   predname <- paste(rasterdir, SpatialOutputFiles[i], sep="")
   SpatialOutputs <- stack(predname)
@@ -74,7 +76,7 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
     Layer <- layers[[p]]
     # Get raster name
     Title <- names(Layer)
-    print(Title1)
+    
     
     #colours
     if ( legend.title == "Standard deviation") {
@@ -110,10 +112,17 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   } # end for loop through PredSDM Layers
 } # end MapLayers function
 
-#plot(SpatialOutputs)
+######################################-
+# Run the two functions
 
 lims <- getLims( Layer = SpatialOutputs )
 
+
+# For each object in SpatialOutputList
+# extract a stack one a time and send
+# that stack to the MapLayers Function
+# This will produce a PDF of each raster 
+# within the stack
 
 start_time <- Sys.time()
 for (i in 1:length(SpatialOutputList)) {
@@ -123,3 +132,9 @@ for (i in 1:length(SpatialOutputList)) {
 }
 end_time <- Sys.time()
 end_time - start_time
+
+# --Run the two functions
+######################################-
+
+# Use just 2 of the stacks in the list
+SpatialOutputList <- SpatialOutputList[c(2,3)]
