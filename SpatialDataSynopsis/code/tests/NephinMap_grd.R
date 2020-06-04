@@ -130,7 +130,7 @@ for (i in 1:length(SpatialOutputList)) {
 end_time <- Sys.time()
 end_time - start_time
 
-# --Run the two functions
+# -- END Run the two functions
 ######################################-
 
 # Use just 2 of the stacks in the list
