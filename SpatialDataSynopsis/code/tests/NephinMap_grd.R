@@ -1,4 +1,4 @@
-# Code provided by Jessica Nephin and mildly edited by Catalina Gomez
+# Code provided by Jessica Nephin and edited by Catalina Gomez and Phil Greyson
 library(raster)
 library(sp)
 library(rgdal)
@@ -26,8 +26,6 @@ for (i in 1:length(SpatialOutputFiles)) {
   RasName = substr(SpatialOutputFiles[i],1,nchar(SpatialOutputFiles[i])-4)
   names(SpatialOutputList)[i] <- RasName
 }
-
-
 
 names(SpatialOutputs)
 SpatialOutputs <- setMinMax(SpatialOutputs)
@@ -117,7 +115,6 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
 
 lims <- getLims( Layer = SpatialOutputs )
 
-
 # For each object in SpatialOutputList
 # extract a stack one a time and send
 # that stack to the MapLayers Function
@@ -137,4 +134,4 @@ end_time - start_time
 ######################################-
 
 # Use just 2 of the stacks in the list
-SpatialOutputList <- SpatialOutputList[c(2,3)]
+#SpatialOutputList <- SpatialOutputList[c(2,3)]
