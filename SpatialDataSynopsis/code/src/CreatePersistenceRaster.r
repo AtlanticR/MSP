@@ -230,7 +230,7 @@ for(i in 1:length(speciescode)) {
     # each raster to a list
     # AND then adding that list to another list (raster_list3???)
     tmpRas <- Gridlist$raster
-    names(tmpRas) <- paste("SP",speciescode[i],"_",Time1,sep = "")
+    names(tmpRas) <- paste("SP",speciescode[i],"_",Time1,"_IDW",sep = "")
     stackRas <- addLayer(stackRas,tmpRas)
     
     restore_tables('rv',clean = FALSE)
