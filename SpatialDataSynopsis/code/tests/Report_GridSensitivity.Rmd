@@ -17,10 +17,6 @@ library(purrr)
 
 ## Results
 
-The Atlantic Canadian protocol on mapping fishing activity has proposed technical considerations to ensure the standardization of derived mapping products produced across DFO regions (Koropatnick and Scott Coffen-Smout 2020 https://waves-vagues.dfo-mpo.gc.ca/Library/40844018.pdf). This protocol recommended the aggregation of fisheries data using a hexagonal grid system that is now available in the Federal Geospatial Platform (https://gcgeo.gc.ca/geonetwork/metadata/eng/572f6221-4d12-415e-9d5e-984b15d34da4). A 10 km2 hexagonal grid system is being used to create an updated fish landings atlas for the Maritimes Region (Rozalska and Coffen-Smout In prep). 
-
-The DFO RV survey data was summarized using this hexagonal grid. To determine the most appropiate grid cell size, a range of grids were created based upon the 10km^2 hexagon grid (Rozalska and Coffen-Smout In prep). The grid cell sizes used were 10, 25, 100, 200, 300, 400 and 1000 km^2 (see figure below). Sum of biomass per each grid cell was calculated for each time period:
-
 - 2005-2008: Post-collapse/moratorium
 - 2009-2013: Warming bottom temperature
 - 2014-2018: Warming bottom temperature
