@@ -37,14 +37,7 @@ wd <- "C:/BIO/20200306/GIT/R/MSP"
 setwd(wd)
 
 source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
-source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
-source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
-source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
-# source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
-
-# wd <- "C:/Temp/BarndoorSkate"
-# wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R"
-# setwd(wd)
+source("./SpatialDataSynopsis/code/src/fn_SelectAllRVSpatialExtentMkGrid.r")
 
 data.dir <- "../data/mar.wrangling"
 get_data('rv', data.dir = data.dir)
@@ -54,23 +47,16 @@ save_tables('rv')
 # bring in OceanMask for clipping data and rasters
 dsn <- "../data/Boundaries"
 oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
-oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
-
-# this command is superceded by the next command
-# land <- readOGR(dsn, "ne_10m_land_Clip")
-load("../data/Boundaries/land.RData")
 
 # bring in Hex grid for analysis
 gridDSN <- "../data/Zones"
-grid <- "HexGrid_400Mil_UTM_ScotianShelf"
-HexGrid <- readOGR(gridDSN,grid)
-HexGridUTM <- spTransform(HexGrid,CRS("+init=epsg:26920"))
-HexGridUTM_sf <- st_as_sf(HexGridUTM)
+# grid <- "HexGrid_400Mil_UTM_ScotianShelf"
+# HexGrid <- readOGR(gridDSN,grid)
+# HexGridUTM <- spTransform(HexGrid,CRS("+init=epsg:26920"))
+# HexGridUTM_sf <- st_as_sf(HexGridUTM)
 
-
-# prjString <- crs(HexGrid)
 save_tables('rv') # new command within Mar.datawrangler that puts a new set of 
-# table in a new environment ('dw')
+# tables in a new environment ('dw')
 
 
 # Get list of species from other data table
@@ -86,42 +72,72 @@ speciescode <- unique(species[,1])
 # Reduce number of species for testing processing
 # speciescode <- speciescode[7:9]
 # speciescode <- speciescode[7] # Redfish
-# speciescode <- speciescode[1] # Cod
+speciescode <- speciescode[1] # Cod
 # speciescode <- speciescode[c(1,22)] # Barndoor skate and cod
-speciescode <- speciescode[22] # Barndoor skate
+# speciescode <- speciescode[22] # Barndoor skate
+
+# Create empty grid with the extents of all RV summer samples
+# Select RV samples for "summer" and type 1 and create 
+# a point spatial object
+RVExtents <- SelectRV_fn("SUMMER", 1)
+
+grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
+
+SelectRV_MkGrid_fn
+
+# Create an emtpy grid from the samples, 100,000 cells
+# MakeEmptyGrid_fn is in the fn_MkGrid.r source
+grd <- MakeEmptyGrid_fn(RVExtents, 100000)
 
 
-#------ Set year variables -----------------
-# Single date range
-yearb <- 2000
-yeare <- 2020
-# All sample years (1970 - 2018)
-yearb <- c(1970, 1978, 1986, 1994, 2007, 2012)
-yeare <- c(1978, 1986, 1994, 2007, 2012, 2019)
-# reduced date range for testing processing
-yearb <- c(1970, 1978)
-yeare <- c(1977, 1985)
 
-# All sample years (2000 - 2019)
-yearb <- c(2000, 2005, 2009, 2014)
-yeare <- c(2005, 2009, 2014, 2020)
-#------ END Set year variables -----------------
+#------ Import Hex Grid sizes and convert to sf Objects -----------------
+HexGrid100 <- readOGR(gridDSN, "ClipHexagons100SqKm")
+HexGrid100_sf <- st_as_sf(HexGrid100)
+HexGrid200 <- readOGR(gridDSN, "ClipHexagons200SqKm")
+HexGrid200_sf <- st_as_sf(HexGrid200)
+HexGrid25 <- readOGR(gridDSN, "ClipHexagons25SqKm")
+HexGrid25_sf <- st_as_sf(HexGrid25)
+HexGrid300 <- readOGR(gridDSN, "ClipHexagons300SqKm")
+HexGrid300_sf <- st_as_sf(HexGrid300)
+HexGrid10 <- readOGR(gridDSN, "ClipHexagons_Oceans10sqkm")
+HexGrid10_sf <- st_as_sf(HexGrid10)
+HexGrid400 <- readOGR(gridDSN, "HexGrid_400Mil_UTM_ScotianShelf")
+HexGrid400_sf <- st_as_sf(HexGrid400)
+HexGrid1000 <- readOGR(gridDSN, "ClipHexagons1000SqKm")
+HexGrid1000_sf <- st_as_sf(HexGrid1000)
+
+
+HexList[[1]] <- HexGrid10_sf
+HexList[[2]] <- HexGrid25_sf
+HexList[[3]] <- HexGrid100_sf
+HexList[[4]] <- HexGrid200_sf
+HexList[[5]] <- HexGrid300_sf
+HexList[[6]] <- HexGrid400_sf
+HexList[[7]] <- HexGrid1000_sf
+
+
+AreaList <- c(10,25,100,200,300,400,1000)
+
+
+#------ END  -----------------
 
 
 # ---------- BEGIN Loops ----------------------####
-
+Gridlist <- list() # create list to hold HexGrids
 count <- 1
 start_time <- Sys.time()
 for(i in 1:length(speciescode)) {
   Time <- 1
-  for (y in 1:length(yearb)) {
-    yearb1 <- yearb[y]
-    yeare1 <- yeare[y]
-    Time1 <- paste("T", Time, "_", sep = "")
-    print(paste("Loop ",count, "Time ", Time1, sep = ""))
+  for (y in 1:length(HexList)) {
+    HexGridUTM_sf <- HexList[[y]]
+    HexGridUTM_sf <-  HexGridUTM_sf %>% dplyr::select(GRID_ID, geometry)
+    HexGridUTM_sf <- st_transform(HexGridUTM_sf, crs = 26920)
+    
+    print(paste("Loop ",names(HexGridUTM_sf), sep = ""))
     # filter data
     clip_by_poly(db='rv', clip.poly = oceanMask) # clip data to the extent of the Ocean Mask
-    GSMISSIONS <- GSMISSIONS[GSMISSIONS$YEAR >= yearb1 & GSMISSIONS$YEAR < yeare1 & GSMISSIONS$SEASON=="SUMMER",]
+    GSMISSIONS <- GSMISSIONS[GSMISSIONS$YEAR >= 2000 & GSMISSIONS$YEAR < 2020 & GSMISSIONS$SEASON=="SUMMER",]
     GSXTYPE <- GSXTYPE[GSXTYPE$XTYPE==1,]
     self_filter(keep_nullsets = FALSE,quiet = TRUE) # 659 in GSCAT
     GSINF2 <- GSINF # make copy of GSINF to use for a full set of samples
@@ -159,10 +175,7 @@ for(i in 1:length(speciescode)) {
     
     allCatch_sf <- st_as_sf(allCatch, coords = c("LONGITUDE","LATITUDE"), crs = 4326)
     allCatchUTM_sf <- st_transform(allCatch_sf, crs = 26920)
-    
-    countAllSample <- nrow(allCatch)
-    countPresence <- nrow(filter(allCatch,STDWGT > 0))
-    
+
     # Join the RV point file to the GRID_ID of the HexGrid.
     allCatchUTM_sf2 <- st_join(allCatchUTM_sf, left = FALSE, HexGridUTM_sf["GRID_ID"])
     # make a table of just the STDWGT and GRID_ID column
@@ -171,28 +184,39 @@ for(i in 1:length(speciescode)) {
     
     # Summarize the data (aggregate() function) to calculate the SUM, MEAN, and COUNT
     # of the points within each grid cell
-    Join2 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=sum)
+#    Join2 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=sum)
     Join3 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=mean)
-    Join5 <- count(Join1,GRID_ID)
+#    Join5 <- count(Join1,GRID_ID)
     # Join4 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=sd)
     
     # Make new column names for these summaries including the time period and species
-    colname2 <- paste("Sp",i,"_T",y,"_WgtTot",sep = "")
-    colname3 <- paste("T",y,"_WgtMean",sep = "")
+ #   colname2 <- paste("Sp",i,"_T",y,"_WgtTot",sep = "")
+    colname3 <- "WgtMean"
     # colname4 <- paste("T",y,"_WgtSD",sep = "")
-    colname5 <- paste("T",y,"_Ct",sep = "")
+#    colname5 <- paste("T",y,"_Ct",sep = "")
 
-    names(Join2)[1:2] <- c("GRID_ID",colname2)
+ #   names(Join2)[1:2] <- c("GRID_ID",colname2)
     names(Join3)[1:2] <- c("GRID_ID",colname3)
     # names(Join4)[1:2] <- c("GRID_ID",colname4)
-    names(Join5)[2] <- colname5
+ #   names(Join5)[2] <- colname5
     
-    HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join2, by = "GRID_ID")
+#    HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join2, by = "GRID_ID")
     HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join3, by = "GRID_ID")
     # HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join4, by = "GRID_ID")
-    HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join5, by = "GRID_ID")
+ #   HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join5, by = "GRID_ID")
     
     # mutate(HexGridUTM_sf, !!colname6 := !!colname4/!!colname3)
+    HexGridUTM_sf_TIB <- as_tibble(HexGridUTM_sf)
+    HexGridNew <- HexGridUTM_sf_TIB %>% mutate(AvgPer = WgtMean/AreaList[y]) 
+    colname <- paste("AvgPer_",AreaList[y],sep ="")
+    names(HexGridNew)[names(HexGridNew) == "AvgPer"] <- colname
+    
+    HexGridUTM_sf <- HexGridNew %>% st_as_sf(crs = 26920)
+    
+    
+    Gridlist[[y]] <- HexGridUTM_sf
+    
+    #summary(HexGridNew$AvgPer)
     
     restore_tables('rv',clean = FALSE)
     Time <- Time + 1
@@ -202,34 +226,41 @@ for(i in 1:length(speciescode)) {
   
   count <- count + 1
 
-  HexGridUTM_sf_TIB <- as_tibble(HexGridUTM_sf)
-  HexGridNew <- HexGridUTM_sf_TIB %>% mutate(SumFinal = select(., c(T1_WgtTot,T2_WgtTot,T3_WgtTot,T4_WgtTot)) %>% 
-                                                                 rowSums(na.rm = TRUE))
 
-  HexGridUTM_sf <- HexGridNew %>% st_as_sf(crs = 26920)
+
 }
 
-HexGridUTM <- sf:::as_Spatial(HexGridUTM_sf)
 
 # alternate way to convert sf object to SP object and retain attributes
 # HexGridUTM <- as(HexGridUTM_sf,"Spatial")
 
 # convert HexGridUTM to a raster on T1Biomass
 
-rfake <- raster(ncol=341, nrow=293)
-extent(rfake) <- extent(grd)
-proj4string(rfake) <- proj4string(rfake) <- CRS("+init=epsg:26920")
-
-r <- Gridlist$rawRaster
-
 # for some reason the rasterize() function needs a Raster Layer and not a Spatial Grid
 grd <- raster(grd)
 
-HexList <- list() # create list to hold rasters
-HexList[[1]] <- rasterize(HexGridUTM, grd, 'T1_WgtTot')
-HexList[[2]] <- rasterize(HexGridUTM, grd, 'T2_WgtTot')
-HexList[[3]] <- rasterize(HexGridUTM, grd, 'T3_WgtTot')
-HexList[[4]] <- rasterize(HexGridUTM, grd, 'T4_WgtTot')
+HexRasList <- list() # create list to hold rasters
 
-stackRas <- stack(HexList[[1]],HexList[[2]],HexList[[3]],HexList[[4]])
+FieldList <- c("AvgPer_10", "AvgPer_25", "AvgPer_100", "AvgPer_200", "AvgPer_300", "AvgPer_400", "AvgPer_1000")
+stackRas <- raster(grd)
+z=1
+for(i in 1:length(Gridlist)) {
+  HexRasList[[i]] <- rasterize(Gridlist[[i]], grd, FieldList[i])
+  tmpRas <- rasterize(Gridlist[[i]], grd, FieldList[i])
+  names(tmpRas) <- paste("SP",speciescode[z],"_Grid",AreaList[i],sep = "")
+  stackRas <- addLayer(stackRas,tmpRas)
+}
+names(stackRas)
+
+
+# Export HexGrids as tables
+for(i in 1:length(Gridlist)) {
+  # print(names(Gridlist[[i]]))
+  
+  FileName <- paste("Grid",AreaList[i],".csv",sep = "")
+  write.csv(Gridlist[i],FileName,row.names = FALSE)
+}
+
+# Write the entire stack out as a .grd file
+writeRaster(stackRas,"./SpatialDataSynopsis/Output/Sp10GridComparison.grd", format="raster")
 

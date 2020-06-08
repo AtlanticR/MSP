@@ -52,6 +52,7 @@ get_data('rv', data.dir = data.dir)
 # data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
 
 source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
+source("./SpatialDataSynopsis/code/src/fn_SelectAllRVSpatialExtentMkGrid.r")
 source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
 source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
 source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
@@ -74,6 +75,7 @@ CRS_ras <- CRS("+init=epsg:4326") # WGS84
 save_tables('rv')
 
 
+grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
 
 
 # - Make oversize grid ----------------------
@@ -94,9 +96,13 @@ coordinates(GSINF_all) <- ~LONGITUDE+LATITUDE
 proj4string(GSINF_all) <- CRS("+init=epsg:4326") # Define coordinate system (WGS84)
 GSINF_allUTM <- spTransform(GSINF_all,CRS("+init=epsg:26920")) # Project to UTM
 
+# Select RV samples for "summer" and type 1 and create 
+# a spatial object
+RVExtents <- SelectRV_fn("SUMMER", 1)
+
 # Create an emtpy grid from the samples, 100,000 cells
 # MakeEmptyGrid_fn is in the Functions.r source
-grd <- MakeEmptyGrid_fn(GSINF_allUTM, 100000)
+grd <- MakeEmptyGrid_fn(RVExtents, 100000)
 
 # Get list of species from other data table
 # fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
