@@ -79,17 +79,10 @@ speciescode <- speciescode[1] # Cod
 # Create empty grid with the extents of all RV summer samples
 # Select RV samples for "summer" and type 1 and create 
 # a point spatial object
-RVExtents <- SelectRV_fn("SUMMER", 1)
+# RVExtents <- SelectRV_fn("SUMMER", 1)
 
 grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
-
-SelectRV_MkGrid_fn
-
-# Create an emtpy grid from the samples, 100,000 cells
-# MakeEmptyGrid_fn is in the fn_MkGrid.r source
-grd <- MakeEmptyGrid_fn(RVExtents, 100000)
-
-
+restore_tables('rv',clean = FALSE)
 
 #------ Import Hex Grid sizes and convert to sf Objects -----------------
 HexGrid100 <- readOGR(gridDSN, "ClipHexagons100SqKm")

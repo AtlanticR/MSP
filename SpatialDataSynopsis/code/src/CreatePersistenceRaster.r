@@ -75,34 +75,9 @@ CRS_ras <- CRS("+init=epsg:4326") # WGS84
 save_tables('rv')
 
 
-grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
-
-
 # - Make oversize grid ----------------------
-# make grid of all SUMMER samples to get min and max extent
-GSMISSIONS <- GSMISSIONS[GSMISSIONS$SEASON=="SUMMER",]
-GSXTYPE <- GSXTYPE[GSXTYPE$XTYPE==1,]
-self_filter(keep_nullsets = FALSE,quiet = TRUE)
-
-# Keep only the columns necessary
-# ("MISSION" "SETNO" "SDATE" "LATITUDE" "LONGITUDE")
-GSINF_all <- dplyr::select(GSINF,1:3,33:34)
-#names(GSINF_all)
-
-# Convert to the SpatialPointsFeature
-# using SP package to create a SPATIAL OBJECT
-# Convert to the Spatial Object
-coordinates(GSINF_all) <- ~LONGITUDE+LATITUDE
-proj4string(GSINF_all) <- CRS("+init=epsg:4326") # Define coordinate system (WGS84)
-GSINF_allUTM <- spTransform(GSINF_all,CRS("+init=epsg:26920")) # Project to UTM
-
-# Select RV samples for "summer" and type 1 and create 
-# a spatial object
-RVExtents <- SelectRV_fn("SUMMER", 1)
-
-# Create an emtpy grid from the samples, 100,000 cells
-# MakeEmptyGrid_fn is in the Functions.r source
-grd <- MakeEmptyGrid_fn(RVExtents, 100000)
+grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
+restore_tables('rv',clean = FALSE)
 
 # Get list of species from other data table
 # fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
