@@ -16,29 +16,17 @@ library(purrr)
 ```
 
 ```{r definePlotSpp, fig.height=11, fig.width=8, echo=FALSE, message=FALSE, cache=FALSE, warning = FALSE}
-#MapCollage("SP200")
-
-#im<-lapply("SP200", MapCollage)
-#print(im[[1]])
-
-spp <- c("SP10", "SP200")
-im <-lapply(spp, MapCollage) 
-
-a <- map(spp, ~MapCollage(.x) )
+#spp <- c("SP10", "SP200")
+#im <-lapply(spp, MapCollage) 
+#a <- map(spp, ~MapCollage(.x) )
 ```
 
 ## Results
-```{r Fig1, fig.height=11, fig.width=8, echo=FALSE, message=FALSE, cache=FALSE, warning = FALSE} 
-#print(im[[1]])
-#print(im[[2]])
-
-#print(a[[2]])
-```
-
-```
-
-## Barndoor Skate
 ```{r Fig1, fig.height=11, fig.width=8, echo=FALSE, message=FALSE, cache=FALSE, warning = FALSE}
+MapCollage("SP10")
+```
+
+```{r Fig2, fig.height=11, fig.width=8, echo=FALSE, message=FALSE, cache=FALSE, warning = FALSE}
 MapCollage("SP200")
 ```
 

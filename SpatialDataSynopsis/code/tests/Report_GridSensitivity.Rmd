@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 source("C:/RProjects/MSP/SpatialDataSynopsis/code/tests/MapCollage_GrdSize.R")
 library(magick)
 library(pdftools)
-library(purrr)
+#library(purrr)
 ```
 
 ## Results

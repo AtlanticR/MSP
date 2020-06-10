@@ -18,8 +18,8 @@ MapCollage <- function(speciesNumber) {
   iml=lapply(fl,image_read_pdf, density = 300)
   
   # group images: this will depend on the file names chosen for pdf files
-  rclass=c(iml[[grep("rclass_T1",fl)]],iml[[grep("rclass_T2",fl)]],iml[[grep("rclass_T3",fl)]],iml[[grep("rclass_T4",fl)]])
-  hexsum=c(iml[[grep("hexsum_T1",fl)]],iml[[grep("hexsum_T2",fl)]],iml[[grep("hexsum_T3",fl)]],iml[[grep("hexsum_T4",fl)]])
+  rclass=c(iml[[grep("T1_IDW",fl)]],iml[[grep("T2_IDW",fl)]],iml[[grep("T3_IDW",fl)]],iml[[grep("T4_IDW",fl)]])
+  hexsum=c(iml[[grep("T1_HEXAVG",fl)]],iml[[grep("T2_HEXAVG",fl)]],iml[[grep("T3_HEXAVG",fl)]],iml[[grep("T4_HEXAVG",fl)]])
   periods=c("2004-2008","2005-2008","2009-2013","2014-2019")
   
   # image append

@@ -18,11 +18,8 @@ MapCollage_GrdSize <- function(speciesNumber) {
   iml=lapply(fl,image_read_pdf, density = 300)
   
   # group images: this will depend on the file names chosen for pdf files
-  hexavg_a=c(iml[[grep("Grid10.pdf",fl)]],iml[[grep("Grid25.pdf",fl)]],iml[[grep("Grid100.pdf",fl)]],iml[[grep("Grid200.pdf",fl)]])
-  hexavg_b=c(iml[[grep("Grid300.pdf",fl)]], iml[[grep("Grid400.pdf",fl)]], iml[[grep("Grid1000.pdf",fl)]])
-  #hexsum_T2=c(iml[[grep("hexsum10_T2",fl)]],iml[[grep("hexsum25_T2",fl)]],iml[[grep("hexsum100_T2",fl)]],iml[[grep("hexsum200_T2",fl)]], iml[[grep("hexsum300_T2",fl)]], iml[[grep("hexsum400_T2",fl)]], iml[[grep("hexsum1000_T2",fl)]])
-  #hexsum_T3=c(iml[[grep("hexsum10_T3",fl)]],iml[[grep("hexsum25_T3",fl)]],iml[[grep("hexsum100_T3",fl)]],iml[[grep("hexsum200_T3",fl)]], iml[[grep("hexsum300_T3",fl)]], iml[[grep("hexsum400_T3",fl)]], iml[[grep("hexsum1000_T3",fl)]])
-  #hexsum_T4=c(iml[[grep("hexsum10_T4",fl)]],iml[[grep("hexsum25_T4",fl)]],iml[[grep("hexsum100_T4",fl)]],iml[[grep("hexsum200_T4",fl)]], iml[[grep("hexsum300_T4",fl)]], iml[[grep("hexsum400_T4",fl)]], iml[[grep("hexsum1000_T4",fl)]])
+  hexavg_a=c(iml[[grep("Avg10.pdf",fl)]],iml[[grep("Avg25.pdf",fl)]],iml[[grep("Avg100.pdf",fl)]],iml[[grep("Avg200.pdf",fl)]])
+  hexavg_b=c(iml[[grep("Avg300.pdf",fl)]], iml[[grep("Avg400.pdf",fl)]], iml[[grep("Avg1000.pdf",fl)]])
   periods_a=c("10 km^2","25 km^2","100 km^2","200 km^2")
   periods_b=c("300 km^2", "400 km^2", "1000 km^2")
   # image append
