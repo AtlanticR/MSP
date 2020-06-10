@@ -36,10 +36,10 @@ library(sf)
 wd <- "C:/BIO/20200306/GIT/R/MSP"
 setwd(wd)
 
-source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
-source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
-source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
-source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
+source("./SpatialDataSynopsis/code/src/fn_SelectAllRVSpatialExtentMkGrid.r")
+# source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
+# source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
+# source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
 # source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
 
 # wd <- "C:/Temp/BarndoorSkate"
@@ -65,7 +65,7 @@ gridDSN <- "../data/Zones"
 grid <- "HexGrid_400Mil_UTM_ScotianShelf"
 HexGrid <- readOGR(gridDSN,grid)
 HexGridUTM <- spTransform(HexGrid,CRS("+init=epsg:26920"))
-HexGridUTM_sf <- st_as_sf(HexGridUTM)
+
 
 
 # prjString <- crs(HexGrid)
@@ -87,20 +87,28 @@ speciescode <- unique(species[,1])
 # speciescode <- speciescode[7:9]
 # speciescode <- speciescode[7] # Redfish
 # speciescode <- speciescode[1] # Cod
-# speciescode <- speciescode[c(1,22)] # Barndoor skate and cod
-speciescode <- speciescode[22] # Barndoor skate
+speciescode <- speciescode[c(1,22)] # Barndoor skate and cod
+# speciescode <- speciescode[22] # Barndoor skate
+
+# - Make oversize grid ----------------------
+grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
+restore_tables('rv',clean = FALSE)
+
+# for some reason the rasterize() function needs a Raster Layer and not a Spatial Grid
+grd <- raster(grd)
+stackRas <- stack(grd)
 
 
 #------ Set year variables -----------------
 # Single date range
-yearb <- 2000
-yeare <- 2020
-# All sample years (1970 - 2018)
-yearb <- c(1970, 1978, 1986, 1994, 2007, 2012)
-yeare <- c(1978, 1986, 1994, 2007, 2012, 2019)
-# reduced date range for testing processing
-yearb <- c(1970, 1978)
-yeare <- c(1977, 1985)
+# yearb <- 2000
+# yeare <- 2020
+# # All sample years (1970 - 2018)
+# yearb <- c(1970, 1978, 1986, 1994, 2007, 2012)
+# yeare <- c(1978, 1986, 1994, 2007, 2012, 2019)
+# # reduced date range for testing processing
+# yearb <- c(1970, 1978)
+# yeare <- c(1977, 1985)
 
 # All sample years (2000 - 2019)
 yearb <- c(2000, 2005, 2009, 2014)
@@ -110,10 +118,13 @@ yeare <- c(2005, 2009, 2014, 2020)
 
 # ---------- BEGIN Loops ----------------------####
 
+
+Gridlist <- list() # create list to hold HexGrids
 count <- 1
 start_time <- Sys.time()
 for(i in 1:length(speciescode)) {
   Time <- 1
+  HexGridUTM_sf <- st_as_sf(HexGridUTM)
   for (y in 1:length(yearb)) {
     yearb1 <- yearb[y]
     yeare1 <- yeare[y]
@@ -164,6 +175,7 @@ for(i in 1:length(speciescode)) {
     countPresence <- nrow(filter(allCatch,STDWGT > 0))
     
     # Join the RV point file to the GRID_ID of the HexGrid.
+    # This creates an sf Object of all the Points with associated GRID_ID.
     allCatchUTM_sf2 <- st_join(allCatchUTM_sf, left = FALSE, HexGridUTM_sf["GRID_ID"])
     # make a table of just the STDWGT and GRID_ID column
     Join1 <- allCatchUTM_sf2 %>% dplyr::select(STDWGT, GRID_ID)
@@ -177,23 +189,23 @@ for(i in 1:length(speciescode)) {
     # Join4 <- stats::aggregate(Join1[,c(1)], by=list(Join1$GRID_ID), FUN=sd)
     
     # Make new column names for these summaries including the time period and species
-    colname2 <- paste("Sp",i,"_T",y,"_WgtTot",sep = "")
+    # colname2 <- paste("Sp",i,"_T",y,"_WgtTot",sep = "")
     colname3 <- paste("T",y,"_WgtMean",sep = "")
     # colname4 <- paste("T",y,"_WgtSD",sep = "")
-    colname5 <- paste("T",y,"_Ct",sep = "")
+    # colname5 <- paste("T",y,"_Ct",sep = "")
 
-    names(Join2)[1:2] <- c("GRID_ID",colname2)
+    # names(Join2)[1:2] <- c("GRID_ID",colname2)
     names(Join3)[1:2] <- c("GRID_ID",colname3)
     # names(Join4)[1:2] <- c("GRID_ID",colname4)
-    names(Join5)[2] <- colname5
+    # names(Join5)[2] <- colname5
     
-    HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join2, by = "GRID_ID")
+    # HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join2, by = "GRID_ID")
     HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join3, by = "GRID_ID")
     # HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join4, by = "GRID_ID")
-    HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join5, by = "GRID_ID")
-    
-    # mutate(HexGridUTM_sf, !!colname6 := !!colname4/!!colname3)
-    
+    # HexGridUTM_sf <- dplyr::left_join(HexGridUTM_sf,Join5, by = "GRID_ID")
+
+#    HexGridUTM_sf <- HexGridNew %>% st_as_sf(crs = 26920)
+
     restore_tables('rv',clean = FALSE)
     Time <- Time + 1
   }
@@ -203,33 +215,57 @@ for(i in 1:length(speciescode)) {
   count <- count + 1
 
   HexGridUTM_sf_TIB <- as_tibble(HexGridUTM_sf)
-  HexGridNew <- HexGridUTM_sf_TIB %>% mutate(SumFinal = select(., c(T1_WgtTot,T2_WgtTot,T3_WgtTot,T4_WgtTot)) %>% 
-                                                                 rowSums(na.rm = TRUE))
+  #HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% mutate(SumAvg = select(., c(T1_WgtMean,T2_WgtMean,T3_WgtMean,T4_WgtMean)) %>% 
+   #                                                              rowSums(na.rm = TRUE))
+  
+ # try
+  #HexGridUTM_sf_TIB$Avg <- HexGridUTM_sf_TIB %>% select(c(T1_WgtMean,T2_WgtMean,T3_WgtMean,T4_WgtMean) %>% rowMeans(na.rm = TRUE)
+  #WHICH is exactly what is above   
+  
+  HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% mutate(AvgFinal = select(., c(T1_WgtMean,T2_WgtMean,T3_WgtMean,T4_WgtMean)) %>% 
+                                                      rowMeans(na.rm = TRUE))
+  # colname <- paste("SP",speciescode[i],"_AvgFinal",sep = "")
+  # names(HexGridUTM_sf_TIB)[8] <- colname
+  # 
+  # colnamesList <- list()
+  # sp = speciescode[i]
+  # for (i in 1:4) {
+  #   colname <- paste("SP",sp,"_T",i,"Avg",sep = "") 
+  #   colnamesList[[i]] <- colname
+  # }
+  # 
+  # for(i in 1:length(colnamesList)) {
+  #   y <- i+2
+  #   names(HexGridUTM_sf_TIB)[y] <- colnamesList[[i]]
+  # }
+  #
+  
+  # this next line assumes 4 time periods!
+#  HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% mutate(AvgFinal = SumAvg/4) # calculate Average of the averages
+#  HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% select(-SumAvg) # remove SumAvg column
 
-  HexGridUTM_sf <- HexGridNew %>% st_as_sf(crs = 26920)
+# perhaps keep all the field names identical and rename them in the rasterize function  
+#  colname <- paste("SP",speciescode[i],"_AvgFinal",sep = "")
+#  names(HexGridUTM_sf_TIB)[names(HexGridUTM_sf_TIB) == "AvgFinal"] <- colname
+
+  HexGridUTM_sf <- HexGridUTM_sf_TIB %>% st_as_sf(crs = 26920)
+  # Gridlist[[y]] <- HexGridUTM_sf
+  # names(Gridlist[[y]]) <- speciescode[i]
+  
+  # Rasterize the Species-specific means, name them and add to the Stack
+  FieldList <- c("T1_WgtMean", "T2_WgtMean", "T3_WgtMean", "T4_WgtMean")
+  for(z in 1:length(FieldList)) {
+    tmpRas <- rasterize(HexGridUTM_sf, grd, FieldList[z])
+    names(tmpRas) <- paste("SP",speciescode[i],"_T",z,"_HEXAVG",sep = "")
+    stackRas <- addLayer(stackRas,tmpRas)
+  }
+  # Rasterize the Species-specific overall Avg, name it and add to the Stack
+  tmpRas <- rasterize(HexGridUTM_sf, grd, "AvgFinal")
+  names(tmpRas) <- paste("SP",speciescode[i],"TALL_HEXAVG",sep = "")
+  stackRas <- addLayer(stackRas,tmpRas)
+  
 }
 
-HexGridUTM <- sf:::as_Spatial(HexGridUTM_sf)
+names(stackRas)
 
-# alternate way to convert sf object to SP object and retain attributes
-# HexGridUTM <- as(HexGridUTM_sf,"Spatial")
-
-# convert HexGridUTM to a raster on T1Biomass
-
-rfake <- raster(ncol=341, nrow=293)
-extent(rfake) <- extent(grd)
-proj4string(rfake) <- proj4string(rfake) <- CRS("+init=epsg:26920")
-
-r <- Gridlist$rawRaster
-
-# for some reason the rasterize() function needs a Raster Layer and not a Spatial Grid
-grd <- raster(grd)
-
-HexList <- list() # create list to hold rasters
-HexList[[1]] <- rasterize(HexGridUTM, grd, 'T1_WgtTot')
-HexList[[2]] <- rasterize(HexGridUTM, grd, 'T2_WgtTot')
-HexList[[3]] <- rasterize(HexGridUTM, grd, 'T3_WgtTot')
-HexList[[4]] <- rasterize(HexGridUTM, grd, 'T4_WgtTot')
-
-stackRas <- stack(HexList[[1]],HexList[[2]],HexList[[3]],HexList[[4]])
-
+writeRaster(stackRas,"./SpatialDataSynopsis/Output/HexGridAverages.grd", format="raster")

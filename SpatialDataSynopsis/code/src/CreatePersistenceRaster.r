@@ -94,7 +94,8 @@ speciescode <- unique(species[,1])
 
 # speciescode <- speciescode[7] # Redfish
 speciescode <- speciescode[c(1,22)] # cod and barndoor skate
-speciescode <- speciescode[c(22)] # barndoor skate
+# speciescode <- speciescode[c(22)] # barndoor skate
+# speciescode <- speciescode[c(1)] # cod
 
 #------ Set year variables -----------------
 # Single date range
@@ -105,8 +106,8 @@ speciescode <- speciescode[c(22)] # barndoor skate
 # yeare <- 2020
 
 # All sample years (1970 - 2018)
-yearb <- c(1970, 1978, 1986, 1994, 2007, 2012)
-yeare <- c(1978, 1986, 1994, 2007, 2012, 2019)
+# yearb <- c(1970, 1978, 1986, 1994, 2007, 2012)
+# yeare <- c(1978, 1986, 1994, 2007, 2012, 2019)
 
 # All sample years (2000 - 2019)
 yearb <- c(2000, 2005, 2009, 2014)
@@ -115,7 +116,7 @@ yeare <- c(2005, 2009, 2014, 2020)
 # yearb <- c(1970, 1978)
 # yeare <- c(1977, 1985)
 #------ END Set year variables -----------------
-restore_tables('rv',clean = FALSE)
+
 
 # ---------- BEGIN Loops ----------------------####
 
@@ -191,7 +192,8 @@ for(i in 1:length(speciescode)) {
     # Home location
     dsn = "./SpatialDataSynopsis/Output"
     
-    # writeOGR(allCatchUTM,"./SpatialDataSynopsis/Output/",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
+    # writeOGR(allCatchUTM,"./SpatialDataSynopsis/Output",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
+    # writeOGR(allCatchUTM,"./SpatialDataSynopsis/Output",paste("SP_",speciescode[i],"_AllUTM",sep = ""),driver="ESRI Shapefile")
     # writeOGR(allCatchUTM,dsn,paste(Time1,"SP",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
     
     # Interpolate the sample data (STDWGT) using the large extent grid
@@ -226,16 +228,19 @@ for(i in 1:length(speciescode)) {
   s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]])
   # s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
   s2 <- s > 32 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
+  names(s2) <- paste("SP",speciescode[i],"_TALL_IDW",sep = "")
+  stackRas <- addLayer(stackRas,s2)
+  
   raster_list2[[i]] <- s2
   skew_listFinal[[i]] <- skew_list1
   presence_listFinal[[i]] <- presence_list1
   count <- count + 1
 }
 # stackRas <- dropLayer(stackRas,1)
-write.table(as.data.frame(skew_listFinal),"./SpatialDataSynopsis/Output/Skewness.csv",sep=",")
-write.table(as.data.frame(presence_listFinal),"./SpatialDataSynopsis/Output/Presence.csv",sep=",")
-end_time <- Sys.time()
-end_time - start_time
+# write.table(as.data.frame(skew_listFinal),"./SpatialDataSynopsis/Output/Skewness.csv",sep=",")
+# write.table(as.data.frame(presence_listFinal),"./SpatialDataSynopsis/Output/Presence.csv",sep=",")
+# end_time <- Sys.time()
+# end_time - start_time
 # ---------- END Loops ----------------------####
 
 
@@ -262,7 +267,7 @@ for(i in 1:nlayers(stackRas)){
 }
 
 # Write the entire stack out as a .grd file
-writeRaster(stackRas,"./SpatialDataSynopsis/Output/TwoSp_InterpReclass.grd", format="raster")
+writeRaster(stackRas,"./SpatialDataSynopsis/Output/IDWReclassed.grd", format="raster")
 RasStack <- stack("./SpatialDataSynopsis/Output/TwoSp_InterpReclass.grd")
 
 # Write it out as a multiband tif

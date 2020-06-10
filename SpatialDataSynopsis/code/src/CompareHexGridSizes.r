@@ -76,14 +76,6 @@ speciescode <- speciescode[1] # Cod
 # speciescode <- speciescode[c(1,22)] # Barndoor skate and cod
 # speciescode <- speciescode[22] # Barndoor skate
 
-# Create empty grid with the extents of all RV summer samples
-# Select RV samples for "summer" and type 1 and create 
-# a point spatial object
-# RVExtents <- SelectRV_fn("SUMMER", 1)
-
-grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
-restore_tables('rv',clean = FALSE)
-
 #------ Import Hex Grid sizes and convert to sf Objects -----------------
 HexGrid100 <- readOGR(gridDSN, "ClipHexagons100SqKm")
 HexGrid100_sf <- st_as_sf(HexGrid100)
@@ -100,6 +92,7 @@ HexGrid400_sf <- st_as_sf(HexGrid400)
 HexGrid1000 <- readOGR(gridDSN, "ClipHexagons1000SqKm")
 HexGrid1000_sf <- st_as_sf(HexGrid1000)
 
+HexList <- list()
 
 HexList[[1]] <- HexGrid10_sf
 HexList[[2]] <- HexGrid25_sf
@@ -201,6 +194,8 @@ for(i in 1:length(speciescode)) {
     # mutate(HexGridUTM_sf, !!colname6 := !!colname4/!!colname3)
     HexGridUTM_sf_TIB <- as_tibble(HexGridUTM_sf)
     HexGridNew <- HexGridUTM_sf_TIB %>% mutate(AvgPer = WgtMean/AreaList[y]) 
+    colname <- paste("WgtMean_",AreaList[y],sep ="")
+    names(HexGridNew)[names(HexGridNew) == "WgtMean"] <- colname
     colname <- paste("AvgPer_",AreaList[y],sep ="")
     names(HexGridNew)[names(HexGridNew) == "AvgPer"] <- colname
     
@@ -227,23 +222,47 @@ for(i in 1:length(speciescode)) {
 # alternate way to convert sf object to SP object and retain attributes
 # HexGridUTM <- as(HexGridUTM_sf,"Spatial")
 
-# convert HexGridUTM to a raster on T1Biomass
+# Create empty grid with the extents of all RV summer samples
+# Select RV samples for "summer" and type 1 and create 
+# a point spatial object
+# RVExtents <- SelectRV_fn("SUMMER", 1)
 
-# for some reason the rasterize() function needs a Raster Layer and not a Spatial Grid
-grd <- raster(grd)
+grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
+restore_tables('rv',clean = FALSE)
 
 HexRasList <- list() # create list to hold rasters
 
-FieldList <- c("AvgPer_10", "AvgPer_25", "AvgPer_100", "AvgPer_200", "AvgPer_300", "AvgPer_400", "AvgPer_1000")
+# for some reason the rasterize() function needs a Raster Layer and not a Spatial Grid
+grd <- raster(grd)
 stackRas <- raster(grd)
 z=1
+
+# Naming for the AvgPerSqKm
+FieldList <- c("AvgPer_10", "AvgPer_25", "AvgPer_100", "AvgPer_200", "AvgPer_300", "AvgPer_400", "AvgPer_1000")
 for(i in 1:length(Gridlist)) {
   HexRasList[[i]] <- rasterize(Gridlist[[i]], grd, FieldList[i])
   tmpRas <- rasterize(Gridlist[[i]], grd, FieldList[i])
-  names(tmpRas) <- paste("SP",speciescode[z],"_Grid",AreaList[i],sep = "")
+  names(tmpRas) <- paste("SP",speciescode[z],"_AvgPerKm",AreaList[i],sep = "")
   stackRas <- addLayer(stackRas,tmpRas)
 }
 names(stackRas)
+# Write the entire stack out as a .grd file
+writeRaster(stackRas,"./SpatialDataSynopsis/Output/Sp10GridComparisonPerSqKm.grd", format="raster")
+
+stackRas <- raster(grd)
+# Naming for the MeanWgt
+FieldList <- c("WgtMean_10", "WgtMean_25", "WgtMean_100", "WgtMean_200", "WgtMean_300", "WgtMean_400", "WgtMean_1000")
+for(i in 1:length(Gridlist)) {
+  HexRasList[[i]] <- rasterize(Gridlist[[i]], grd, FieldList[i])
+  tmpRas <- rasterize(Gridlist[[i]], grd, FieldList[i])
+  names(tmpRas) <- paste("SP",speciescode[z],"_Avg",AreaList[i],sep = "")
+  stackRas <- addLayer(stackRas,tmpRas)
+}
+names(stackRas)
+
+
+# Write the entire stack out as a .grd file
+writeRaster(stackRas,"./SpatialDataSynopsis/Output/Sp10GridComparisonAvg.grd", format="raster")
 
 
 # Export HexGrids as tables
@@ -253,7 +272,4 @@ for(i in 1:length(Gridlist)) {
   FileName <- paste("Grid",AreaList[i],".csv",sep = "")
   write.csv(Gridlist[i],FileName,row.names = FALSE)
 }
-
-# Write the entire stack out as a .grd file
-writeRaster(stackRas,"./SpatialDataSynopsis/Output/Sp10GridComparison.grd", format="raster")
 
