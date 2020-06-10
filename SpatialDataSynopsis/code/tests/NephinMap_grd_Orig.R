@@ -88,20 +88,17 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
     # "bottomleft", "bottomright", "topleft", "topright"
     if( legendPos == "bottomleft") smallplot <- c(.08, .48, .14, .16)
     if( legendPos == "bottomright") smallplot <- c(.52, .92, .14, .16)
-    if( legendPos == "bottomright") smallplot <- c(.32, .72, .14, .16)
     if( legendPos == "topleft") smallplot <- c(.08, .48, .92, .94)
     if( legendPos == "topright") smallplot <- c(.52, .92, .92, .94)
     
     # Map (up to 5,000,000 pixels)
-    pdf( file=file.path(rasterdir, paste0(prefix, p, ".pdf")),
+    pdf( file=file.path(rasterdir, paste0(prefix, p, "Old.pdf")),
          height=6, width=5.25*diff(lims$x)/diff(lims$y)+1 )
     par( mar=c(1,1,1,1) )
-    plot( Layer, maxpixels=5000000, col=pal, legend=FALSE,border = NA, xlim = lims$x , ylim = lims$y,
-          main = Title )
-    plot( land, col = "grey80", borders = "grey80",
-          add=TRUE )
+    plot( land, col = "grey80", border = NA, xlim = lims$x , ylim = lims$y,
+          main = Title)
     box( lty = 'solid', col = 'black')
-    # plot( Layer, maxpixels=5000000, add=TRUE, col=pal, legend=FALSE )
+    plot( Layer, maxpixels=5000000, add=TRUE, col=pal, legend=FALSE )
     plot(Layer, col=pal, horizontal=TRUE,
          legend.only=TRUE, smallplot=smallplot,
          axis.args=list(cex.axis=.7, padj=-2, tck=-.5),
