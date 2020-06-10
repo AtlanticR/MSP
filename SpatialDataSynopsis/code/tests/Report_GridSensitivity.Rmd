@@ -16,13 +16,8 @@ library(purrr)
 ```
 
 ## Results
-
-- 2005-2008: Post-collapse/moratorium
-- 2009-2013: Warming bottom temperature
-- 2014-2018: Warming bottom temperature
-
-## Barndoor Skate
+## Atlantic Cod: Summer Ecosystem RV Survey (2000-2019)
 ```{r Fig1, fig.height=11, fig.width=8, echo=FALSE, message=FALSE, cache=FALSE, warning = FALSE}
-MapCollage_GrdSize("SP200")
+MapCollage_GrdSize("SP10")
 ```
 

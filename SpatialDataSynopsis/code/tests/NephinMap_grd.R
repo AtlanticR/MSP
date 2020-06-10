@@ -66,8 +66,8 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
     # legend text
     if(grepl("hexcv", p, ignore.case = T)) legend.title <- "CV Biomass per grid cell"
     if(grepl("hexsd", p, ignore.case = T))  legend.title <- "SD Biomass per grid cell"
-    if(grepl("hexsum", p, ignore.case = T))  legend.title <- "Sum Biomass per grid cell"
-    if(grepl("rclass", p, ignore.case = T))  legend.title <- "Ranked Areas"
+    if(grepl("Grid", p, ignore.case = T))  legend.title <- "Average biomass/Area of a grid cell"
+    if(grepl("IDW", p, ignore.case = T))  legend.title <- "Ranked Areas calculated via IDW"
     if ( !exists("legend.title") ) legend.title <- p
     
     # Get raster from stack
