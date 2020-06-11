@@ -98,8 +98,7 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
     par( mar=c(1,1,1,1) )
     plot( Layer, maxpixels=5000000, col=pal, legend=FALSE,border = NA, xlim = lims$x , ylim = lims$y,
           main = Title )
-    plot( land, col = "grey80", borders = "grey80",
-          add=TRUE )
+    plot( land, col = "grey80", borders = "grey80", add=TRUE )
     box( lty = 'solid', col = 'black')
     # plot( Layer, maxpixels=5000000, add=TRUE, col=pal, legend=FALSE )
     plot(Layer, col=pal, horizontal=TRUE,
