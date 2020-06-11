@@ -1,5 +1,5 @@
 ---
-title: "Port Hawkesbury Oil Spill Exercise"
+title: "Port Hawkesbury/Staright of Canso Oil Spill Exercise"
 author: Synthesis prepared by the MSP and PIER Science Teams
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
@@ -65,7 +65,7 @@ site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 cat(AquaSiteName)
 ```
 
-This report was prepared by the MSP and PIER teams for the Port Hawkesbury oil spill exercise and evaluate its potential use for spill incidents. A polygon surrounding the spill areas (Predicted Exposure Zone: PEZ) was used to search regional databases (**2002 - 2018**) and summarize species that have been recorded. Species lists generated in this synthesis is subsequently circulated to emergency responders in Maritimes Science to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
+This report was prepared by the MSP and PIER teams for the Point Tupper Maeine Services Corporation (PTMSC) oil spill exercise held on June 17, 2020, and to evaluate its potential use for spill incidents. A polygon surrounding the spill areas (Predicted Exposure Zone: PEZ) was used to search regional databases (**2002 - 2018**) and summarize species that have been recorded. Species lists generated in this synthesis is subsequently circulated to emergency responders in Maritimes Science to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
 
 Map below shows the PEZ polygon (blue) used to search regional databases and summarize recorded species.
 
@@ -257,15 +257,15 @@ plot_wsdb(PEZ_poly,wsdb_filter,5)
 
 ### **Sources of Uncertainty**
 
-Coastal areas are generally not adequately sampled on spatial and temporal scales of most relevance to oil spill incidents, i.e. tens to hundreds of meters and hours to months, and hence information on these space and time scales is generally not contained within the various data sources available to DFO, including the surveys referred to in this document. Therefore, there is uncertainty as to the exact distribution of species in the area of the proposed expansion.
+Coastal areas are generally not adequately sampled on spatial and temporal scales of most relevance to oil spill incidents, i.e. tens to hundreds of meters and hours to months, and hence information on these space and time scales is generally not contained within the various data sources available to DFO, including the surveys referred to in this document. Therefore, there is uncertainty as to the exact distribution of species in the area of the theoretical oil spill.
 
-MARFIS and ISDB do not fully sample the region spatially or temporally and, therefore, additional information on presence and habitat use (i.e. spawning, migration, feeding) must be drawn from larger-scale studies, which were also generally utilized by the proponent. 
+MARFIS and ISDB do not fully sample the region spatially or temporally and, therefore, additional information on presence and habitat use (i.e. spawning, migration, feeding) must be drawn from larger-scale studies. 
 
 The marine mammal sightings database has inherent problems with negative or positive reactions by cetaceans to the approach of such vessels that have not yet been factored into the data. Sighting effort has not been quantified (i.e., the numbers cannot be used to estimate true species density or abundance for an area). Lack of sightings do not represent lack of species present in a particular area. Numbers sighted have not been verified (especially in light of the significant differences in detectability among species). For completeness, the data represent an amalgamation of sightings from a variety of years and seasons. 
 
 ### **This document**
 
-This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/SearchPEZ>. The full document can be updated rapidly as more or different information becomes available.
+This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/MSP/SearchPEZ>. The full document can be updated rapidly as more or different information becomes available.
 
 This document was prepared by the Science MSP Team: <Catalina.Gomez@dfo-mpo.gc.ca>, <Gordana.Lazin@dfo-mpo.gc.ca>, <Brian.Bower@dfo-mpo.gc.ca>, <Phil.Greyson@dfo-mpo.gc.ca>, and <Tana.Worcester@dfo-mpo.gc.ca>
 
