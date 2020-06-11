@@ -8,6 +8,11 @@ library(maps)
 # Load a generic land base into Environment
 load("../data/Boundaries/land.RData")
 
+# bring in OceanMask for clipping rasters
+dsn <- "../data/Boundaries"
+oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
+oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
+
 # R E A D   S T A C K   S P A T I A L   O U T P U T S
 rasterdir <- "./SpatialDataSynopsis/Output/"
 SpatialOutputFiles <- list.files(path = paste(rasterdir, sep=""), 
@@ -35,19 +40,19 @@ SpatialOutputs <- setMinMax(SpatialOutputs)
 getLims <- function( Layer ) {
   # convert raster for extents
   {
-  ras_spdf <- as(Layer[[1]], "SpatialPixelsDataFrame")
-  # Get the vertical and horizontal limits
-  ext <- extent( ras_spdf )
-  # Get x and y limits
-  adj <- round(ext@xmin*0.01)
-  lims <- list( x=c(ext@xmin-adj, ext@xmax+adj), y=c(ext@ymin-adj, ext@ymax+adj) )
     ras_spdf <- as(Layer[[1]], "SpatialPixelsDataFrame")
     # Get the vertical and horizontal limits
     ext <- extent( ras_spdf )
     # Get x and y limits
     adj <- round(ext@xmin*0.01)
     lims <- list( x=c(ext@xmin-adj, ext@xmax+adj), y=c(ext@ymin-adj, ext@ymax+adj) )
-
+    ras_spdf <- as(Layer[[1]], "SpatialPixelsDataFrame")
+    # Get the vertical and horizontal limits
+    ext <- extent( ras_spdf )
+    # Get x and y limits
+    adj <- round(ext@xmin*0.01)
+    lims <- list( x=c(ext@xmin-adj, ext@xmax+adj), y=c(ext@ymin-adj, ext@ymax+adj) )
+    
   }
   # return
   return(lims)
@@ -71,6 +76,11 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
     
     # Get raster from stack
     Layer <- layers[[p]]
+    
+    # clip the raster to the extent of the RV survey
+    Layer <- crop(Layer,oceanMaskUTM)
+    Layer <- mask(Layer,oceanMaskUTM)
+    
     # Get raster name
     Title <- names(Layer)
     
@@ -88,20 +98,17 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
     # "bottomleft", "bottomright", "topleft", "topright"
     if( legendPos == "bottomleft") smallplot <- c(.08, .48, .14, .16)
     if( legendPos == "bottomright") smallplot <- c(.52, .92, .14, .16)
-    if( legendPos == "bottomright") smallplot <- c(.32, .72, .14, .16)
     if( legendPos == "topleft") smallplot <- c(.08, .48, .92, .94)
     if( legendPos == "topright") smallplot <- c(.52, .92, .92, .94)
     
     # Map (up to 5,000,000 pixels)
-    pdf( file=file.path(rasterdir, paste0(prefix, p, ".pdf")),
+    pdf( file=file.path(rasterdir, paste0(prefix, p, "Old.pdf")),
          height=6, width=5.25*diff(lims$x)/diff(lims$y)+1 )
     par( mar=c(1,1,1,1) )
-    plot( Layer, maxpixels=5000000, col=pal, legend=FALSE,border = NA, xlim = lims$x , ylim = lims$y,
-          main = Title )
-    plot( land, col = "grey80", borders = "grey80",
-          add=TRUE )
+    plot( land, col = "grey80", border = NA, xlim = lims$x , ylim = lims$y,
+          main = Title)
     box( lty = 'solid', col = 'black')
-    # plot( Layer, maxpixels=5000000, add=TRUE, col=pal, legend=FALSE )
+    plot( Layer, maxpixels=5000000, add=TRUE, col=pal, legend=FALSE )
     plot(Layer, col=pal, horizontal=TRUE,
          legend.only=TRUE, smallplot=smallplot,
          axis.args=list(cex.axis=.7, padj=-2, tck=-.5),
@@ -135,5 +142,6 @@ end_time - start_time
 # -- END Run the two functions
 ######################################-
 
-# Use just 2 of the stacks in the list
+# Use just 1 or 2 of the stacks in the list
 #SpatialOutputList <- SpatialOutputList[c(2,3)]
+#SpatialOutputList <- SpatialOutputList[c(1)]
