@@ -1,4 +1,9 @@
 data <- read.csv("./SpatialDataSynopsis/Output/GridCellSizeStats.csv")
+data2 <- read.csv("./SpatialDataSynopsis/Output/GridCellSizeAllData.csv")
+
+data <- data[order(data$GridSize),]
+
+
 plot(data$GridSize,data$AvgPerSqKm,
      xlab="Grid cell area (sq km)",
      ylab="Average Biomass /sq km",
@@ -10,11 +15,20 @@ plot(data$GridSize,data$AvgPerSqKm,
 # doesn't have an exterior boundary
 # 1. Open jpeg file
 jpeg("./SpatialDataSynopsis/Output/AvgPerSqKm.jpg", width = 350, height = 350)
-plot(data$GridSize,data$AvgPerSqKm,
+
+plot(data2$GridSize, data2$AvgPerSqKm,
      xlab="Grid cell area (sq km)",
      ylab="Average Biomass /sq km",
      pch = 16,
-     col="red")
+     col = "blue",
+     log = "y")
+par(new = TRUE)
+plot(data$GridSize,data$AvgPerSqKm,
+     type = "b",
+     pch = 16,
+     col="red",
+     log = "y",
+     xlab="", ylab="")
 dev.off()
 
 jpeg("./SpatialDataSynopsis/Output/SD.jpg", width = 350, height = 350)
@@ -36,6 +50,14 @@ plot(data$GridSize,data$CV,
      log = "y")
 dev.off()
 
-# graphical paramethers 
+# graphical parameters 
 # https://www.statmethods.net/advgraphs/parameters.html
 # https://www.datanovia.com/en/blog/pch-in-r-best-tips/
+
+plot(data$GridSize,data$AvgPerSqKm,
+     
+     pch = 16,
+     col="red",
+     log = "y",
+     axes=TRUE,
+     xlab="", ylab="")
