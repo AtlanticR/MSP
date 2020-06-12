@@ -43,6 +43,7 @@ source("C:/RProjects/MSP/SearchPEZ/code/filter_wsdb.r")
 ```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
 mspPath <- "C:/RProjects/MSP/SearchPEZ/"
 data.dir = "C:/RProjects/data/mar.wrangling"
+#create a folder in outputs with the name of the site and buffer area search
 dataPath <- file.path("C:/RProjects/MSP/SearchPEZ/outputs",paste0(AquaSiteName,PEZversion))
 setwd(dataPath)
 polyPath <- "C:/RProjects/data/SearchPEZpolygons"
@@ -76,127 +77,27 @@ site_map(PEZ_poly,site,land,40)
 
 # **Regional Databases**
 
-```{r PEZ search, echo=FALSE, include=FALSE, cache=FALSE}
-#This chunk of code should be run to do a re-extraction of data or to extract data using a new polygon.
-#Note taht you need 64-bit ODBC driver to be able to extract MARFIS data. Mike provided data to Catalina on Sept 2019 and waiting to get Oracle 64 bit to do extraction myself.
-
-# get_data(db = 'rv', data.dir = data.dir)
-# GSINF = clip_by_poly(df = GSINF
-#                       , lat.field = "LATITUDE"
-#                       , lon.field = "LONGITUDE"
-#                       , clip.poly = PEZ_poly)
-# self_filter()
-# save_data(db='rv')
-# cleanup('rv')
-# 
-# get_data('isdb', data.dir=data.dir)
-# ISSETPROFILE_WIDE = clip_by_poly(df = ISSETPROFILE_WIDE
-#                              , lat.field = "LATITUDE"
-#                              , lon.field = "LONGITUDE"
-#                              , clip.poly = PEZ_poly)
-# self_filter()
-# save_data(db='isdb')
-# cleanup('isdb')
-# 
-# get_data('marfis', data.dir = data.dir)
-# PRO_SPC_INFO = clip_by_poly(df = PRO_SPC_INFO
-#                       , lat.field = "LATITUDE"
-#                       , lon.field = "LONGITUDE"
-#                       , clip.poly = PEZ_poly)
-# self_filter()
-# save_data(db='marfis')
-# cleanup('marfis')
-```
-
 ```{r read csv extracted with previous chunck, echo=FALSE, include=FALSE, cache=FALSE}
 fl <- list.files(dataPath,".csv")
 marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
 marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
-isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
-isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
-rv <- read.csv(file.path(dataPath,fl[grep("rv_",fl)]))
-rv <- rv[which(year(rv$SDATE)>=minYear),] 
+# isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
+# isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
+# rv <- read.csv(file.path(dataPath,fl[grep("rv_",fl)]))
+# rv <- rv[which(year(rv$SDATE)>=minYear),] 
 ```
 
 ### **Ecosystem Research Vessel (RV) Survey**
 
-Fisheries and Oceans Canada (DFO) has conducted Research Vessel (RV) surveys in the Maritimes Region using a standardized protocol. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>. The search of the Ecosystem RV Survey database resulted in the Table below that summarizes records by species or species group. 
-
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
-rv$database <- "rv"
-rv_freq <- aggregate(
-        x = list(Records = rv$COMM),
-      by = list(Species = rv$COMM
-      ),
-      length
-      )
-rv_freq <- rv_freq[order(-rv_freq$Records),]
-rownames(rv_freq) <- c()
-rv_total <- aggregate(
-        x = list(total = rv$COMM),
-      by = list(db = rv$database
-      ),
-      length
-      )
-Total_number_records_RV <- rv_total[[2]] 
-Total_number_records_RV
-```
-```{r} 
-kable(as.data.frame(Total_number_records_RV), digits=2, full_width = F, position = "left")
-``` 
-```{r}
-kable(rv_freq) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```
-Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed are summarized in the table above). The yellow polygon shows the locations of the theoretical spill location. The blue polygon displays the PEZ used for this synthesis. 
-
-```{r Fig 2 Ecosystem RV Survey records, fig.height=8, fig.width=11}
-site_map(PEZ_poly,site,land,2)
-points(rv$LONGITUDE,rv$LATITUDE, col="black",pch=16,cex=1.5)
-```
+Fisheries and Oceans Canada (DFO) has conducted Research Vessel (RV) surveys in the Maritimes Region using a standardized protocol. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>. The search of the Ecosystem RV Survey database resulted in no records. 
 
 ### **Industry Survey Database (ISDB)**
 
-ISDB is a DFO database that contains at-sea fish catch observations from commercial fishing vessels operating in the North West Atlantic.
-
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
-isdb$database <- "isdb"
-isdb_freq <- aggregate(
-        x = list(Records = isdb$COMMON),
-      by = list(Species = isdb$COMMON
-      ),
-      length
-      )
-isdb_freq <- isdb_freq[order(-isdb_freq$Records),]
-rownames(isdb_freq) <- c()
-
-isdb_total <- aggregate(
-  x = list(total = isdb$COMMON),
-  by = list(db = isdb$database
-  ),
-  length
-)
-
-Total_number_records_ISDB <- isdb_total[[2]] 
-Total_number_records_ISDB
-```
-
-The search of ISDB resulted in the Table below that summarizes records by species or species group. Records were cropped to match PEZ.
-
-
-```{r} 
-kable(as.data.frame(Total_number_records_ISDB), digits=2, full_width = F, position = "left")
-``` 
-
-```{r}
-kable(isdb_freq) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```
+ISDB is a DFO database that contains at-sea fish catch observations from commercial fishing vessels operating in the North West Atlantic.The search of the ISDB resulted in no records. 
 
 ### **The Maritime Fishery Information System (MARFIS)**
 
 MARFIS is a DFO database, managed by the Policy and Economics Branch, that houses information on the fisheries of the Maritimes Region. This fishery monitoring information represents a complete census of almost all commercial fishing activities.  
-
 
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
 marfis$database <- "marfis"
@@ -218,7 +119,7 @@ marfis_total <- aggregate(
 Total_number_records_MARFIS <- marfis_total[[2]] 
 Total_number_records_MARFIS 
 ```
-The search of MARFIS resulted in the Table below that summarizes records by species or species group. Records were cropped to match PEZ.
+The search of MARFIS resulted in the Table below that summarizes records by species or species group. Records were cropped to match PEZ. 
 
 
 ```{r}
@@ -228,12 +129,12 @@ kable(as.data.frame(Total_number_records_MARFIS), digits=2, full_width = F, posi
 kable(marfis_freq) %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
-Map below shows the location of samples recorded in the MARFIS and ISDB databases (records are summarized in the tables/sections above). The yellow polygon shows the locations of the theoretical oil spill site. The blue polygon displays the PEZ used for this synthesis. Records were cropped to match PEZ.
+Map below shows the location of samples recorded in the MARFIS database (records are summarized in the tables/sections above). The yellow polygon shows the locations of the theoretical oil spill site. The blue polygon displays the PEZ used for this synthesis. Records were cropped to match PEZ. 
 
 ```{r Fig 3 MARFIS and ISDB records, fig.height=8, fig.width=11}
 site_map(PEZ_poly,site,land,2)
 points(marfis$ENT_LONGITUDE,marfis$ENT_LATITUDE, col="black",pch=16,cex=0.5)
-points(isdb$LONG2,isdb$LAT2, col="black",pch=16,cex=0.5)
+#points(isdb$LONG2,isdb$LAT2, col="black",pch=16,cex=0.5)
 ```
 
 ### **Whale Sightings Database **
