@@ -1,5 +1,5 @@
 
-# Create an empty grid from the samples, 100,000 cells
+# Create an empty grid from the RV samples, 100,000 cells
 # It's necessary to create an empty grid of all samples initially so that the individual
 # date range grids have the same extents
 # If the extents aren't identical the SUM function won't work
