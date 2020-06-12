@@ -1,4 +1,4 @@
-# This function is created for the Aquaculture tool
+# This function is created to search a polygon
 #
 # It adds sightings of the multiple species from the whale sightings database 
 # on the map displaying the study area polygon.
