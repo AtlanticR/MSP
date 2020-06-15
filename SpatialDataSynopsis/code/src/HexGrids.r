@@ -261,7 +261,7 @@ for(i in 1:length(speciescode)) {
   }
   # Rasterize the Species-specific overall Avg, name it and add to the Stack
   tmpRas <- rasterize(HexGridUTM_sf, grd, "AvgFinal")
-  names(tmpRas) <- paste("SP",speciescode[i],"TALL_HEXAVG",sep = "")
+  names(tmpRas) <- paste("SP",speciescode[i],"_TALL_HEXAVG",sep = "")
   stackRas <- addLayer(stackRas,tmpRas)
   
 }

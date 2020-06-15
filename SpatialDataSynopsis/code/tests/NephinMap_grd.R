@@ -102,7 +102,7 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
     if( legendPos == "topright") smallplot <- c(.52, .92, .92, .94)
     
     # Map (up to 5,000,000 pixels)
-    pdf( file=file.path(rasterdir, paste0(prefix, p, "Old.pdf")),
+    pdf( file=file.path(rasterdir, paste0(prefix, p, ".pdf")),
          height=6, width=5.25*diff(lims$x)/diff(lims$y)+1 )
     par( mar=c(1,1,1,1) )
     plot( land, col = "grey80", border = NA, xlim = lims$x , ylim = lims$y,
@@ -144,4 +144,4 @@ end_time - start_time
 
 # Use just 1 or 2 of the stacks in the list
 #SpatialOutputList <- SpatialOutputList[c(2,3)]
-#SpatialOutputList <- SpatialOutputList[c(1)]
+#SpatialOutputList <- SpatialOutputList[c(2)]

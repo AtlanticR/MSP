@@ -51,12 +51,8 @@ get_data('rv', data.dir = data.dir)
 # alternate site for the data:
 # data.dir <- "//dcnsbiona01a/BIODataSVC/IN/MSP/Projects/Aquaculture/SearchPEZ/inputs/mar.wrangling"
 
-source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
 source("./SpatialDataSynopsis/code/src/fn_SelectAllRVSpatialExtentMkGrid.r")
 source("./SpatialDataSynopsis/code/src/fn_InterpolateRV.r")
-source("./SpatialDataSynopsis/code/src/fn_PlotRasters.r")
-source("./SpatialDataSynopsis/code/src/fn_PlotAll_Layout.r")
-# source("./SpatialDataSynopsis/code/src/fn_RestoreTables.r")
 
 
 # using SP package, read in a shapefile
@@ -227,7 +223,9 @@ for(i in 1:length(speciescode)) {
   # line for four time periods
   s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]])
   # s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
-  s2 <- s > 32 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
+  # s2 <- s > 32 # Top 20% assuming it's broken into 10 classes AND four time periods
+  s2 <- s > 16 # Top 20% assuming it's broken into 5 classes AND four time periods
+  
   names(s2) <- paste("SP",speciescode[i],"_TALL_IDW",sep = "")
   stackRas <- addLayer(stackRas,s2)
   
