@@ -167,7 +167,7 @@ The marine mammal sightings database has inherent problems with negative or posi
 
 ### **This document**
 
-This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/SearchPEZ_PortHawkesburyExercise.Rmd>. The full document can be updated rapidly as more or different information becomes available.
+This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/MSP/tree/master/SearchPEZ>. The full document can be updated rapidly as more or different information becomes available.
 
 This document was prepared by the Science MSP Team: <Catalina.Gomez@dfo-mpo.gc.ca>, <Gordana.Lazin@dfo-mpo.gc.ca>, <Brian.Bower@dfo-mpo.gc.ca>, <Phil.Greyson@dfo-mpo.gc.ca>, and <Tana.Worcester@dfo-mpo.gc.ca>
 
