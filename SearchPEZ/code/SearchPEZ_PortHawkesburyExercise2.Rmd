@@ -1,5 +1,5 @@
 ---
-title: "Oil Spill Exercise - June 25 2020"
+title: "Port Hawkesbury/Straight of Canso Oil Spill Exercise"
 author: Synthesis prepared by the MSP and PIER Science Teams
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:

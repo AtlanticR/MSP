@@ -5,7 +5,7 @@ library(rgdal)
 
 #polyPath <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/inputs/polygons"
 polyPath <- "C:/RProjects/data/SearchPEZpolygons"
-AquaSiteName <- "Hawkesbury_Canso"
+AquaSiteName <- "SaintJohn"
 PEZversion <- "25km"
 cat(AquaSiteName)
 pl <- list.files(polyPath,"*.shp")
@@ -15,6 +15,7 @@ site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 
 source("C:/Users/GomezC/Documents/.Rprofile") #Catalina's path to access Oracle passwords
 data.dir = "C:/RProjects/data/mar.wrangling"
+
 get_data(db = 'rv', data.dir = data.dir)
 GSINF = clip_by_poly(df = GSINF
                      , lat.field = "LATITUDE"
@@ -39,5 +40,7 @@ PRO_SPC_INFO = clip_by_poly(df = PRO_SPC_INFO
                             , lon.field = "LONGITUDE"
                             , clip.poly = PEZ_poly)
 self_filter()
+#marfis <- merge(PRO_SPC_INFO, SPECIES[,c("SPECIES_CODE", "SPECIES_NAME")])
+#Mar.utils::df_to_shp(df = marfis,filename = "MARFIS")
 save_data(db='marfis')
 cleanup('marfis')
