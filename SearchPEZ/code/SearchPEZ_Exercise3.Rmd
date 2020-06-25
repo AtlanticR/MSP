@@ -66,7 +66,7 @@ PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZver
 cat(AquaSiteName)
 ```
 
-This report was prepared by the MSP and PIER teams for the Point Tupper Maeine Services Corporation (PTMSC) oil spill exercise held on June 17, 2020, and to evaluate its potential use for spill incidents. A polygon surrounding the spill areas (Predicted Exposure Zone: PEZ) was used to search regional databases (**2002 - 2018**) and summarize species that have been recorded. Species lists generated in this synthesis is subsequently circulated to emergency responders in Maritimes Science to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
+This report was prepared by the MSP and PIER teams for the Point Tupper Maeine Services Corporation (PTMSC) oil spill exercise, and to evaluate its potential use for spill incidents. A polygon surrounding the spill areas (Predicted Exposure Zone: PEZ) was used to search regional databases (**2002 - 2018**) and summarize species that have been recorded. Species lists generated in this synthesis is subsequently circulated to emergency responders in Maritimes Science to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
 
 Map below shows the PEZ polygon (blue) used to search regional databases and summarize recorded species.
 
