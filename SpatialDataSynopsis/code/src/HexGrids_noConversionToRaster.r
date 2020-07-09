@@ -18,7 +18,6 @@
 
 
 library(rgdal) # to read shapefiles
-library(raster) # for the various raster functions
 library(dplyr) # all-purpose data manipulation (loaded after raster package since both have a select() function)
 library(sp) # Classes and methods for spatial data (reading and writing shapefiles)
 library(Mar.datawrangling) # loads and filters RV survey data 
@@ -28,8 +27,6 @@ library(sf)
 # home location
 wd <- "C:/BIO/20200306/GIT/R/MSP"
 setwd(wd)
-
-source("./SpatialDataSynopsis/code/src/fn_SelectAllRVSpatialExtentMkGrid.r")
 
 data.dir <- "../data/mar.wrangling"
 get_data('rv', data.dir = data.dir) # Load RV survey data tables
@@ -57,17 +54,9 @@ species <- dplyr::filter(species, !CODE %in% c(52,51,414,15,200,160,64))
 speciescode <- unique(species[,1])
 
 # Reduce number of species for testing processing
-# speciescode <- speciescode[1] # Cod
+speciescode <- speciescode[1] # Cod
 
 
-# - Make oversize grid ----------------------
-# that all rasters will use as a template
-grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
-restore_tables('rv',clean = FALSE)
-
-# for some reason the rasterize() function needs a Raster Layer and not a Spatial Grid
-grd <- raster(grd)
-stackRas <- stack(grd) #create a stack to hold all the rasters
 
 
 #------ Set year variables -----------------
@@ -196,22 +185,7 @@ for(i in 1:length(speciescode)) {
   
   HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% mutate(AvgFinal = select(., c(T1_WgtMean,T2_WgtMean,T3_WgtMean,T4_WgtMean)) %>% 
                                                       rowMeans(na.rm = TRUE))
-  # colname <- paste("SP",speciescode[i],"_AvgFinal",sep = "")
-  # names(HexGridUTM_sf_TIB)[8] <- colname
-  # 
-  # colnamesList <- list()
-  # sp = speciescode[i]
-  # for (i in 1:4) {
-  #   colname <- paste("SP",sp,"_T",i,"Avg",sep = "") 
-  #   colnamesList[[i]] <- colname
-  # }
-  # 
-  # for(i in 1:length(colnamesList)) {
-  #   y <- i+2
-  #   names(HexGridUTM_sf_TIB)[y] <- colnamesList[[i]]
-  # }
-  #
-  
+ 
   # this next line assumes 4 time periods!
 #  HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% mutate(AvgFinal = SumAvg/4) # calculate Average of the averages
 #  HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% select(-SumAvg) # remove SumAvg column
@@ -224,40 +198,21 @@ for(i in 1:length(speciescode)) {
   # Gridlist[[y]] <- HexGridUTM_sf
   # names(Gridlist[[y]]) <- speciescode[i]
   
-  # Rasterize the Species-specific means, name them and add to the Stack
-  FieldList <- c("T1_WgtMean", "T2_WgtMean", "T3_WgtMean", "T4_WgtMean")
-  for(z in 1:length(FieldList)) {
-    tmpRas <- rasterize(HexGridUTM_sf, grd, FieldList[z])
-    names(tmpRas) <- paste("SP",speciescode[i],"_T",z,"_HEXAVG",sep = "")
-    stackRas <- addLayer(stackRas,tmpRas)
-  }
-  # Rasterize the Species-specific overall Avg, name it and add to the Stack
-  tmpRas <- rasterize(HexGridUTM_sf, grd, "AvgFinal")
-  names(tmpRas) <- paste("SP",speciescode[i],"_TALL_HEXAVG",sep = "")
-  stackRas <- addLayer(stackRas,tmpRas)
-  
+
 }
 
-names(stackRas)
 
-writeRaster(stackRas,"./SpatialDataSynopsis/Output/HexGridAverages.grd", format="raster")
+# Network location
+# dsn = "U:/GIS/Projects/MSP/Persistance/Output/"
+# Home location
+dsn = "./SpatialDataSynopsis/Output"
+output = paste0(dsn, "/", "Cod.shp")
 
-# Export layers in stackRas to .tif files
-dir <- "./SpatialDataSynopsis/Output/"
-for(i in 1:nlayers(stackRas)){
-  tif <- paste(dir,names(stackRas[[i]]),".tif",sep = "")
-  writeRaster(stackRas[[i]],tif, overwrite = TRUE, datatype = "INT2U")
-}
+st_write(HexGridUTM_sf, output, delete_layer = TRUE) # overwrites
 
-plot(stackRas[[10]])
-plot(stackRas[[5]])
-
-table((as.data.frame(stackRas[[5]])))
-table(as.data.frame(as.integer(stackRas[[5]])))
-
-i=2
-tif <- paste(dir,names(stackRas[[i]]),"New.tif",sep = "")
-writeRaster(stackRas[[i]],tif, overwrite = TRUE, datatype = "INT2U")
+# writeOGR(allCatchUTM,"./SpatialDataSynopsis/Output",paste(Time1,"SP_",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile")
+# writeOGR(allCatchUTM,"./SpatialDataSynopsis/Output",paste("SP_",speciescode[i],"_AllUTM",sep = ""),driver="ESRI Shapefile")
+# writeOGR(allCatchUTM,dsn,paste(Time1,"SP",speciescode[i],"_UTM",sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
 
 
       

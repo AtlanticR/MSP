@@ -77,7 +77,8 @@ restore_tables('rv',clean = FALSE)
 
 # Get list of species from other data table
 # fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
-species <- read.csv("../data/Spreadsheets/ThirtyFiveSpecies.csv", header = TRUE)
+# species <- read.csv("../data/Spreadsheets/ThirtyFiveSpecies.csv", header = TRUE)
+species <- read.csv("../data/Spreadsheets/SynopsisSpecies.csv", header = TRUE)
 # filter out snow crab.  snow crab was not recorded until 1981
 species <- filter(species, CODE != 2526)
 speciescode <- unique(species[,1])
@@ -89,7 +90,7 @@ speciescode <- unique(species[,1])
 # speciescode <- speciescode[7:9] # pollock, redfish, halibut
 
 # speciescode <- speciescode[7] # Redfish
-speciescode <- speciescode[c(1,22)] # cod and barndoor skate
+ speciescode <- speciescode[c(1,22)] # cod and barndoor skate
 # speciescode <- speciescode[c(22)] # barndoor skate
 # speciescode <- speciescode[c(1)] # cod
 
@@ -128,6 +129,7 @@ for(i in 1:length(speciescode)) {
   raster_list <- list() # Create an empty list
   skew_list1 <- list() # create list to hold skewness values
   presence_list1 <- list() # create a list to hold presence values (row counts)
+  print(paste("Species ", speciescode[i],sep = ""))
   for (y in 1:length(yearb)) {
     yearb1 <- yearb[y]
     yeare1 <- yeare[y]
@@ -141,6 +143,7 @@ for(i in 1:length(speciescode)) {
     GSINF2 <- GSINF # make copy of GSINF to use for a full set of samples
     GSSPECIES <- GSSPECIES[GSSPECIES$CODE %in% speciescode[i],] # WORKS
     self_filter(keep_nullsets = FALSE,quiet = TRUE)
+    print("Completed self-filter")
     # Create a valid DEPTH field (Depth values are in fathoms)
     GSINF2$DEPTH <- round((GSINF2$DMIN*1.8288+GSINF2$DMAX*1.8288)/2,2)
     # Keep only the columns necessary
@@ -194,7 +197,9 @@ for(i in 1:length(speciescode)) {
     
     # Interpolate the sample data (STDWGT) using the large extent grid
     # Using the same values for Power and Search Radius as Anna's script (idp and maxdist)
+    print("Sending data to Grid_fun")
     Gridlist <-  Grid_fn(allCatchUTM, grd, 2.0, 16668)
+    print("Grid_fun complete"    )
     rasDD <- projectRaster(Gridlist$raster, crs=CRS_ras) #change test.idw from UTM to wgs84
     dir <- "./SpatialDataSynopsis/Output/"
     # This is the UTM version of the raster
@@ -211,7 +216,8 @@ for(i in 1:length(speciescode)) {
     tmpRas <- Gridlist$raster
     names(tmpRas) <- paste("SP",speciescode[i],"_",Time1,"_IDW",sep = "")
     stackRas <- addLayer(stackRas,tmpRas)
-    
+    print("Restoring tables")
+    print(paste("stackRas has ",nlayers(stackRas)," layers", sep=""))
     restore_tables('rv',clean = FALSE)
     
     raster_list3 <- append(raster_list3, raster_list)
@@ -221,10 +227,10 @@ for(i in 1:length(speciescode)) {
   # line for 6 time periods
   #  s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
   # line for four time periods
-  s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]])
+  s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]], na.rm = TRUE)
   # s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
   # s2 <- s > 32 # Top 20% assuming it's broken into 10 classes AND four time periods
-  s2 <- s > 16 # Top 20% assuming it's broken into 5 classes AND four time periods
+  s2 <- s >= 16 # Top 20% assuming it's broken into 5 classes AND four time periods
   
   names(s2) <- paste("SP",speciescode[i],"_TALL_IDW",sep = "")
   stackRas <- addLayer(stackRas,s2)
@@ -266,6 +272,8 @@ for(i in 1:nlayers(stackRas)){
 
 # Write the entire stack out as a .grd file
 writeRaster(stackRas,"./SpatialDataSynopsis/Output/IDWReclassed.grd", format="raster")
+# All species
+writeRaster(stackRas,"./SpatialDataSynopsis/Output/IDWReclassed_Allsp.grd", format="raster")
 RasStack <- stack("./SpatialDataSynopsis/Output/TwoSp_InterpReclass.grd")
 
 # Write it out as a multiband tif
@@ -280,3 +288,11 @@ for(i in 1:length(raster_list)){
   # poly <- rasterToPolygons(raster_list2[[i]], fun=function(x){x==1}, n=4, na.rm=TRUE, digits=12, dissolve=TRUE)
   # writeOGR(poly,"U:/GIS/Projects/MSP/HotSpotCode/Output",paste("TestSP_",speciescode[i],sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
 }
+
+# Export layers in stackRas to .tif files
+
+for(i in 1:nlayers(stackRas)){
+  tif <- paste(dir,names(stackRas[[i]]),".tif",sep = "")
+  writeRaster(stackRas[[i]],tif, overwrite = TRUE, datatype = "INT1U")
+}
+
