@@ -17,8 +17,9 @@ bound <- readOGR(dsn,"HA_extent_20200708")
 
 # bathy <- '../data/Projects/SDM_Pacific/predictors/bathy.asc'
 bath <- '../data/Projects/SDM_Pacific/predictors/NOAABath.tif'
-sst <- '../data/Projects/LauraFeyrer/Imagery/Satellite/mean_noaa_sst_summer_2010-2019.tif'
-chl <- '../data/Projects/LauraFeyrer/Imagery/Satellite/mean_modis_chl_summer_2010-2019.tif'
+sst <- '../data/Projects/LauraFeyrer/Imagery/Satellite/mean_noaa_sst_MJJA_2010-2019.tif'
+
+chl <- '../data/Projects/LauraFeyrer/Imagery/Satellite/mean_modis_chl_MJJA_2010-2019.tif'
 # sal <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Sal_JulyMean_2012_14.tif' 
 # tem <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Temp_JulyMean_2012_14.tif' 
 # temOld <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Temp_JulyMean_2012_14_Old.tif'
