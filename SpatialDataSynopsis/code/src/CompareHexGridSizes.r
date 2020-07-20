@@ -1,21 +1,7 @@
 ###########################################################################################
 ###########################################################################################
 ### 
-### This code is a recreation in R of ImportantHabitat.py by Anna Serdynska from 2012
-### Original purpose:
-### "To create important habitat layers for various fish species from DFO's RV survey data"
 ### 
-### Author: Philip Greyson
-### Date: December 2020
-### 
-### Using RV survey data clipped to the Scotian Shelf this process interpolates surfaces of
-### standardized catch weight (STDWGT) for six time periods, reclassifies the surfaces into
-### deciles, sums the six surfaces together and then creates a summary surface for each 
-### species out of the top 20 percent (sum > 48 out of possible 60).
-### 
-### Skewness and presence metrics are calculated for each species.
-### The resultant raster, interpreted as a way of categorizing the persistance of a species
-### through different management regimes, is exported.
 ### 
 ###########################################################################################
 ###########################################################################################
@@ -27,7 +13,6 @@ library(dplyr) # all-purpose data manipulation (loaded after raster package sinc
 library(gstat) # for IDW function
 library(sp) #Classes and methods for spatial data
 library(Mar.datawrangling)
-library(rgeos) # required for the dissolve argument in rasterToPolygon() according to help file
 library(moments) # required for skewness calculation
 library(sf)
 

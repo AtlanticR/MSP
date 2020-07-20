@@ -24,12 +24,9 @@ library(sp) # Classes and methods for spatial data (reading and writing shapefil
 library(Mar.datawrangling) # loads and filters RV survey data 
 library(sf)
 
-# Load RV data
-# home location
-wd <- "C:/BIO/20200306/GIT/R/MSP"
-setwd(wd)
 
 source("./SpatialDataSynopsis/code/src/fn_SelectAllRVSpatialExtentMkGrid.r")
+source("./SpatialDataSynopsis/code/src/fn_CreateSpPresenceObject.R")
 
 data.dir <- "../data/mar.wrangling"
 get_data('rv', data.dir = data.dir) # Load RV survey data tables
@@ -39,7 +36,7 @@ save_tables('rv') # creates a copy of RV survey tables to new environment ('dw')
 # bring in OceanMask for clipping data and rasters
 dsn <- "../data/Boundaries"
 oceanMask <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
-oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
+# oceanMaskUTM <- spTransform(oceanMask,CRS("+init=epsg:26920"))
 
 # bring in Hex grid for analysis
 gridDSN <- "../data/Zones"
@@ -57,11 +54,12 @@ species <- dplyr::filter(species, !CODE %in% c(52,51,414,15,200,160,64))
 speciescode <- unique(species[,1])
 
 # Reduce number of species for testing processing
-# speciescode <- speciescode[1] # Cod
+speciescode <- speciescode[1] # Cod
 
 
 # - Make oversize grid ----------------------
 # that all rasters will use as a template
+# Arguments for SelectRV_MkGrid_fn() are season, sampletype, ncells
 grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
 restore_tables('rv',clean = FALSE)
 
@@ -143,9 +141,9 @@ for(i in 1:length(speciescode)) {
     allCatch_sf <- st_as_sf(allCatch, coords = c("LONGITUDE","LATITUDE"), crs = 4326)
     allCatchUTM_sf <- st_transform(allCatch_sf, crs = 26920)
     
-    countAllSample <- nrow(allCatch)
-    countPresence <- nrow(filter(allCatch,STDWGT > 0))
-    
+# run the function
+#    allCatchUTM_sf_new <- CreatePresenceObject_fn(yearb[y], yeare[y], "SUMMER", 1, speciescode[i])
+
     # Join the RV point file to the GRID_ID of the HexGrid.
     # This creates an sf Object of all the Points with associated GRID_ID.
     allCatchUTM_sf2 <- st_join(allCatchUTM_sf, left = FALSE, HexGridUTM_sf["GRID_ID"])
