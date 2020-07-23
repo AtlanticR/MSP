@@ -2,13 +2,8 @@ library(rgdal) # to read shapefiles
 library(raster) # for the various raster functions
 library(sp) # Classes and methods for spatial data
 
-
-# This is my R drive
-wd <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R"
-setwd(wd)
-
 # bring in OceanMask for clipping data and rasters
-dsn <- "./data/Boundaries"
+dsn <- "../data/Boundaries"
 # oceanMaskMAR <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone")
 oceanMaskMAR <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
 # oceanMaskATL <- readOGR() # NEED TO CONVERT GDB FC to shapefile
@@ -23,7 +18,7 @@ sst <- 'R:/Science/CESD/HES_MSP/R/data/Projects/SDM_Pacific/predictors/mean_jul_
 chl <- 'R:/Science/CESD/HES_MSP/R/data/Projects/SDM_Pacific/predictors/mean_jul_chl_2012_2018.tif'
 sal <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Sal_JulyMean_2012_14.tif' 
 tem <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Temp_JulyMean_2012_14.tif' 
-temOld <- 'U:/GIS/Projects/MSP/MSPData/NaturalResources/Climate/Temp_JulyMean_2012_14_Old.tif'
+
 
 
 rastNames <- c('bath','sst','chl','sal','tem')
@@ -32,22 +27,20 @@ names(rastList) <- rastNames
 # turn the .tifs and .asc files into RasterLayers
 rastList1 <- lapply(rastList,raster)
 # Set initial clipping extent from the smallest raster (bathy)
-names(rastList1)
-
 
 # See this post on alignning rasters:
 # https://gis.stackexchange.com/questions/158159/snapping-raster-grids-in-r
 
+# Set initial clipping extent from the smallest raster (bathy)
 # get parameters of the bathymetry raster 
 # to use in the resample() function
-
 Resamp <- raster(bathy) 
 
 
 # resample all rasters to the same extent (bathymetry layer)
 # crop and mask to the Scotian Shelf extent
 # project to UTM Zone 20, with a resolution of 1000m
-prjFun <- function(y) {
+Crop_fn <- function(y) {
   crs(y) <- prj
   y <- resample(y,Resamp)
   y <- crop(y,oceanMaskMAR)
@@ -55,58 +48,30 @@ prjFun <- function(y) {
   y <- projectRaster(y,crs = prjUTM,res = 1000)
 }
 
-# apply the prjFun() function to each raster in the list
-rastList2 <- lapply(rastList1,prjFun)
+# apply the Crop_fn() function to each raster in the list
+rastList2 <- lapply(rastList1, Crop_fn)
 
-# name the rasters in the new list
-names(rastList2) <- rastNames
-
-rastList2[[1]] <- round(rastList2[[1]],0) # this isn't really needed since I can use the datatype argument
+# Round down values in rasters to reduce precision.
+# For bathymetry, round to zero decimal places
+rastList2[[1]] <- round(rastList2[[1]],0) # this may not needed since I can use the datatype argument
 # in writeRaster( , ,datatype = "INT2S")
 
-rastList2[[2]] <- round(rastList2[[2]],1)
-rastList2[[3]] <- round(rastList2[[3]],1)
-rastList2[[4]] <- round(rastList2[[4]],1)
-rastList2[[5]] <- round(rastList2[[5]],1)
-
-
-plot(rastList2[[1]])
-plot(rastList2[[2]])
-plot(rastList2[[3]])
-plot(rastList2[[4]])
-plot(rastList2[[5]])
-
-summary(rastList2[[1]])
-
-dsn <-  "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SDM_PacificMARCollaboration/DataInput"
-
-start_time <- Sys.time()
-for(i in 1:5){
-  rast <- rastList2[[i]] > -9999 # WHAT'S THIS FOR?
-  poly <- rasterToPolygons(rast,na.rm = TRUE, dissolve = TRUE)
-  writeOGR(poly,dsn,paste("Poly_",names(rastList2[i]),sep = ""),driver="ESRI Shapefile", overwrite_layer = TRUE)
-}
-end_time <- Sys.time()
-end_time - start_time
-
-
-
-SumFun <- function(y) {
-  table(as.vector(y))
+for(i in 2:5){
+  round(rastList2[[i]],1)
 }
 
 # Write the rasters to tif files
+# The bathymetry tif should be an integer raster so the 
+# writeRaster() command uses the datatype = "INT2S" argument
+dsn <-  "./SDM_PacificMARCollaboration/DataInput"
+
 tif <- paste(dsn,"/",names(rastList2[1]),"_1.tif",sep = "")
 writeRaster(rastList2[[1]],tif,overwrite = TRUE,datatype = "INT2S")
-tif <- paste(dsn,"/",names(rastList2[2]),"_1.tif",sep = "")
-writeRaster(rastList2[[2]],tif,overwrite = TRUE)
-tif <- paste(dsn,"/",names(rastList2[3]),"_1.tif",sep = "")
-writeRaster(rastList2[[3]],tif,overwrite = TRUE)
-tif <- paste(dsn,"/",names(rastList2[4]),"_1.tif",sep = "")
-writeRaster(rastList2[[4]],tif,overwrite = TRUE)
-tif <- paste(dsn,"/",names(rastList2[5]),"_1.tif",sep = "")
-writeRaster(rastList2[[5]],tif,overwrite = TRUE)
 
+for(i in 2:5){
+  tif <- paste(dsn,"/",names(rastList2[i]),"_1.tif",sep = "")
+  writeRaster(rastList2[[i]],tif,overwrite = TRUE)
+}
 
 
 # Create a stack of the rasters and export as a single tif file (5 bands)
