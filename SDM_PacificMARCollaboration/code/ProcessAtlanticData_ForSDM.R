@@ -1,13 +1,29 @@
+###########################################################################################
+###########################################################################################
+### 
+### This code process different raster layers to the same spatial extent and resolution
+### so that they can be used as predictor layers within a species distribution model
+### 
+### Author: Philip Greyson
+### Date: June 2020
+### 
+### 
+### Link for code repository
+### https://github.com/AtlanticR/MSP/tree/master/SDM_ProcessData/code
+### 
+###########################################################################################
+###########################################################################################
+
+
 library(rgdal) # to read shapefiles
 library(raster) # for the various raster functions
 library(sp) # Classes and methods for spatial data
 
 # bring in OceanMask for clipping data and rasters
+# Polygon will represent the study area
 dsn <- "../data/Boundaries"
 # oceanMaskMAR <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone")
 oceanMaskMAR <- readOGR(dsn,"ScotianShelfOceanMask_WithoutCoastalZone_Edit")
-# oceanMaskATL <- readOGR() # NEED TO CONVERT GDB FC to shapefile
-oceanMaskUTM <- spTransform(oceanMaskMAR,CRS("+init=epsg:26920"))
 
 prj <- CRS("+init=epsg:4326") # EPSG code for WGS84
 prjUTM <- CRS("+init=epsg:26920") # EPSG code for NAD83 UTM Zone 20
@@ -41,7 +57,7 @@ Resamp <- raster(bathy)
 # crop and mask to the Scotian Shelf extent
 # project to UTM Zone 20, with a resolution of 1000m
 Crop_fn <- function(y) {
-  crs(y) <- prj
+   crs(y) <- prj
   y <- resample(y,Resamp)
   y <- crop(y,oceanMaskMAR)
   y <- mask(y,oceanMaskMAR)
@@ -76,10 +92,9 @@ for(i in 2:5){
 
 # Create a stack of the rasters and export as a single tif file (5 bands)
 st <- stack(rastList2)  # works!!!
-tif2=paste(dsn,"/Stack_1.tif",sep = "")
-writeRaster(st,tif2)
 
 
+################################################################################-
 # select RV samples for barndoor skate and export as a shapefile
 
 library(dplyr) # all-purpose data manipulation (loaded after raster package since both have a select() function)
