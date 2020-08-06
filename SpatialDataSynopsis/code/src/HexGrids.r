@@ -142,7 +142,8 @@ for(i in 1:length(speciescode)) {
     allCatchUTM_sf <- st_transform(allCatch_sf, crs = 26920)
     
 # run the function
-#    allCatchUTM_sf_new <- CreatePresenceObject_fn(yearb[y], yeare[y], "SUMMER", 1, speciescode[i])
+    allCatchUTM_sf_new <- CreatePresenceObject_fn(yearb[y], yeare[y], "SUMMER", 1, speciescode[i])
+#    Returnlist <-  CreatePresenceObject_fn(yearb[y], yeare[y], "SUMMER", 1, speciescode[i])
 
     # Join the RV point file to the GRID_ID of the HexGrid.
     # This creates an sf Object of all the Points with associated GRID_ID.
