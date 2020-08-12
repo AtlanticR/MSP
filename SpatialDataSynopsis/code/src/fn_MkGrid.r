@@ -13,3 +13,4 @@ MakeEmptyGrid_fn <- function(data, ncells) {
   fullgrid(grd2) <- TRUE  # Create SpatialGrid object
   return(grd2)
 }
+

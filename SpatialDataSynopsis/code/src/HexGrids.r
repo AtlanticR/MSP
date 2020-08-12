@@ -25,8 +25,7 @@ library(Mar.datawrangling) # loads and filters RV survey data
 library(sf)
 
 
-source("./SpatialDataSynopsis/code/src/fn_SelectAllRVSpatialExtentMkGrid.r")
-source("./SpatialDataSynopsis/code/src/fn_CreateSpPresenceObject.R")
+source("./SpatialDataSynopsis/code/src/fn_MkGrid.r")
 
 data.dir <- "../data/mar.wrangling"
 get_data('rv', data.dir = data.dir) # Load RV survey data tables
@@ -46,7 +45,6 @@ HexGridUTM <- spTransform(HexGrid,CRS("+init=epsg:26920"))
 
 
 # Get list of species from other data table
-# fish <- read.csv("./data/Spreadsheets/FifteenSpecies.csv", header = TRUE)
 species <- read.csv("../data/Spreadsheets/SynopsisSpecies.csv", header = TRUE)
 # filter out low occurence species
 # (NORTHERN WOLFFISH,SPOTTED WOLFFISH,ROUNDNOSE GRENADIER,CUSK,BARNDOOR SKATE,ARGENTINE(ATLANTIC),CAPELIN)
@@ -54,13 +52,28 @@ species <- dplyr::filter(species, !CODE %in% c(52,51,414,15,200,160,64))
 speciescode <- unique(species[,1])
 
 # Reduce number of species for testing processing
-speciescode <- speciescode[1] # Cod
+speciescode <- speciescode[c(1,7)] # Cod, redfish
 
 
 # - Make oversize grid ----------------------
 # that all rasters will use as a template
-# Arguments for SelectRV_MkGrid_fn() are season, sampletype, ncells
-grd <- SelectRV_MkGrid_fn("SUMMER", 1, 100000)
+# Filter RV survey data down to "SUMMER"  and Type=1
+GSMISSIONS <- GSMISSIONS[GSMISSIONS$SEASON=="SUMMER",]
+GSXTYPE <- GSXTYPE[GSXTYPE$XTYPE==1,]
+self_filter(keep_nullsets = FALSE,quiet = TRUE)
+
+# Keep only the columns necessary
+# ("MISSION" "SETNO" "SDATE" "LATITUDE" "LONGITUDE")
+GSINF_all <- dplyr::select(GSINF,1:3,33:34)
+#names(GSINF_all)
+
+# Convert to the SpatialPointsFeature
+# using SP package to create a SPATIAL OBJECT
+coordinates(GSINF_all) <- ~LONGITUDE+LATITUDE
+proj4string(GSINF_all) <- CRS("+init=epsg:4326") # Define coordinate system (WGS84)
+GSINF_allUTM <- spTransform(GSINF_all,CRS("+init=epsg:26920"))# Project to UTM
+
+grd <- MakeEmptyGrid_fn(GSINF_allUTM, 100000)
 restore_tables('rv',clean = FALSE)
 
 # for some reason the rasterize() function needs a Raster Layer and not a Spatial Grid
@@ -87,8 +100,6 @@ yeare <- c(2005, 2009, 2014, 2020)
 
 # ---------- BEGIN Loops ----------------------####
 
-
-Gridlist <- list() # create list to hold HexGrids
 count <- 1
 start_time <- Sys.time()
 for(i in 1:length(speciescode)) {
@@ -141,9 +152,6 @@ for(i in 1:length(speciescode)) {
     allCatch_sf <- st_as_sf(allCatch, coords = c("LONGITUDE","LATITUDE"), crs = 4326)
     allCatchUTM_sf <- st_transform(allCatch_sf, crs = 26920)
     
-# run the function
-    allCatchUTM_sf_new <- CreatePresenceObject_fn(yearb[y], yeare[y], "SUMMER", 1, speciescode[i])
-#    Returnlist <-  CreatePresenceObject_fn(yearb[y], yeare[y], "SUMMER", 1, speciescode[i])
 
     # Join the RV point file to the GRID_ID of the HexGrid.
     # This creates an sf Object of all the Points with associated GRID_ID.
@@ -180,49 +188,22 @@ for(i in 1:length(speciescode)) {
     restore_tables('rv',clean = FALSE)
     Time <- Time + 1
   }
-  #  s <- sum(raster_list[[1]],raster_list[[2]],raster_list[[3]],raster_list[[4]],raster_list[[5]],raster_list[[6]])
-  #  s2 <- s > 48 # Anna's original value was 39 but I've got another time period so increased it to 48 (80%)
-  
+
   count <- count + 1
 
   HexGridUTM_sf_TIB <- as_tibble(HexGridUTM_sf)
-  #HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% mutate(SumAvg = select(., c(T1_WgtMean,T2_WgtMean,T3_WgtMean,T4_WgtMean)) %>% 
-   #                                                              rowSums(na.rm = TRUE))
-  
- # try
-  #HexGridUTM_sf_TIB$Avg <- HexGridUTM_sf_TIB %>% select(c(T1_WgtMean,T2_WgtMean,T3_WgtMean,T4_WgtMean) %>% rowMeans(na.rm = TRUE)
-  #WHICH is exactly what is above   
-  
-  HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% mutate(AvgFinal = select(., c(T1_WgtMean,T2_WgtMean,T3_WgtMean,T4_WgtMean)) %>% 
-                                                      rowMeans(na.rm = TRUE))
-  # colname <- paste("SP",speciescode[i],"_AvgFinal",sep = "")
-  # names(HexGridUTM_sf_TIB)[8] <- colname
-  # 
-  # colnamesList <- list()
-  # sp = speciescode[i]
-  # for (i in 1:4) {
-  #   colname <- paste("SP",sp,"_T",i,"Avg",sep = "") 
-  #   colnamesList[[i]] <- colname
-  # }
-  # 
-  # for(i in 1:length(colnamesList)) {
-  #   y <- i+2
-  #   names(HexGridUTM_sf_TIB)[y] <- colnamesList[[i]]
-  # }
-  #
-  
-  # this next line assumes 4 time periods!
-#  HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% mutate(AvgFinal = SumAvg/4) # calculate Average of the averages
-#  HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% select(-SumAvg) # remove SumAvg column
 
-# perhaps keep all the field names identical and rename them in the rasterize function  
-#  colname <- paste("SP",speciescode[i],"_AvgFinal",sep = "")
-#  names(HexGridUTM_sf_TIB)[names(HexGridUTM_sf_TIB) == "AvgFinal"] <- colname
+  
+  HexGridUTM_sf_TIB <- HexGridUTM_sf_TIB %>% mutate(AvgFinal = 
+                                select(., c(T1_WgtMean,T2_WgtMean,T3_WgtMean,
+                                T4_WgtMean)) %>% rowMeans(na.rm = TRUE))
+
 
   HexGridUTM_sf <- HexGridUTM_sf_TIB %>% st_as_sf(crs = 26920)
-  # Gridlist[[y]] <- HexGridUTM_sf
-  # names(Gridlist[[y]]) <- speciescode[i]
-  
+  dir <- "./SpatialDataSynopsis/Output/New/"
+  dsn <- paste(dir,"SP_",speciescode[i],".shp",sep = "")
+  st_write(HexGridUTM_sf,dsn, append=FALSE)
+
   # Rasterize the Species-specific means, name them and add to the Stack
   FieldList <- c("T1_WgtMean", "T2_WgtMean", "T3_WgtMean", "T4_WgtMean")
   for(z in 1:length(FieldList)) {
@@ -239,24 +220,11 @@ for(i in 1:length(speciescode)) {
 
 names(stackRas)
 
-writeRaster(stackRas,"./SpatialDataSynopsis/Output/HexGridAverages.grd", format="raster")
+# writeRaster(stackRas,"./SpatialDataSynopsis/Output/HexGridAverages.grd", format="raster")
 
 # Export layers in stackRas to .tif files
-dir <- "./SpatialDataSynopsis/Output/"
+dir <- "./SpatialDataSynopsis/Output/New/"
 for(i in 1:nlayers(stackRas)){
   tif <- paste(dir,names(stackRas[[i]]),".tif",sep = "")
   writeRaster(stackRas[[i]],tif, overwrite = TRUE, datatype = "INT2U")
 }
-
-plot(stackRas[[10]])
-plot(stackRas[[5]])
-
-table((as.data.frame(stackRas[[5]])))
-table(as.data.frame(as.integer(stackRas[[5]])))
-
-i=2
-tif <- paste(dir,names(stackRas[[i]]),"New.tif",sep = "")
-writeRaster(stackRas[[i]],tif, overwrite = TRUE, datatype = "INT2U")
-
-
-      
