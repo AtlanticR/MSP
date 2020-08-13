@@ -4,11 +4,18 @@
 .Ruserdata
 .Rprofile
 
+## reports with privacy concerns
+SearchPEZ_CablesZone1Aug2020.Rmd
+SearchPEZ_CablesZone2Aug2020.Rmd
+SearchPEZ_CablesZone3Aug2020.Rmd
+SearchPEZ_CablesZone4Aug2020.Rmd
 
-
+#
 *~
 *.pdf
 *.tiff
+*.Rmd
+*.7z
 auto*
 
 *.rdata
@@ -39,6 +46,8 @@ auto*
 *.sbn
 *.sbx
 *.xml
+*.qpj
+
 
 
 
