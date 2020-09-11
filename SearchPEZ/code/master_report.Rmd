@@ -213,7 +213,8 @@ points(isdb$LONG2,isdb$LAT2, col="black",pch=16,cex=0.5)
 ### **Whale Sightings Database **
 Whalesitings Database, Ocean and Ecosystem Sciences Division, Dartmouth, NS
 
-Most sightings are collected on an opportunistic basis and observations may come from individuals with a variety of expertise in marine mammal identification experiences. Most data have been gathered from platforms of opportunity that were vessel-based. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/40642999.pdf> or contact Pamela.Emery@dfo-mpo.gc.ca
+Most sightings are collected on an opportunistic basis and observations may come from individuals with a variety of expertise in marine mammal identification experiences. Most data have been gathered from platforms of opportunity that were vessel-based. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/40642999.pdf> or contact <XMARWhaleSightings@dfo-mpo.gc.ca>
+
 
 Map below shows location of marine mammals sightings recorded in the Fisheries and Oceans whale sightings database. Map includes SARA and COSEWIC species within the region of interest. The yellow polygon shows the locations of the theoretical site. The blue polygon displays the PEZ used for this synthesis. 
 
