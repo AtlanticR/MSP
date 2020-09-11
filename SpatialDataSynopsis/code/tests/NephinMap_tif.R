@@ -3,7 +3,7 @@ library(raster)
 library(sp)
 library(rgdal)
 library(RColorBrewer)
-load("SpatialDataSynopsis/code/tests/Data/LandPolygon.RData")
+load("SpatialDataSynopsis/code/tests/Data/Boundaries/LandPolygon.RData")
 
 # R E A D   S T A C K   S P A T I A L   O U T P U T S 
 rasterdir <- "SpatialDataSynopsis/code/tests/Data/outputs/"
@@ -17,7 +17,7 @@ for(x in SpatialOutputsFiles)
 }
 SpatialOutputs <- setMinMax(SpatialOutputs)
 
-CRS_ras <- CRS("+init=epsg:26920")
+CRS_ras <- CRS("+init=epsg:26920") #EPSG code for UTM Zone 20, NAD83
 SpatialOutputs <- projectRaster(SpatialOutputs, crs=CRS_ras)
 
 # F U N C T I O N S 
@@ -46,7 +46,7 @@ MapLayers <- function( layers, lims, prefix="Map_", legendPos){
   for(p in preds){
     
     # legend text
-    if(grepl("hexsum", p, ignore.case = T))  legend.title <- "Sum Biomass per grid cell"
+    if(grepl("HEXAVG", p, ignore.case = T))  legend.title <- "Average Biomass per grid cell"
     if(grepl("rclass", p, ignore.case = T))  legend.title <- "Ranked Areas"
     if ( !exists("legend.title") ) legend.title <- p
     
