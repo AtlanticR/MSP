@@ -1,5 +1,5 @@
 ---
-title: "Search Species in PEZ - Master Report"
+title: "Search Species in PEZ - Master Report for Internal DFO use only"
 author: Synthesis prepared by the MSP Team
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
@@ -66,12 +66,11 @@ PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZver
 ```{r echo=FALSE, results='asis'}
 cat(AquaSiteName)
 ```
-
-This report was prepared by the MSP team for use in supporting a request Request for Review form for the Amitié Submarine Cable System Project. A polygon surrounding the potential submarine cable (Predicted Exposure Zone: PEZ) was used to search regional databases (**2002 - 2018**) and summarize species that have been recorded. Species lists generated in this synthesis were subsequently circulated to staff in CSAS Maritimes Science to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
+This report if for internal DFO use only. It was prepared by the MSP team for use in supporting a request Request for Review form for the x Project. A polygon representing the Predicted Exposure Zone (PEZ) was used to search regional databases (**2002 - 2018**) and summarize species that have been recorded. We recommend to share the species lists generated in this synthesis with DFO staff in CSAS Maritimes Science to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
 
 Map below shows the PEZ polygon (blue) used to search regional databases and summarize recorded species.
 
-NOTE FOR DEVELOPMENT: WOULD BE IDEAL TO USE CSASDOWN FOR INTERNAL RPEORTING FORMATTING 
+NOTE FOR DEVELOPMENT: WOULD BE IDEAL TO USE CSASDOWN FOR INTERNAL REPORTING FORMATTING 
 
 
 ```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11}
@@ -231,6 +230,26 @@ plot_wsdb(PEZ_poly,wsdb_filter,5)
 ```
 
 # **Resources**
+
+### **Important Disclaimers for ISDB and MARFIS**
+
+Please remember that fisheries catch and effort information:
+1.         for an individual licence holder is considered personal information and is protected under section 19 of the Access to Information Act <https://laws-lois.justice.gc.ca/eng/acts/a-1/page-5.html#h-12>. 
+2.         for a corporate licence holder is considered to be sensitive, proprietary information and protected under Section 20 of the Access to Information Act <https://laws-lois.justice.gc.ca/eng/acts/a-1/page-5.html#h-13>.  
+Without written consent, DFO is not permitted to release information or data products (e.g., maps and data layers) that might reveal personal or third party information such as catch, landed values, and vessel-specific fishing locations.  All of this is spelled out to DFO staff here - Informal Release Guidelines (i.e. Appendix B – “Catch and Effort and Quota Information: Do’s and Don’ts for Informal Release” <\\ent.dfo-mpo.ca\ATLShares\Shared\ATIP Information\Informal_Release_Guidelines-eng.docx>).
+
+The reproducible reporting tool is for internal use only. Please do not release data you should not. If in doubt, check with your supervisor.
+
+Should you receive a request for set-level Observer data (ISDB) and MARFIS, please just forward to Peter Comeau and <XMARComData@dfo-mpo.gc.ca>, respectively. Please feel free to use the email template below. Note that the template includes an attachment which you can download here - Informal Release Guidelines <\\ent.dfo-mpo.ca\ATLShares\Shared\ATIP Information\Informal_Release_Guidelines-eng.docx>. If you are including observer data in a publication, please remember to aggregate it.  If you need help doing so, Mike McMahon has a handy R script that can help you. Ask him - he loves to talk about his scripts. 
+
+TLDR; Please do not share set-level observer data (ISDB) and MARFIS with external (non-DFO) people.  
+
+Hi,
+
+I apologize, but we can not provide you with the level of detail as it has been requested.  Fisheries catch and effort information for an individual licence holder is considered personal information and is protected under section 19 of the Access to Information Act. Fisheries catch and effort information for a corporate licence holder is considered to be sensitive, proprietary information and protected under Section 20 of the Access to Information Act.  Without written consent, DFO is not permitted to release information or data products (e.g., maps and data layers) that might reveal personal or third party information such as catch, landed values, and vessel-specific fishing locations.  All of this is spelled out to DFO staff the attached document (i.e. Appendix B – “Catch and Effort and Quota Information: Do’s and Don’ts for Informal Release”). 
+
+It may be possible to provide you instead with an aggregated product that combines the information for at least five different licence holders, licences, or vessels.  Please feel free to contact us again if you need help modifying your request such that it meets these specifications while still being useful in answering your questions. 
+
 
 ### **Sources of Uncertainty**
 
