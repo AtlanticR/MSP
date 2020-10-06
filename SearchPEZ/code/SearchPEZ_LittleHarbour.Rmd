@@ -1,5 +1,5 @@
 ---
-title: "Search Species in PEZ - Master Report for Internal DFO use only"
+title: "Search Species in Little Harbour - Report for Internal DFO use only"
 author: Synthesis prepared by the MSP Team
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
@@ -16,8 +16,8 @@ output:
 #HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
 #output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
 rm(list=ls(all=TRUE))
-AquaSiteName <- "FarmersLedge"
-PEZversion <- "4748m"
+AquaSiteName <- "LittleHarbour"
+PEZversion <- "25km"
 
 #make sure you delete all shp.xml files in the folder to be able to run this code
 minYear <- 2002
@@ -66,17 +66,16 @@ PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZver
 ```{r echo=FALSE, results='asis'}
 cat(AquaSiteName)
 ```
+
 ### About this Report
 
 This report if for internal DFO use only. No maps, layers, or data that violate the rule of 5 will be shared outside of the department. This report should be used to inform a general list of species (no associated numbers, frequency, or catch information) that we know may be in the area. Absence of a species in this report should be interpreted as an absence of reporting, not as an absence of the species in the area. We recommend to circulate the species list generated in this synthesis to appropiate units and sectors to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
 
 ### About this Request
 
-This report was prepared by the MSP team for use in supporting a request Request for Review form for the x Project. A polygon representing the Predicted Exposure Zone (PEZ) was used to search regional databases (**2002 - 2018**) and summarize species that have been recorded. We recommend to share the species lists generated in this synthesis with DFO staff in CSAS Maritimes Science to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
+This report was prepared by the MSP team for use in supporting a request related to a vessel of concern in Little Habour, NS. A polygon representing the Predicted Exposure Zone (PEZ) was used to search regional databases (**2002 - 2018**) and summarize species that have been recorded. We recommend to share the species lists generated in this synthesis with DFO staff in CSAS Maritimes Science to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
 
 Map below shows the PEZ polygon (blue) used to search regional databases and summarize recorded species.
-
-NOTE FOR DEVELOPMENT: WOULD BE IDEAL TO USE CSASDOWN FOR INTERNAL REPORTING FORMATTING 
 
 
 ```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11}
@@ -209,8 +208,6 @@ kable(marfis_freq) %>%
 ```
 Map below shows the location of samples recorded in the MARFIS and ISDB databases (records are summarized in the tables/sections above). The yellow polygon shows the locations of the theoretical site. The blue polygon displays the PEZ used for this synthesis. Records were cropped to match PEZ. 
 
-FOR DEVELOPMENT: TO INCLUDE A DISCLAIMER DIRECTLY IN THE MAP e.g. This map is for internal DFO use only. Please see disclaimers section of the report for additonal information. 
-
 ```{r Fig 3 MARFIS and ISDB records, fig.height=8, fig.width=11}
 site_map(PEZ_poly,site,land,2)
 points(marfis$ENT_LONGITUDE,marfis$ENT_LATITUDE, col="black",pch=16,cex=0.5)
@@ -285,8 +282,6 @@ This synthesis is created using Rmarkdown and therefore this document can be rep
 This document was prepared by the Science MSP Team: <Catalina.Gomez@dfo-mpo.gc.ca>, <Gordana.Lazin@dfo-mpo.gc.ca>, <Brian.Bower@dfo-mpo.gc.ca>, <Phil.Greyson@dfo-mpo.gc.ca>, and <Tana.Worcester@dfo-mpo.gc.ca>
 
 ###**References**
-
-NOTE FOR DEVELOPMENT: WOULD NEED TO INCLUDE ADDITIONAL REFERENCES AND PROPER CITATIONS 
 
 MacDonald, D., Emery, P., Themelis, D., Smedbol, R.K., Harris, L.E., and McCurdy, Q. 2017. Marine mammal and pelagic animal sightings (Whalesightings) database: a user’s guide. Can. Tech. Rep. Fish. Aquat. Sci. 3244: v + 44 p.
 
