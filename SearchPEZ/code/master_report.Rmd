@@ -32,6 +32,7 @@ library(rgdal)
 library(maps)
 library(lubridate)
 library(raster)
+library(Rcurl)
 #source("C:/RProjects/SearchPEZ/code/.Rprofile") #Catalina's path to access Oracle passwords
 ```
 ```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
@@ -39,6 +40,14 @@ library(raster)
 source("C:/RProjects/MSP/SearchPEZ/code/site_map.r")
 source("C:/RProjects/MSP/SearchPEZ/code/plot_wsdb.r")
 source("C:/RProjects/MSP/SearchPEZ/code/filter_wsdb.r")
+
+## Another option is to load directly from the web and read in using Rcurl
+function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
+                   "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/plot_wsdb.r",
+                   "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
+
+for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
+
 ```
 
 ```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
