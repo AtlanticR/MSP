@@ -33,7 +33,7 @@ occ <- lapply(files$filename, function(x) readRDS(file.path(datadir,x)) %>%
 # Convert sf geometry column to separate latitude and longitude columns for export to CSV
 # and drop the geometry column
 occ_coords <- do.call(rbind, st_geometry(occ)) %>% 
-  as_tibble() %>% setNames(c("lon","lat"))
+  as_tibble() %>% setNames(c("LONGITUDE","LATITUDE"))
 
 occ_final <- bind_cols(occ,occ_coords)
 occ_final$geometry <- NULL
