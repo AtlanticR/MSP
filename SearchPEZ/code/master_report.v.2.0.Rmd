@@ -37,16 +37,7 @@ library(RCurl)
 #source("C:/RProjects/SearchPEZ/code/.Rprofile") #Catalina's path to access Oracle passwords
 ```
 ```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
-# Here code reads from HES_MSP. However, code is in Catalina's computer and pushed to  https://github.com/AtlanticR/MSP/tree/master/SearchPEZ/code 
-# source("C:/RProjects/MSP/SearchPEZ/code/site_map.r")
-# source("C:/RProjects/MSP/SearchPEZ/code/plot_wsdb.r")
-# source("C:/RProjects/MSP/SearchPEZ/code/filter_wsdb.r")
-# 
-# source("N:/MSP/Projects/SearchPEZ/code/site_map.r")
-
-# # Local Phil computer path based on project wd
-# the .Rmd file sets the working directory based on where it resides
-# and ignores the wd set by the .RProj file
+# the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
 source("site_map.r")
 source("plot_wsdb.r")
 source("filter_wsdb.r")
@@ -57,7 +48,6 @@ source("filter_wsdb.r")
 #                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
 # 
 # for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
-
 ```
 
 ```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
@@ -67,10 +57,9 @@ data.dir = "../../../Data/mar.wrangling"
 dataPath <- file.path("../outputs",paste0(AquaSiteName,PEZversion))
 # setwd(dataPath) #not needed?
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
-
-
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
-wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
+#wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
+wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
 ```
 ```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
 landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
@@ -246,7 +235,8 @@ Map below includes SARA and COSEWIC species within the search area. Absence of a
 
 ```{r read wsdb and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
 wsdb <- read.csv(wsdbFile)
-wsdb <- wsdb[which(year(as.Date(wsdb$WS_DATE,"%d-%b-%Y"))>=minYear),]
+#wsdb <- wsdb[which(year(as.Date(wsdb$WS_DATE,"%d-%b-%Y"))>=minYear),]
+wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
 #wsdb <- remove_landPoints(wsdb,land)
 wsdb_filter <- filter_wsdb(wsdb)
 ```
