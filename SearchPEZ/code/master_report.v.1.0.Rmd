@@ -1,0 +1,304 @@
+---
+title: "Reproducible Report for Species in Maritimes Region - for Internal DFO use only"
+author: Synthesis prepared by the MSP Team
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output:
+  html_document:
+    theme: paper
+    toc: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+---
+
+```{r Define Site, echo=FALSE, include=FALSE, cache=FALSE}
+#HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
+#output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
+rm(list=ls(all=TRUE))
+AquaSiteName <- "FarmersLedge"
+PEZversion <- "4748m"
+
+#make sure you delete all shp.xml files in the folder to be able to run this code
+minYear <- 2002
+cat(AquaSiteName)
+```
+```{r setup, echo=FALSE, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
+library(Mar.datawrangling)
+library(knitr)
+library(kableExtra)
+library(rgdal)
+library(maps)
+library(lubridate)
+library(raster)
+library(Rcurl)
+#source("C:/RProjects/SearchPEZ/code/.Rprofile") #Catalina's path to access Oracle passwords
+```
+```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
+# Here code reads from HES_MSP. However, code is in Catalina's computer and pushed to  https://github.com/AtlanticR/MSP/tree/master/SearchPEZ/code 
+source("C:/RProjects/MSP/SearchPEZ/code/site_map.r")
+source("C:/RProjects/MSP/SearchPEZ/code/plot_wsdb.r")
+source("C:/RProjects/MSP/SearchPEZ/code/filter_wsdb.r")
+
+## Another option is to load directly from the web and read in using Rcurl
+function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
+                   "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/plot_wsdb.r",
+                   "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
+
+for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
+
+```
+
+```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
+mspPath <- "C:/RProjects/MSP/SearchPEZ/"
+data.dir = "C:/RProjects/data/mar.wrangling"
+#create a folder in outputs with the name of the site and buffer area search
+dataPath <- file.path("C:/RProjects/MSP/SearchPEZ/outputs",paste0(AquaSiteName,PEZversion))
+setwd(dataPath)
+polyPath <- "C:/RProjects/data/SearchPEZpolygons"
+site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
+wsdbFile <- file.path("C:/RProjects/MSP/SearchPEZ/inputs","WSDB_GLazin_AllSpecies_2018.csv")
+```
+```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
+landGDB <- "C:/RProjects/data/Boundaries/Coast50K/Coastline50k.gdb"
+land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
+```
+```{r Define PEZ!, echo=FALSE, include=FALSE, cache=FALSE}
+pl <- list.files(polyPath,"*.shp")
+pl <- pl[-grep("xml",pl)]
+PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
+```
+
+### **About this report**
+
+This reproducible report summarizes species that have been reported in specific areas drawing from databases available, both within and outside the Department (**2002 - 2018**). This report if for internal DFO use only. No maps, layers, or data that violate the rule of 5 will be shared outside of the department. 
+
+### **How to use this report?**
+
+This report is used used to inform a general list of species that have been reported in a given area. Absence of a species in this report should be interpreted as an absence of reporting, not as an absence of the species in the area. The focus of this report is on species presence and not on associated numbers, frequency, or catch information. For more information, please read the "resources and sources of uncertainty" section of this document. 
+
+We recommend to circulate the species list generated in this synthesis to appropiate DFO units and sectors to verify and supplement the information provided (e.g. reported spatial and temporal presence/absence of species in the area). 
+
+### **Search area**
+
+Map below shows the polygon (blue) used to search regional databases and summarize species reported.
+
+**Site:**
+```{r echo=FALSE, results='asis'}
+cat(AquaSiteName)
+```
+
+```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11}
+site_map(PEZ_poly,site,land,40)
+```
+
+# **Databases**
+
+```{r read csv extracted with previous chunck, echo=FALSE, include=FALSE, cache=FALSE}
+fl <- list.files(dataPath,".csv")
+marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
+marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
+isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
+isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
+rv <- read.csv(file.path(dataPath,fl[grep("rv_",fl)]))
+rv <- rv[which(year(rv$SDATE)>=minYear),]  
+```
+
+### **Ecosystem Research Vessel (RV) Survey**
+
+Fisheries and Oceans Canada (DFO) has conducted Research Vessel (RV) surveys in the Maritimes Region using a standardized protocol. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>. The search of the Ecosystem RV Survey database resulted in the Table below that summarizes records by species or species group. 
+
+```{r, echo=FALSE, include=FALSE, cache=FALSE}
+rv$database <- "rv"
+rv_freq <- aggregate(
+        x = list(Records = rv$COMM),
+      by = list(Species = rv$COMM
+      ),
+      length
+      )
+rv_freq <- rv_freq[order(-rv_freq$Records),]
+rownames(rv_freq) <- c()
+rv_total <- aggregate(
+        x = list(total = rv$COMM),
+      by = list(db = rv$database
+      ),
+      length
+      )
+Total_number_records_RV <- rv_total[[2]] 
+Total_number_records_RV
+```
+```{r} 
+kable(as.data.frame(Total_number_records_RV), digits=2, full_width = F, position = "left")
+``` 
+```{r}
+kable(rv_freq) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed are summarized in the table above). The yellow polygon shows the locations of the human activity. The blue polygon displays the area searched and summarized in this report. 
+
+```{r Fig 2 Ecosystem RV Survey records, fig.height=8, fig.width=11}
+site_map(PEZ_poly,site,land,2)
+points(rv$LONGITUDE,rv$LATITUDE, col="black",pch=16,cex=1.5)
+```
+
+### **Industry Survey Database (ISDB)**
+
+ISDB is a DFO database that contains at-sea fish catch observations from commercial fishing vessels operating in the North West Atlantic.
+
+```{r, echo=FALSE, include=FALSE, cache=FALSE}
+isdb$database <- "isdb"
+isdb_freq <- aggregate(
+        x = list(Records = isdb$COMMON),
+      by = list(Species = isdb$COMMON
+      ),
+      length
+      )
+isdb_freq <- isdb_freq[order(-isdb_freq$Records),]
+rownames(isdb_freq) <- c()
+
+isdb_total <- aggregate(
+  x = list(total = isdb$COMMON),
+  by = list(db = isdb$database
+  ),
+  length
+)
+
+Total_number_records_ISDB <- isdb_total[[2]] 
+Total_number_records_ISDB
+```
+
+The search of ISDB resulted in the Table below that summarizes records by species or species group. 
+
+
+```{r} 
+kable(as.data.frame(Total_number_records_ISDB), digits=2, full_width = F, position = "left")
+``` 
+
+```{r}
+kable(isdb_freq) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+### **The Maritime Fishery Information System (MARFIS)**
+
+MARFIS is a DFO database, managed by the Policy & Economics Branch. MARFIS contains: catch and effort, quota, and licensing information for the Maritimes region. The catch and effort data contains the log information for all commercial fisheries that land within this region. If a Maritimes region commercial vessel lands in another DFO region or outside of Canadian waters, it is not included in the database. The majority of catch information is related to commercial offloads. There is also more limited data related to discards and the SARA log. Not all catch records have associated lat/long coordinates. This may be due to the structure of the log itself, or missing data. Generally all records have a NAFO Division and NAFO Unit Area flag, even if no coordinates have been provided. Data for the years 2017-2020 is preliminary and subject to change without notice. There may be some limited changes to data in the years 2016 and previous. Ongoing qa/qc work is done on the MARFIS database, but not all errors are corrected. If you have data errors, questions, or corrections, you can send them to our data quality inbox: CDDDataQuality@dfo-mpo.gc.ca. Requests for data exports can be sent to: XMARComData@dfo-mpo.gc.ca. This information about MARFIS was provided by Colin.O'Neil@dfo-mpo.gc.ca (July 2020, Policy & Economics Branch).
+
+```{r, echo=FALSE, include=FALSE, cache=FALSE}
+marfis$database <- "marfis"
+marfis_freq <- aggregate(
+        x = list(Records = marfis$SPECIES_NAME),
+      by = list(Species = marfis$SPECIES_NAME
+      ),
+      length
+      )
+marfis_freq <- marfis_freq[order(-marfis_freq$Records),]
+rownames(marfis_freq) <- c()
+
+marfis_total <- aggregate(
+  x = list(total = marfis$COMM),
+  by = list(db = marfis$database
+  ),
+  length
+)
+Total_number_records_MARFIS <- marfis_total[[2]] 
+Total_number_records_MARFIS 
+```
+The search of MARFIS resulted in the Table below that summarizes records by species or species group. 
+
+
+```{r}
+kable(as.data.frame(Total_number_records_MARFIS), digits=2, full_width = F, position = "float_left") 
+```
+```{r}
+kable(marfis_freq) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+Map below shows the location of samples recorded in the MARFIS and ISDB databases (tables above summarize records per species or species group). Map below is for internal DFO use only (rule of five was not applied). Please read the "resources and sources of uncertainty" section for additional information. 
+
+```{r Fig 3 MARFIS and ISDB records, fig.height=8, fig.width=11}
+site_map(PEZ_poly,site,land,2)
+points(marfis$ENT_LONGITUDE,marfis$ENT_LATITUDE, col="black",pch=16,cex=0.5)
+points(isdb$LONG2,isdb$LAT2, col="black",pch=16,cex=0.5)
+```
+
+### **Whale Sightings Database (WSDB)**
+
+The Marine Mammal and Pelagic Animals or Whale Sighting Database (WSDB) was
+implemented in 2002 by the Department of Fisheries and Oceans (DFO) to provide a
+central repository for opportunistic sightings of marine animals and to improve
+accessibility to data from surveys and research activities conducted in the Bay of Fundy and on the Scotian Shelf (MacDonald et al 2017). Most sightings are collected on an opportunistic basis and observations may come from individuals with a variety of expertise in marine mammal identification experiences. Most data is gathered from platforms of opportunity that were vessel-based. Please read the Important Disclaimers for WSDB in the section below. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/40642999.pdf> or contact <XMARWhaleSightings@dfo-mpo.gc.ca>
+
+Map below includes SARA and COSEWIC species within the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). 
+
+```{r read wsdb and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
+wsdb <- read.csv(wsdbFile)
+wsdb <- wsdb[which(year(as.Date(wsdb$WS_DATE,"%d-%b-%Y"))>=minYear),]
+#wsdb <- remove_landPoints(wsdb,land)
+wsdb_filter <- filter_wsdb(wsdb)
+```
+```{r Fig 4 Whale Sightings Database, fig.height=8, fig.width=11}
+par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
+site_map(PEZ_poly,site,land,5)
+plot_wsdb(PEZ_poly,wsdb_filter,5)
+```
+
+# **Resources and Sources of Uncertainty**
+
+Coastal and offshore areas of the Scotian Shelf bioregion are generally not adequately sampled, and hence information on these space and time scales is generally not contained within the various data sources available to DFO, including the surveys referred to in this document. Therefore, there is uncertainty as to the exact distribution of species in the search.
+
+### **Important Disclaimers for ISDB and MARFIS**
+
+MARFIS and ISDB do not fully sample the region spatially or temporally and, therefore, additional information on presence and habitat use (i.e. spawning, migration, feeding) must be drawn from larger-scale studies. 
+
+Please remember that fisheries catch and effort information:
+1.         for an individual licence holder is considered personal information and is protected under section 19 of the Access to Information Act <https://laws-lois.justice.gc.ca/eng/acts/a-1/page-5.html#h-12>. 
+2.         for a corporate licence holder is considered to be sensitive, proprietary information and protected under Section 20 of the Access to Information Act <https://laws-lois.justice.gc.ca/eng/acts/a-1/page-5.html#h-13>.  
+Without written consent, DFO is not permitted to release information or data products (e.g., maps and data layers) that might reveal personal or third party information such as catch, landed values, and vessel-specific fishing locations.  All of this is spelled out to DFO staff here - Informal Release Guidelines (i.e. Appendix B – “Catch and Effort and Quota Information: Do’s and Don’ts for Informal Release” <\\ent.dfo-mpo.ca\ATLShares\Shared\ATIP Information\Informal_Release_Guidelines-eng.docx>).
+
+The reproducible reporting tool is for internal use only. Please do not release data you should not. If in doubt, check with your supervisor.
+
+Should you receive a request for set-level Observer data (ISDB) and MARFIS, please just forward to Peter Comeau and <XMARComData@dfo-mpo.gc.ca>, respectively. Please feel free to use the email template below. Note that the template includes an attachment which you can download here - Informal Release Guidelines <\\ent.dfo-mpo.ca\ATLShares\Shared\ATIP Information\Informal_Release_Guidelines-eng.docx>. If you are including observer data in a publication, please remember to aggregate it. If you need help doing so, Mike McMahon has a handy R script that can help you. Ask him - he loves to talk about his scripts. 
+
+TLDR; Please do not share set-level observer data (ISDB) and MARFIS with external (non-DFO) people.  
+
+Hi,
+
+I apologize, but we can not provide you with the level of detail as it has been requested.  Fisheries catch and effort information for an individual licence holder is considered personal information and is protected under section 19 of the Access to Information Act. Fisheries catch and effort information for a corporate licence holder is considered to be sensitive, proprietary information and protected under Section 20 of the Access to Information Act.  Without written consent, DFO is not permitted to release information or data products (e.g., maps and data layers) that might reveal personal or third party information such as catch, landed values, and vessel-specific fishing locations.  All of this is spelled out to DFO staff the attached document (i.e. Appendix B – “Catch and Effort and Quota Information: Do’s and Don’ts for Informal Release”). 
+
+It may be possible to provide you instead with an aggregated product that combines the information for at least five different licence holders, licences, or vessels.  Please feel free to contact us again if you need help modifying your request such that it meets these specifications while still being useful in answering your questions. 
+
+### **Important Disclaimers for WSDB**
+
+- The sighting data have not yet been completely error-checked. 
+
+- The quality of some of the sighting data is unknown. Most sightings are collected on an opportunistic basis and observations may come from individuals with a variety of expertise in marine mammal identification experiences. 
+
+- Most data have been gathered from platforms of opportunity that were vessel-based. The inherent problems with negative or positive reactions by cetaceans to the approach of such vessels have not yet been factored into the data 
+
+- Sighting effort has not been quantified (i.e., the numbers cannot be used to estimate true species density or abundance for an area). Lack of sightings do not represent lack of species present in a particular area 
+
+- Numbers sighted have not been verified (especially in light of the significant differences in detectability among species). 
+
+- For completeness, the data represent an amalgamation of sightings from a variety of years and seasons. Effort (and number of sightings) is not necessarily consistent among months, years, and areas. There are large gaps between years. Thus seasonal, depth, and distributional information should not be considered definitive. 
+
+- Many sightings could not be identified to species, but are listed to the smallest taxonomic group possible
+
+### **This document**
+
+This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/MSP/tree/master/SearchPEZ>. The full document can be updated rapidly as more or different information becomes available.
+
+This document was prepared by the Science MSP Team: <Catalina.Gomez@dfo-mpo.gc.ca>, <Gordana.Lazin@dfo-mpo.gc.ca>, <Brian.Bower@dfo-mpo.gc.ca>, <Phil.Greyson@dfo-mpo.gc.ca>, and <Tana.Worcester@dfo-mpo.gc.ca>
+
+###**References**
+
+NOTE FOR DEVELOPMENT: WOULD NEED TO INCLUDE ADDITIONAL REFERENCES AND PROPER CITATIONS 
+
+MacDonald, D., Emery, P., Themelis, D., Smedbol, R.K., Harris, L.E., and McCurdy, Q. 2017. Marine mammal and pelagic animal sightings (Whalesightings) database: a user’s guide. Can. Tech. Rep. Fish. Aquat. Sci. 3244: v + 44 p.
+
+### **Acknowledgements**
+
+<Mike.McMahon@dfo-mpo.gc.ca>! for providing code and advice in the use of `Mar.datawrangling`: A suite of tools for extracting, filtering and aggregating data from the Maritimes fisheries science databases <https://github.com/Maritimes/Mar.datawrangling>
+
+The Atlantic R Learning & Development Initiative <https://github.com/AtlanticR>.  
+
