@@ -32,42 +32,55 @@ library(rgdal)
 library(maps)
 library(lubridate)
 library(raster)
-library(Rcurl)
+library(RCurl)
+
 #source("C:/RProjects/SearchPEZ/code/.Rprofile") #Catalina's path to access Oracle passwords
 ```
 ```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
 # Here code reads from HES_MSP. However, code is in Catalina's computer and pushed to  https://github.com/AtlanticR/MSP/tree/master/SearchPEZ/code 
-source("C:/RProjects/MSP/SearchPEZ/code/site_map.r")
-source("C:/RProjects/MSP/SearchPEZ/code/plot_wsdb.r")
-source("C:/RProjects/MSP/SearchPEZ/code/filter_wsdb.r")
+# source("C:/RProjects/MSP/SearchPEZ/code/site_map.r")
+# source("C:/RProjects/MSP/SearchPEZ/code/plot_wsdb.r")
+# source("C:/RProjects/MSP/SearchPEZ/code/filter_wsdb.r")
+# 
+# source("N:/MSP/Projects/SearchPEZ/code/site_map.r")
 
-## Another option is to load directly from the web and read in using Rcurl
-function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
-                   "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/plot_wsdb.r",
-                   "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
+# # Local Phil computer path based on project wd
+# the .Rmd file sets the working directory based on where it resides
+# and ignores the wd set by the .RProj file
+source("site_map.r")
+source("plot_wsdb.r")
+source("filter_wsdb.r")
 
-for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
+# ## Another option is to load directly from the web and read in using Rcurl
+# function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
+#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/plot_wsdb.r",
+#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
+# 
+# for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
 
 ```
 
 ```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
-mspPath <- "C:/RProjects/MSP/SearchPEZ/"
-data.dir = "C:/RProjects/data/mar.wrangling"
+mspPath <- "../"
+data.dir = "../../../Data/mar.wrangling"
 #create a folder in outputs with the name of the site and buffer area search
-dataPath <- file.path("C:/RProjects/MSP/SearchPEZ/outputs",paste0(AquaSiteName,PEZversion))
-setwd(dataPath)
-polyPath <- "C:/RProjects/data/SearchPEZpolygons"
+dataPath <- file.path("../outputs",paste0(AquaSiteName,PEZversion))
+# setwd(dataPath) #not needed?
+polyPath <- "../../../Data/Zones/SearchPEZpolygons"
+
+
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
-wsdbFile <- file.path("C:/RProjects/MSP/SearchPEZ/inputs","WSDB_GLazin_AllSpecies_2018.csv")
+wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
 ```
 ```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
-landGDB <- "C:/RProjects/data/Boundaries/Coast50K/Coastline50k.gdb"
+landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
 land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
 ```
 ```{r Define PEZ!, echo=FALSE, include=FALSE, cache=FALSE}
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
+
 ```
 
 ### **About this report**
@@ -288,7 +301,7 @@ It may be possible to provide you instead with an aggregated product that combin
 
 This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/MSP/tree/master/SearchPEZ>. The full document can be updated rapidly as more or different information becomes available.
 
-This document was prepared by the Science MSP Team: <Catalina.Gomez@dfo-mpo.gc.ca>, <Gordana.Lazin@dfo-mpo.gc.ca>, <Brian.Bower@dfo-mpo.gc.ca>, <Phil.Greyson@dfo-mpo.gc.ca>, and <Tana.Worcester@dfo-mpo.gc.ca>
+This document was prepared by the Science MSP Team: <Catalina.Gomez@dfo-mpo.gc.ca>, <Gordana.Lazin@dfo-mpo.gc.ca>, <Brian.Bower@dfo-mpo.gc.ca>, <Philip.Greyson@dfo-mpo.gc.ca>, and <Tana.Worcester@dfo-mpo.gc.ca>
 
 ###**References**
 
