@@ -69,7 +69,7 @@ plot_wsdb <- function(studyArea,wsdb,buf) {
   
   # add legend on separate plot
   plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
-  legend("topleft", legend=leg$species,col=leg$colors,pch=leg$shapes, cex=1)
+  legend("topleft", legend=leg$species,col=leg$colors,pch=leg$shapes, cex=0.8,
+         inset=-0.01,y.intersp=1.5,bty = "n")
   
- 
 }
