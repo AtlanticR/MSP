@@ -277,7 +277,7 @@ iNaturalist (https://www.inaturalist.org/)
 
 # **Open Data**
 
-Open Government is about making government more accessible to everyone; for more information please visit <https://open.canada.ca/en>. Records summarized below are all accessible via Open Data <https://open.canada.ca/en/open-data>. 
+As part of its Open Government initiative, the Canadian Federal Government is committed to increasing the availability of scientific data and publications. DFO continues to support this objective by making scientific data available publically on the open government data portals in the machine-readable, simple to access, and convenient formats. Records summarized below have been published and maintained by DFO on Open Data and are available for download. For more information on open data please visit <https://open.canada.ca/en>.
 
 ### **Species At Risk Distribution Range**
 
