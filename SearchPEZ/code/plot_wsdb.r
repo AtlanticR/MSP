@@ -67,8 +67,10 @@ plot_wsdb <- function(studyArea,wsdb,buf) {
   points(dfBox$LONGITUDE,dfBox$LATITUDE, col=dfBox$colors, cex=0.8, pch=dfBox$shapes)
   
   # add legend on separate plot
+  #par(mar = c(5.1, 1, 4.1,1))
   plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
   legend("topleft", legend=leg$species,col=leg$colors,pch=leg$shapes, cex=0.8,
          inset=-0.01,y.intersp=1.5,bty = "n")
+  #par(mar = c(5.1, 4.1, 4.1, 2.1))
   
 }

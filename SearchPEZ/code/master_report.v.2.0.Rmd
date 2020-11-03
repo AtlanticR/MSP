@@ -271,15 +271,13 @@ NOTE: TO INCLUDE WATERMARK OR DISCLAIMER TEXT "THIS MAP IS FOR INTERNAL USE ONLY
 
 REMI DAIGLE
 
-Ocean Biogeographic Information System (OBIS; http://www.iobis.org/), 
-
-Global Biodiversity Information Facility (GBIF; https://www.gbif.org/),
-
-iNaturalist (https://www.inaturalist.org/),
+Ocean Biogeographic Information System (OBIS; http://www.iobis.org/)
+Global Biodiversity Information Facility (GBIF; https://www.gbif.org/)
+iNaturalist (https://www.inaturalist.org/)
 
 # **Open Data**
 
-GORDANA TO PROVIDE SOME TEXT ABOUT OPEN DATA PERHAPS?
+Open Government is about making government more accessible to everyone; for more information please visit <https://open.canada.ca/en>. Records summarized below are all accessible via Open Data <https://open.canada.ca/en/open-data>. 
 
 ### **Species At Risk Distribution Range**
 
@@ -309,10 +307,9 @@ TBA: blueFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/Blu
 
 TBA: leatherbackFile <- file.path("../../../Data/NaturalResources/Species/.??..","...")
 
-### ***EBSA**
+### **EBSA**
 
 TBA: ebsaFile <- file.path("../../../Data/Zones/DFO_EBSA","...")
-
 
 # **Resources and Sources of Uncertainty**
 
