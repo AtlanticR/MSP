@@ -41,8 +41,8 @@ library(RCurl)
 source("site_map.r")
 source("plot_wsdb.r")
 source("filter_wsdb.r")
-source("filter_narwc.r")
 source("plot_narwc.r")
+source("filter_narwc.r")
 
 # ## Another option is to load directly from the web and read in using Rcurl
 # function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
@@ -226,6 +226,7 @@ site_map(PEZ_poly,site,land,2)
 points(marfis$ENT_LONGITUDE,marfis$ENT_LATITUDE, col="black",pch=16,cex=0.5)
 points(isdb$LONG2,isdb$LAT2, col="black",pch=16,cex=0.5)
 ```
+NOTE: TO INCLUDE WATERMARK OR DISCLAIMER TEXT "THIS MAP IS FOR INTERNAL USE ONLY"
 
 ### **Whale Sightings Database (WSDB)**
 
@@ -244,24 +245,73 @@ wsdb_filter <- filter_wsdb(wsdb)
 ```
 ```{r Fig 4 Whale Sightings Database, fig.height=8, fig.width=11}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-#par(mfrow = c(1,2), mai = c(1, 0.1, 0.1, 0.1))#it goes c(bottom, left, top, right)
+#par(mar = c(5.1, 4.1, 4.1, 2.1))
 site_map(PEZ_poly,site,land,5)
 plot_wsdb(PEZ_poly,wsdb_filter,5)
 ```
+NOTE: TO INCLUDE WATERMARK OR DISCLAIMER TEXT "THIS MAP IS FOR INTERNAL USE ONLY"
 
 ### **North Atlantic Right Whale Consortium (NARWC) Database**
+
+The North Atlantic right whale consortium (NARWC) databases <https://www.narwc.org/narwc-databases.html> were established in 1986 as part of a cooperative right whale research program conducted by the University of Rhode Island, New England Aquarium, Center for Coastal Studies, Woods Hole Oceanographic Institution, and other organizations forming the North Atlantic Right Whale Consortium. The Sightings Database <https://www.narwc.org/sightings-database.html> was requested to the NARWC on October 2020 for use in this internal reporting *only*. Marine mammal SARA records in the databse are summarized in this report. For more informa Please consult the NARWC guide for users and contributors for a comprhensive guide about this database: <https://www.narwc.org/uploads/1/1/6/6/116623219/narwc_users_guide__v_6_.pdf>
 
 ```{r read narwc and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
 narwc <- read.csv(narwcFile)
 narwc <- narwc[which(narwc$YEAR>=minYear),]
 narwc_filter <- filter_narwc(narwc)
 ```
-
 ```{r Fig 5 NARWC Database, fig.height=8, fig.width=11}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 site_map(PEZ_poly,site,land,5)
 plot_narwc(PEZ_poly,narwc_filter,5)
 ```
+NOTE: TO INCLUDE WATERMARK OR DISCLAIMER TEXT "THIS MAP IS FOR INTERNAL USE ONLY"
+
+### **OBIS, GBIF and iNaturalist**
+
+REMI DAIGLE
+
+Ocean Biogeographic Information System (OBIS; http://www.iobis.org/), 
+
+Global Biodiversity Information Facility (GBIF; https://www.gbif.org/),
+
+iNaturalist (https://www.inaturalist.org/),
+
+# **Open Data**
+
+GORDANA TO PROVIDE SOME TEXT ABOUT OPEN DATA PERHAPS?
+
+### **Species At Risk Distribution Range**
+
+<https://open.canada.ca/data/en/dataset/e0fabad5-9379-4077-87b9-5705f28c490b>
+
+TBA: priorityCetaceanFile <- file.path("../../../Data/NaturalResources/Species/SpeciesAtRisk/Distribution_FGP","...")
+
+### **Species At Risk Critical Habitat**
+
+<https://open.canada.ca/data/en/dataset/db177a8c-5d7d-49eb-8290-31e6a45d786c>
+
+TBA: priorityCetaceanFile <- file.path("../../../Data/NaturalResources/Species/SpeciesAtRisk/CriticalHabitat_FGP","...")
+
+### **Priority Areas to Enhance Monitoring of Cetaceans**
+
+Species Distribution Models  were used to predict and identify priority areas for enhanced monitoring of cetaceans in eastern Canadian waters off Nova Scotia, Newfoundland and Labrador (Gomez et al. 2020) <https://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf>. Outputs from this report are available in the Open Data record <https://open.canada.ca/data/en/dataset/c094782e-0d6f-4cc0-b5a3-58908493a433> and summarized in this report for cetacean SAR. 
+
+TBA: priorityCetaceanFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP","...")
+
+### **Blue Whale Important Habitat**
+
+<https://open.canada.ca/data/en/dataset/8fafd919-fcbe-43a3-a911-3d9461273441>
+
+TBA: blueFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/BlueWhaleHabitat_FGP","...")
+
+### **Leatherback Sea Turtle Important Habitat**
+
+TBA: leatherbackFile <- file.path("../../../Data/NaturalResources/Species/.??..","...")
+
+### ***EBSA**
+
+TBA: ebsaFile <- file.path("../../../Data/Zones/DFO_EBSA","...")
 
 
 # **Resources and Sources of Uncertainty**
@@ -305,6 +355,12 @@ It may be possible to provide you instead with an aggregated product that combin
 
 - Many sightings could not be identified to species, but are listed to the smallest taxonomic group possible
 
+### **Cetacean Information**
+
+- Please contact the NARWC for infomration about the <https://www.narwc.org/sightings-database.html>, and please consult the NARWC guide for users and contributors:  <https://www.narwc.org/uploads/1/1/6/6/116623219/narwc_users_guide__v_6_.pdf>
+
+- Please review the "Interpreting results for marine spatial planning purposes" section for a summary of caveats and uncertainty associated with model prediction in Gomez et al. 2020 <https://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf>.
+
 ### **This document**
 
 This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/MSP/tree/master/SearchPEZ>. The full document can be updated rapidly as more or different information becomes available.
@@ -315,7 +371,9 @@ This document was prepared by the Science MSP Team: <Catalina.Gomez@dfo-mpo.gc.c
 
 NOTE FOR DEVELOPMENT: WOULD NEED TO INCLUDE ADDITIONAL REFERENCES AND PROPER CITATIONS 
 
-MacDonald, D., Emery, P., Themelis, D., Smedbol, R.K., Harris, L.E., and McCurdy, Q. 2017. Marine mammal and pelagic animal sightings (Whalesightings) database: a user’s guide. Can. Tech. Rep. Fish. Aquat. Sci. 3244: v + 44 p.
+MacDonald, D., Emery, P., Themelis, D., Smedbol, R.K., Harris, L.E., and McCurdy, Q. 2017. Marine mammal and pelagic animal sightings (Whalesightings) database: a user’s guide. Can. Tech. Rep. Fish. Aquat. Sci. 3244: v + 44 p.<https://waves-vagues.dfo-mpo.gc.ca/Library/40642999.pdf> 
+
+Kennedy R.D. 2019. The North Atlantic Right Whale Consortium Database: A Guide for Users and Contributors. Version 6. North Atlantic Right Whale Consortium Reference Document 2019-02.144 pp. <https://www.narwc.org/uploads/1/1/6/6/116623219/narwc_users_guide__v_6_.pdf> 
 
 ### **Acknowledgements**
 

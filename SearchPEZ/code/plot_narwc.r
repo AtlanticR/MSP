@@ -14,7 +14,7 @@
 #          this controls the "zoom" of the plot
 #
 # Written for MSP, Gordana Lazin, September 13, 2019
-# Edited by Catalina Gomez  November 2020
+# Edited by Catalina Gomez  November 3 2020
 
 
 plot_narwc <- function(studyArea,narwc,buf) {
@@ -44,10 +44,10 @@ plot_narwc <- function(studyArea,narwc,buf) {
   dfBox=df[inBox,]
 
   # unique species in the box
-  species=as.character(unique(dfBox$SPECNAME))
+  species=as.character(unique(dfBox$SPECCODE))
   
   # define colours to circle through
-  colors=c("darkgoldenrod1","black","blue", "darkorange2","blueviolet", "red", "cyan","magenta","darkgreen")
+  colors=c("darkgoldenrod1","darkgrey","blue", "red","blueviolet", "darkorange2", "cyan","magenta","darkgreen")
   colors=rep(colors, times=ceiling(length(species)/length(colors)))
   colors=colors[1:length(species)]
   
@@ -62,14 +62,15 @@ plot_narwc <- function(studyArea,narwc,buf) {
   leg$colors=as.character(leg$colors)
   
   # add sybology to species dataframe, columns colors and shapes
-  dfBox=merge(dfBox,leg,by.x="SPECNAME",by.y="species")
+  dfBox=merge(dfBox,leg,by.x="SPECCODE",by.y="species")
   
   # ADD POINT DATA, only in the box
   points(dfBox$LONGITUDE,dfBox$LATITUDE, col=dfBox$colors, cex=0.8, pch=dfBox$shapes)
   
   # add legend on separate plot
   plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
-  legend("topleft", legend=leg$species,col=leg$colors,pch=leg$shapes, cex=1)
+  legend("topleft", legend=leg$species,col=leg$colors,pch=leg$shapes, cex=0.8,
+         inset=-0.01,y.intersp=1.5,bty = "n")
   
  
 }

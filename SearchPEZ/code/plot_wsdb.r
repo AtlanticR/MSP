@@ -42,12 +42,11 @@ plot_wsdb <- function(studyArea,wsdb,buf) {
   # data in the box
   dfBox=df[inBox,]
 
-
   # unique species in the box
   species=as.character(unique(dfBox$COMMONNAME))
   
   # define colours to circle through
-  colors=c("darkgoldenrod1","black","blue", "darkorange2","blueviolet", "red", "cyan","magenta","darkgreen")
+  colors=c("darkgoldenrod1","darkgrey","blue", "red","blueviolet", "darkorange2", "cyan","magenta","darkgreen")
   colors=rep(colors, times=ceiling(length(species)/length(colors)))
   colors=colors[1:length(species)]
   

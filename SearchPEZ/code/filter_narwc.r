@@ -1,7 +1,7 @@
 filter_narwc <- function(narwc) {
 
-  narwc_filt <- narwc[narwc$SPECCODE %in% c('HAPO', 'FIWH','RIWH', 'NBWH',
-                                    'KIWH', 'BLWH', 'SEWH', "SOBW"), ]
+  narwc_filt <- narwc[narwc$SPECCODE %in% c('HAPO', 'SEWH', 'FIWH','RIWH', 'NBWH',
+                                    'KIWH', 'BLWH',  "SOBW"), ]
 
   narwc_filt$SPECCODE[which(narwc_filt$SPECCODE=="HAPO")]= "Harbour Porpoise: Threatened (SARA) Special Concern (COSEWIC)"
   narwc_filt$SPECCODE[which(narwc_filt$SPECCODE=="FIWH")]= "Fin Whale: Special Concern (SARA & COSEWIC)"
