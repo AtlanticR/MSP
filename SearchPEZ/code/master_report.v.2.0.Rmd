@@ -112,6 +112,8 @@ rv <- rv[which(year(rv$SDATE)>=minYear),]
 
 ### **Ecosystem Research Vessel (RV) Survey**
 
+TO BE REPLACED WITH OPEN DATA RECORD
+
 Fisheries and Oceans Canada (DFO) has conducted Research Vessel (RV) surveys in the Maritimes Region using a standardized protocol. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>. The search of the Ecosystem RV Survey database resulted in the Table below that summarizes records by species or species group. 
 
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
@@ -278,6 +280,13 @@ iNaturalist (https://www.inaturalist.org/)
 # **Open Data**
 
 As part of its Open Government initiative, the Canadian Federal Government is committed to increasing the availability of scientific data and publications. DFO continues to support this objective by making scientific data available publically on the open government data portals in the machine-readable, simple to access, and convenient formats. Records summarized below have been published and maintained by DFO on Open Data and are available for download. For more information on open data please visit <https://open.canada.ca/en>.
+
+### **Ecosystem Research Vessel Survey**
+
+Open Data link TBA
+
+TBA: rvFile <- file.path("../../../Data/NaturalResources/Species/","...")
+
 
 ### **Species At Risk Distribution Range**
 
