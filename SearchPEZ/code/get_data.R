@@ -4,11 +4,11 @@ library(Mar.datawrangling)
 library(rgdal)
 
 #polyPath <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/inputs/polygons"
-polyPath <- "C:/RProjects/data/SearchPEZpolygons"
+polyPath <- "C:/RProjects/Data/Zones/SearchPEZpolygons"
 #AquaSiteName <- "StAndrewsBlockhouse"
-AquaSiteName <- "StMarys"
+AquaSiteName <- "BrierIsland"
 
-PEZversion <- "5km"
+PEZversion <- "25km"
 cat(AquaSiteName)
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
@@ -16,7 +16,7 @@ PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZver
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 
 source("C:/Users/GomezC/Documents/.Rprofile") #Catalina's path to access Oracle passwords
-data.dir = "C:/RProjects/data/mar.wrangling"
+data.dir = "C:/RProjects/data.v1.0/mar.wrangling"
 
 get_data(db = 'rv', data.dir = data.dir)
 GSINF = clip_by_poly(df = GSINF

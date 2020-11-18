@@ -16,8 +16,8 @@ output:
 #HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
 #output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
 rm(list=ls(all=TRUE))
-AquaSiteName <- "FarmersLedge"
-PEZversion <- "4748m"
+AquaSiteName <- "BrierIsland"
+PEZversion <- "25km"
 
 #make sure you delete all shp.xml files in the folder to be able to run this code
 minYear <- 2002
@@ -111,8 +111,6 @@ rv <- rv[which(year(rv$SDATE)>=minYear),]
 ```
 
 ### **Ecosystem Research Vessel (RV) Survey**
-
-TO BE REPLACED WITH OPEN DATA RECORD
 
 Fisheries and Oceans Canada (DFO) has conducted Research Vessel (RV) surveys in the Maritimes Region using a standardized protocol. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>. The search of the Ecosystem RV Survey database resulted in the Table below that summarizes records by species or species group. 
 
