@@ -6,9 +6,8 @@ library(rgdal)
 #polyPath <- "//ent.dfo-mpo.ca/ATLShares/Science/CESD/HES_MSP/R/SearchPEZ/inputs/polygons"
 polyPath <- "C:/RProjects/Data/Zones/SearchPEZpolygons"
 #AquaSiteName <- "StAndrewsBlockhouse"
-AquaSiteName <- "BrierIsland"
-
-PEZversion <- "25km"
+AquaSiteName <- "FarmersLedge"
+PEZversion <- "4748m"
 cat(AquaSiteName)
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
