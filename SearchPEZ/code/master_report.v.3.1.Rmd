@@ -32,10 +32,9 @@ library(maps)
 library(lubridate)
 library(raster)
 library(RCurl)
-library(basicPlotteR)
-###These next two lines are necessary for the generation of the water mark on all plots.#######
 #install.packages("devtools")
 #devtools::install_github("JosephCrispell/basicPlotteR")
+library(basicPlotteR) #use the two lines above to install this package
 #source("C:/RProjects/SearchPEZ/code/.Rprofile") #Catalina's path to access Oracle passwords
 ```
 ```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
