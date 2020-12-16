@@ -300,7 +300,7 @@ TBA: priorityCetaceanFile <- file.path("../../../Data/NaturalResources/Species/S
 
 ```{r Set up paths for Crithab files, echo=FALSE, include=FALSE, cache=FALSE}
 #Re-load polygon of PEZ using the st_read function.
-PEZ_poly_st <- st_read("../../../Data/Zones/SearchPEZpolygons/Site_TestGully.shp", quiet=TRUE)
+PEZ_poly_st <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]), quiet=TRUE)
 ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/ClippedCritHab.shp", quiet=TRUE)
 ClippedCritLand <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/ClippedCritLand.shp", quiet=TRUE)
 
