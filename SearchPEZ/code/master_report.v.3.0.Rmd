@@ -109,7 +109,7 @@ marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
 marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
 isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
 isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
-rv <- read.csv(file.path(dataPath,fl[grep("FALL_",fl)]))
+rv <- read.csv(file.path(dataPath,fl[grep("rv_",fl)]))
 rv <- rv[which(year(rv$SDATE)>=minYear),] 
 ```
 
@@ -301,8 +301,8 @@ TBA: priorityCetaceanFile <- file.path("../../../Data/NaturalResources/Species/S
 ```{r Set up paths for Crithab files, echo=FALSE, include=FALSE, cache=FALSE}
 #Re-load polygon of PEZ using the st_read function.
 PEZ_poly_st <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]), quiet=TRUE)
-ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/ClippedCritHab.shp", quiet=TRUE)
-ClippedCritLand <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/ClippedCritLand.shp", quiet=TRUE)
+ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClippedCritHab.shp", quiet=TRUE)
+ClippedCritLand <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClippedCritLand.shp", quiet=TRUE)
 
 ```
 
