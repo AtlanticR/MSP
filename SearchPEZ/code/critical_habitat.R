@@ -35,6 +35,7 @@ Query_output_area<-if(x < 1){
 Query_output_area2<-paste(unique(Query_output_area), collapse = ' ')
 Query_output_area3<-noquote(Query_output_area2)
 
-writeLines(c(Query_output_crit2,Query_output_area3,Query_output_sp3), sep = "\n")
+result<-paste(unique(Query_output_crit2,Query_output_area3,Query_output_sp3, fromLast=TRUE))
+writeLines(c(result), sep = "\n")
 
 }
