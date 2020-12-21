@@ -11,7 +11,7 @@ latmax<-(maxmin$V4)+0.5
 ggplot()+
   geom_sf(data=ClippedCritHab,fill="red",col="red")+
   geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
-  geom_sf(data=ClippedCritLand,fill=c("grey90", "grey", "grey95"), col="black")+
+  geom_sf(data=ClippedCritLand,fill=c("grey90"), col="black")+
   theme_bw()+
   coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
   labs(x=expression(paste("Longitude ",degree,"W",sep="")),
