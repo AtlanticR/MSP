@@ -302,7 +302,7 @@ TBA: priorityCetaceanFile <- file.path("../../../Data/NaturalResources/Species/S
 #Re-load polygon of PEZ using the st_read function.
 PEZ_poly_st <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]), quiet=TRUE)
 ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClippedCritHab.shp", quiet=TRUE)
-ClippedCritLand <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClippedCritLand.shp", quiet=TRUE)
+Landshp <- st_read("../../../Data/Boundaries/Land50k_Maritimes.shp", quiet=TRUE)
 
 ```
 
@@ -319,7 +319,7 @@ source("plot_crithab.R")
 ```
 
 ```{r Fig X PEZ polygon with all maritime Critical Habitat polygons, fig.height=8, fig.width=11}
-plot_crithab(ClippedCritHab, PEZ_poly_st, ClippedCritLand)
+plot_crithab(ClippedCritHab, PEZ_poly_st, Landshp)
 ```
 
 ```{r read for zoom , echo=FALSE, include=FALSE, cache=FALSE}
@@ -327,7 +327,7 @@ source("plot_crithab_zoom.R")
 ```
 
 ```{r Fig X close up of PEZ polygon, fig.height=8, fig.width=11}
-plot_crithab_zoom(ClippedCritHab, PEZ_poly_st, ClippedCritLand)
+plot_crithab_zoom(ClippedCritHab, PEZ_poly_st, Landshp)
 ```
 
 ### **Priority Areas to Enhance Monitoring of Cetaceans**
