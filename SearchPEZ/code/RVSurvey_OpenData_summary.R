@@ -43,6 +43,6 @@ my_data4<-left_join(my_data3,GS_INF_unite,by="MISSION_SET")
 my_data5<-select(my_data4, MISSION_SET, SDATE, SLAT, SLONG, ELAT, ELONG, SPEC.CODE, TOTNO, SPEC.CODE, SPEC.GSSPECIES, COMM, TOTNO)
 my_data6<-my_data5 %>%
   separate("MISSION_SET", c("MISSION", "SETNO"))
-write.csv(my_data6, file = file.path(data.dir, paste(SurveyPrefix, "_summary.csv", sep = "", collapse = NULL)))
+write.csv(my_data6, file = file.path(data.dir, paste(SurveyPrefix, "_summaryb.csv", sep = "", collapse = NULL)))
 
           
