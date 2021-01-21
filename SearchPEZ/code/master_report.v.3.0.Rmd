@@ -16,6 +16,8 @@ output:
 #HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
 #output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
 rm(list=ls(all=TRUE))
+#AquaSiteName <- "TestGully"
+#PEZversion <- "Polygon"
 AquaSiteName <- "FarmersLedge"
 PEZversion <- "4748m"
 #make sure you delete all shp.xml files in the folder to be able to run this code
@@ -39,6 +41,8 @@ library(ggplot2)
 library(data.table)
 library(gridExtra)
 library(dplyr)
+library(stars)
+library(ggspatial)
 ###These next two lines are necessary for the generation of the water mark on all plots.#######
 #install.packages("devtools")
 #devtools::install_github("JosephCrispell/basicPlotteR")
@@ -48,6 +52,7 @@ library(basicPlotteR)
 ```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
 # the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
 source("site_map.r")
+source("site_map_old.r")
 source("plot_wsdb.r")
 source("filter_wsdb.r")
 source("plot_narwc.r")
@@ -64,55 +69,65 @@ source("filter_narwc.r")
 mspPath <- "../"
 data.dir = "../../../Data/mar.wrangling"
 #create a folder in outputs with the name of the site and buffer area search
-dataPath <- file.path("../outputs",paste0(AquaSiteName,PEZversion))
+dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
 # setwd(dataPath) #not needed?
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
+site_sf <- st_as_sf(site)
 opendataPath = "../../../Data/mar.wrangling/RVSurvey_OpenData"
 #wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
 wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
 narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
 ```
+
 ```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
 landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
 land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
 land_sf <- st_as_sf(land)
 ```
+
 ```{r Define PEZ!, echo=FALSE, include=FALSE, cache=FALSE}
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
+#PEZ_poly_st<-st_read(../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp", quiet=TRUE)
 PEZ_poly_st<-st_as_sf(PEZ_poly)
 ```
 
-```{r Define SARs in the Maritime Region, echo=FALSE, include=FALSE, cache=FALSE}
-#list of species listed in SARA schedule 1
-MARSAR_com_up <- c("ATLANTIC MUD-PIDDOCK","ATLANTIC SALMON","ATLANTIC WOLFFISH","BELUGA WHALE",
-            "BLUE WHALE","BROOK FLOATER","FIN WHALE","HARBOUR SEAL LACS DES LOUPS MARINS SUBSPECIES",
-            "LEATHERBACK SEA TURTLE","LOGGERHEAD SEA TURTLE","NORTH ATLANTIC RIGHT WHALE",
-            "NORTHERN BOTTLENOSE WHALE","NORTHERN WOLFFISH","SOWERBY'S BEAKED WHALE","SPOTTED WOLFFISH",
-            "WHITE SHARK","YELLOW LAMPMUSSEL")
-MARSAR_sci_up <- c("BARNEA TRUNCATA","SALMO SALAR","ANARHICHAS LUPUS","DELPHINAPTERUS LEUCAS","BALAENOPTERA MUSCULUS",
-                "ALASMIDONTA VARICOSA","BALAENOPTERA PHYSALUS","PHOCA VITULINA  MELLONAE","DERMOCHELYS CORIACEA",
-                "CARETTA CARETTA","EUBALAENA GLACIALIS","HYPEROODON AMPULLATUS","ANARHICHAS DENTICULATUS",
-                "MESOPLODON BIDENS","ANARHICHAS MINOR","CARCHARODON CARCHARIAS","LAMPSILIS CARIOSA")
+```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, echo=FALSE, include=FALSE, cache=FALSE}
 
-MARSAR_sci_low <- c("Barnea truncata","Salmo salar","Anarhichas lupus","Delphinapterus leucas","Balaenoptera musculus",
-                "Alasmidonta varicosa","Balaenoptera physalus","Phoca vitulina  mellonae","Dermochelys coriacea",
-                "Caretta caretta","Eubalaena glacialis","Hyperoodon ampullatus","Anarhichas denticulatus",
-                "Mesoplodon bidens","Anarhichas minor","Carcharodon carcharias","Lampsilis cariosa")
-
+listed_species<-read.csv("../../../Data/NaturalResources/Species/SAR_MAR_Region_SORTED.csv")
+MARSAR_com <- listed_species$Common_Name
+MARSAR_com_up <- listed_species$Common_Name_upper
+MARSAR_sci <- listed_species$Scientific_Name
+MARSAR_sci_up <- listed_species$Scientific_Name_upper
 ```
 
 ### **About this report**
 
-This reproducible report summarizes species that have been reported in specific areas drawing from databases available, both within and outside the Department (**2002 - 2018**). This report if for internal DFO use only. No maps, layers, or data that violate the rule of 5 will be shared outside of the department. 
+This reproducible report summarizes species that have been reported in specific areas drawing from databases available, both within and outside the Department (**2002 - 2018**). This report is for internal DFO use only. No maps, layers, or data that violate the rule of 5 will be shared outside of the department. 
 
-### **How to use this report?**
+### **How to use this report**
 
-This report is used used to inform a general list of species that have been reported in a given area. Absence of a species in this report should be interpreted as an absence of reporting, not as an absence of the species in the area. The focus of this report is on species presence and not on associated numbers, frequency, or catch information. For more information, please read the "resources and sources of uncertainty" section of this document. 
+This report provides a general list of species that have been reported in a given area. Absence of a species in this report should be interpreted as an absence of reporting, not as an absence of the species in the area. The focus of this report is on species presence and not on associated numbers, frequency, or catch information. For more information, please read the "resources and sources of uncertainty" section of this document. 
 
-We recommend to circulate the species list generated in this synthesis to appropriate DFO units and sectors to verify and supplement the information provided (e.g. reported spatial and temporal presence/absence of species in the area). 
+The intent of this report for all users is to prompt a circulation of the species list generated in this synthesis to appropriate DFO units and sectors to verify and supplement the information provided (e.g. reported spatial and temporal presence/absence of species in the area).
+
+### **Tiers of confidence** in data sources.
+
+There are various data sources featured in this report, including federal and provincial agencies, non-proft organizations and citizen groups. Below is a framework by which users can assess the confidence with which they can assess the different data sources provided throughout the report.
+
+```{r echo=FALSE, results='asis'}
+Tier_table<-matrix(c("Records available from systematic surveys, with qualified observers/personnel.", "This record has high certainty, and it comes from a reliable source (not necessarily DFO).", "RV survey, NARWC", "Records available from a mix of opportunistic and systematic surveys, quality control has been applied, although additional work is required to verify information.", "Use with caution.", "TBA", "Primarily opportunistic surveys, or results of invalidated models. Data quality protocols still required, quality control not standardized or explored just yet in this report.", "Use with caution. Use at your own discretion, preferably only if data in high/medium tiers validates information from this tier. Very high uncertainty. ", "WSDB, Priority area for cetaceans"), ncol=3,byrow=TRUE)
+colnames(Tier_table)<-c("Description", "Usage recommendations", "Examples")
+rownames(Tier_table)<-c("High Confidence", "Medium Confidence", "Low Confidence")
+Tiers<-as.table(Tier_table)
+```
+
+```{r}
+kable(Tiers, align="l") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
 
 ### **Search area**
 
@@ -124,7 +139,8 @@ cat(AquaSiteName)
 ```
 
 ```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11}
-site_map(PEZ_poly,site,land,40)
+site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,40)
+
 ```
 
 # **Databases**
@@ -141,130 +157,238 @@ rv <- rv[which(year(rv$SDATE)>=minYear),]
 rv_OD <- read.csv(file.path(opendataPath,("rv_OD_summary.csv")))
 rv_OD <- rv[which(year(rv$SDATE)>=minYear),]
 #Word from Remi Daigle is that this data set is not ready yet.
-#obis<-read.csv("C:/Users/puncherg/Documents/NLP/Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_CBIF_iNaturalist.csv")
+obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_CBIF_iNaturalist.csv")
 #obis <- obis[which(year(obis$year)>=minYear),]
-```
-
-### **Ecosystem Research Vessel (RV) Survey**
-
-THIS HAS BEEN REPLACED WITH OPEN DATA RECORD FEATURED BELOW
-
-Fisheries and Oceans Canada (DFO) has conducted Research Vessel (RV) surveys in the Maritimes Region using a standardized protocol. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>. The search of the Ecosystem RV Survey database resulted in the Table below that summarizes records by species or species group. 
-
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
-rv$database <- "rv"
-rv_freq <- aggregate(
-        x = list(Records = rv$COMM),
-      by = list(Species = rv$COMM
-      ),
-      length
-      )
-rv_freq <- rv_freq[order(-rv_freq$Records),]
-rownames(rv_freq) <- c()
-rv_total <- aggregate(
-        x = list(total = rv$COMM),
-      by = list(db = rv$database
-      ),
-      length
-      )
-Total_number_records_RV <- rv_total[[2]] 
-Total_number_records_RV
-```
-```{r} 
-kable(as.data.frame(Total_number_records_RV), digits=2, full_width = F, position = "left")
-``` 
-```{r}
-kable(rv_freq) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```
-Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed are summarized in the table above). The yellow polygon shows the locations of the human activity. The blue polygon displays the area searched and summarized in this report. 
-
-```{r Fig 2 Ecosystem RV Survey records, fig.height=8, fig.width=11}
-site_map(PEZ_poly,site,land,2)
-points(rv$LONGITUDE,rv$LATITUDE, col="black",pch=16,cex=1.5)
 ```
 
 ### **Industry Survey Database (ISDB)**
 
-ISDB is a DFO database that contains at-sea fish catch observations from commercial fishing vessels operating in the North West Atlantic.
+ISDB is a DFO database that contains at-sea fish catch observations from commercial fishing vessels operating in the North West Atlantic. The data provided by ISDB is confidential and cannot be communicated outside of the DFO, given teh direct implications of the Rule of 5.
 
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
-isdb$database <- "isdb"
+##skip all of these steps and create an isdb file for all of the MAR region.
+#df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
+isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
+isdb_intersect <- st_intersection(isdb_shp,PEZ_poly_st)
+isdb_sites<-data.frame(longitude=isdb_intersect$LONGITUDE, latitude=isdb_intersect$LATITUDE)
+```
+
+```{r, echo=FALSE, include=FALSE, cache=FALSE}
 isdb_freq <- aggregate(
-        x = list(Records = isdb$COMMON),
-      by = list(Species = isdb$COMMON
+      x = list(Records = isdb_intersect$SCIENTIFI1),
+      by = list(Species = isdb_intersect$SCIENTIFI1
       ),
       length
       )
 isdb_freq <- isdb_freq[order(-isdb_freq$Records),]
 rownames(isdb_freq) <- c()
-isdb_total <- aggregate(
-  x = list(total = isdb$COMMON),
-  by = list(db = isdb$database
-  ),
-  length
-)
-Total_number_records_ISDB <- isdb_total[[2]] 
-Total_number_records_ISDB
+Total_number_records_isdb <- sum(isdb_freq$Records)
+isdb_poly_SAR_total<-isdb_freq %>% select(Species, Records) %>% filter (Species %in% MARSAR_sci_up)
+Total_number_SAR_records_isdb<-sum(isdb_poly_SAR_total$Records)
 ```
-
-The search of ISDB resulted in the Table below that summarizes records by species or species group. 
-
-
-```{r} 
-kable(as.data.frame(Total_number_records_ISDB), digits=2, full_width = F, position = "left")
-``` 
 
 ```{r}
-kable(isdb_freq) %>%
+#table with scientific names of species and number of records
+isdb_poly_SAR_records<-isdb_intersect %>% select(SCIENTIFI1, COMMON) %>% filter (SCIENTIFI1 %in% MARSAR_sci_up)
+
+x<-as.numeric(nrow(isdb_poly_SAR_records))
+
+Report_isdb<-if(x < 1){
+    "There are no records of Species at Risk in the Industry Survey Database (ISDB) for this polygon."
+  } else {
+    
+CommonName<-isdb_intersect$COMMON
+Species<-isdb_intersect$SCIENTIFI1
+
+#list of SAR species in polygon
+isdb_poly_SAR_list<-unique(isdb_poly_SAR_records$SCIENTIFI1)
+
+
+#build table with rows containing sets in which SARs were captured 
+isdb_setcounttable<-data.frame(Common_Name="", Scientific_Name_upper="", SARA_listing="", COSEWIC_listing="", Wild_Species_listing="", Set_Occurence=0, Set_Frequency=0)
+
+isdb_poly_filter_sets<-isdb_intersect %>% filter(SCIENTIFI1 %in% isdb_poly_SAR_list)
+
+#scientific names column
+for(i in 1:length(isdb_poly_SAR_list)){
+  isdb_spec<-isdb_intersect %>% filter(SCIENTIFI1 %in% isdb_poly_SAR_list[i])
+  set_count<-length(unique(isdb_spec$SET_NO))
+  isdb_setcounttable[i,2]<-isdb_poly_SAR_list[i]
+  isdb_setcounttable[i,6]<-set_count
+}
+
+#common names column
+isdb_poly_SAR_list_com<-unique(isdb_poly_SAR_records$COMMON)
+for(i in 1:length(isdb_poly_SAR_list)){
+  isdb_com<-isdb_intersect %>% filter(COMMON %in% isdb_poly_SAR_list_com[i])
+  set_count<-length(unique(isdb_com$SET_NO))
+  isdb_setcounttable[i,1]<-isdb_poly_SAR_list_com[i]
+  isdb_setcounttable[i,6]<-set_count
+}
+
+isdb_setcounttabledf<-as.data.frame(isdb_setcounttable)
+
+#Count sets
+Total_sets<-length(unique(isdb_intersect$SET_NO))
+
+}
+```
+
+```{r}
+isdb_set_summary_table<-data.frame(Sets_recorded_in_polygon="", Organisms_recorded_in_polygon="", Listed_organisms_recorded_in_polygon="")
+isdb_set_summary_table[1,1]<-Total_sets
+isdb_set_summary_table[1,2]<-Total_number_records_isdb
+isdb_set_summary_table[1,3]<-Total_number_SAR_records_isdb
+
+```
+
+```{r}
+kable(isdb_set_summary_table, align="c") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
+
+```{r}
+isdb_setcounttable2<-mutate(isdb_setcounttabledf, Set_Frequency=format(round((Set_Occurence/Total_sets)*100,1), nsmall=1))
+isdb_table<-merge(isdb_setcounttable2, listed_species, by='Scientific_Name_upper')
+isdb_table2<-isdb_table %>% 
+  transmute(Scientific_Name, Common_Name.y, Schedule.status, COSEWIC.status, Wild_Species, Set_Occurence,Set_Frequency)
+isdb_table3<- isdb_table2 %>% rename(Common_Name=Common_Name.y,
+                                     SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species,
+                                     Set_occurence=Set_Occurence,
+                                     Set_frequency=Set_Frequency
+                                     )
+
+```
+
+ **Table 1:** ISDB records of species observed within the provided polygon which have a listed status wotj SARA, COSEWIC or Wild Species. Data is summarized by species or species group.
+
+```{r}
+kable(isdb_table3, align="l") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+**Note:** A complete list of ISDB observation records of all species within the provided polygon can be found in the Appendix.
 
 ### **The Maritime Fishery Information System (MARFIS)**
 
 MARFIS is a DFO database, managed by the Policy & Economics Branch. MARFIS contains: catch and effort, quota, and licensing information for the Maritimes region. The catch and effort data contains the log information for all commercial fisheries that land within this region. If a Maritimes region commercial vessel lands in another DFO region or outside of Canadian waters, it is not included in the database. The majority of catch information is related to commercial offloads. There is also more limited data related to discards and the SARA log. Not all catch records have associated lat/long coordinates. This may be due to the structure of the log itself, or missing data. Generally all records have a NAFO Division and NAFO Unit Area flag, even if no coordinates have been provided. Data for the years 2017-2020 is preliminary and subject to change without notice. There may be some limited changes to data in the years 2016 and previous. Ongoing qa/qc work is done on the MARFIS database, but not all errors are corrected. If you have data errors, questions, or corrections, you can send them to our data quality inbox: CDDDataQuality@dfo-mpo.gc.ca. Requests for data exports can be sent to: XMARComData@dfo-mpo.gc.ca. This information about MARFIS was provided by Colin.O'Neil@dfo-mpo.gc.ca (July 2020, Policy & Economics Branch).
 
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
-marfis$database <- "marfis"
+##skip all of these steps and create an isdb file for all of the MAR region.
+#df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
+marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
+marfis_intersect <- st_intersection(marfis_shp,PEZ_poly_st)
+marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
+```
+
+```{r, echo=FALSE, include=FALSE, cache=FALSE}
 marfis_freq <- aggregate(
-        x = list(Records = marfis$SPECIES_NAME),
-      by = list(Species = marfis$SPECIES_NAME
-      ),
-      length
-      )
+      x = list(Records = marfis_intersect$SPECIENAME),
+      by = list(Species = marfis_intersect$SPECIENAME),
+      length)
 marfis_freq <- marfis_freq[order(-marfis_freq$Records),]
 rownames(marfis_freq) <- c()
-marfis_total <- aggregate(
-  x = list(total = marfis$COMM),
-  by = list(db = marfis$database
-  ),
-  length
-)
-Total_number_records_MARFIS <- marfis_total[[2]] 
-Total_number_records_MARFIS 
+Total_number_records_marfis <- sum(marfis_freq$Records)
+marfis_poly_SAR_total<-marfis_freq %>% select(Species, Records) %>% filter (Species %in% MARSAR_com_up)
+Total_number_SAR_records_marfis<-sum(marfis_poly_SAR_total$Records)
 ```
-The search of MARFIS resulted in the Table below that summarizes records by species or species group. 
 
 ```{r}
-kable(as.data.frame(Total_number_records_MARFIS), digits=2, full_width = F, position = "float_left") 
+#table with scientific names of species and number of records
+marfis_poly_SAR_records<-marfis_intersect %>% select(SPECIENAME) %>% filter (SPECIENAME %in% MARSAR_com_up)
+
+x<-as.numeric(nrow(marfis_poly_SAR_records))
+
+Report_marfis<-if(x < 1){
+    "There are no records of Species at Risk in the Industry Survey Database (ISDB) for this polygon."
+  } else {
+    
+CommonName<-marfis_intersect$SPECIENAME
+
+#list of SAR species in polygon
+marfis_poly_SAR_list<-unique(marfis_poly_SAR_records$SPECIENAME)
+
+
+#build table with rows containing sets in which SARs were captured 
+marfis_setcounttable<-data.frame(Common_Name="", Scientific_Name_upper="", SARA_listing="", COSEWIC_listing="", Wild_Species_listing="", Set_Occurence=0, Set_Frequency=0)
+marfis_poly_filter_sets<-marfis_intersect %>% filter(SPECIENAME %in% marfis_poly_SAR_list)
+marfis_poly_filter_sets<- marfis_poly_filter_sets %>% rename(Common_Name_upper=SPECIENAME)
+marfis_poly_filter_sets$Common_Name_upper
+listed_species$Common_Name_upper
+marfis_SAR_master<-merge(marfis_poly_filter_sets, listed_species, by='Common_Name_upper')
+
+#common names column
+for(i in 1:length(marfis_poly_SAR_list)){
+  marfis_spec<-marfis_SAR_master %>% filter(Common_Name_upper %in% marfis_poly_SAR_list[i])
+  set_count<-length(unique(marfis_spec$LOGEFRTSID))
+  marfis_setcounttable[i,1]<-marfis_poly_SAR_list[i]
+  marfis_setcounttable[i,6]<-set_count
+}
+
+marfis_setcounttable<- marfis_setcounttable %>% rename(Common_Name_upper=Common_Name)
+marfis_setcounttable2<-merge(marfis_setcounttable, listed_species, by='Common_Name_upper')
+col_order<-c("Scientific_Name", "Common_Name", "Schedule.status","COSEWIC.status", "Wild_Species", "Set_Occurence", "Set_Frequency")
+marfis_setcounttable3<-marfis_setcounttable2[,col_order]
+
+#Count sets
+Total_sets<-length(unique(marfis_intersect$LOGEFRTSID))
+}
 ```
+
 ```{r}
-kable(marfis_freq) %>%
+marfis_set_summary_table<-data.frame(Sets_recorded_in_polygon="", Organisms_recorded_in_polygon="", Listed_organisms_recorded_in_polygon="")
+marfis_set_summary_table[1,1]<-Total_sets
+marfis_set_summary_table[1,2]<-Total_number_records_marfis
+marfis_set_summary_table[1,3]<-Total_number_SAR_records_marfis
+
+```
+
+```{r}
+kable(marfis_set_summary_table, align="c") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
-Map below shows the location of samples recorded in the MARFIS and ISDB databases (tables above summarize records per species or species group). Map below is for internal DFO use only (rule of five was not applied). Please read the "resources and sources of uncertainty" section for additional information. 
+
+```{r}
+marfis_setcounttable4<-mutate(marfis_setcounttable3, Set_Frequency=format(round((Set_Occurence/Total_sets)*100,1), nsmall=1))
+marfis_setcounttable5<- marfis_setcounttable4 %>% rename(
+                                     SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species,
+                                     Set_occurence=Set_Occurence,
+                                     Set_frequency=Set_Frequency
+                                     )
+
+```
+ **Table 2:** MARFIS observation records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
+
+```{r}
+kable(marfis_setcounttable5, align="l") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+**Note:** A complete list of MARFIS observation records of all species within the provided polygon can be found in the Appendix.
+
+
+The map below shows the location of samples recorded in the MARFIS and ISDB databases (tables above summarize records per species or species group). Map below is for internal DFO use only (rule of five was not applied). Please read the "resources and sources of uncertainty" section for additional information. 
 
 ```{r Fig 3 MARFIS and ISDB records, fig.height=8, fig.width=11}
-site_map(PEZ_poly,site,land,2)
-points(marfis$ENT_LONGITUDE,marfis$ENT_LATITUDE, col="black",pch=16,cex=0.5)
-points(isdb$LONG2,isdb$LAT2, col="blue",pch=16,cex=0.5)
+site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+  geom_point(data = isdb_sites, aes(x = longitude, y = latitude), size = 3, 
+        shape = 16, fill = "black")+
+  geom_point(data = marfis_sites, aes(x = longitude, y = latitude), size = 3, 
+        shape = 16, fill = "black")
+
 ```
 
 ### **Whale Sightings Database (WSDB)**
 
-The Marine Mammal and Pelagic Animals or Whale Sighting Database (WSDB) was implemented in 2002 by the Department of Fisheries and Oceans (DFO) to provide a central repository for opportunistic sightings of marine animals, especially cetaceans, and to improve accessibility to data from a variety of sources, including some data from marine mammal surveys and research activities conducted in the Bay of Fundy, on the Scotian Shelf (MacDonald et al 2017), and more recently in the Gulf of St. Lawrence. Most sightings are collected on an opportunistic basis and observations come from individuals with a wide range of expertise and experience in marine mammal identification. Most data is gathered from platforms of opportunity that were vessel-based. Please read the Important Disclaimers for WSDB in the section below. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/40642999.pdf>, <http://www.inter.dfo-mpo.gc.ca/Maritimes/SABS/popec/sara/Database> or contact <XMARWhaleSightings@dfo-mpo.gc.ca>
+The Marine Mammal and Pelagic Animals or Whale Sighting Database (WSDB) was
+implemented in 2002 by the Department of Fisheries and Oceans (DFO) to provide a
+central repository for opportunistic sightings of marine animals and to improve
+accessibility to data from surveys and research activities conducted in the Bay of Fundy and on the Scotian Shelf (MacDonald et al 2017). Most sightings are collected on an opportunistic basis and observations may come from individuals with a variety of expertise in marine mammal identification experiences. Most data is gathered from platforms of opportunity that were vessel-based. Please read the Important Disclaimers for WSDB in the section below. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/40642999.pdf> or contact <XMARWhaleSightings@dfo-mpo.gc.ca>
 
-Map below includes sightings (including sightings of groups of animals) SARA-listed (Schedule 1) and COSEWIC-assessed species within the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). 
+Map below includes SARA and COSEWIC species within the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). 
 
 ```{r read wsdb and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
 wsdb <- read.csv(wsdbFile)
@@ -275,13 +399,14 @@ wsdb_filter <- filter_wsdb(wsdb)
 ```{r Fig 4 Whale Sightings Database, fig.height=8, fig.width=11}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 #par(mar = c(5.1, 4.1, 4.1, 2.1))
-site_map(PEZ_poly,site,land,5)
+site_map_old(PEZ_poly,site,land,5)
 plot_wsdb(PEZ_poly,wsdb_filter,5)
+
 ```
 
 ### **North Atlantic Right Whale Consortium (NARWC) Database**
 
-The North Atlantic right whale consortium (NARWC) databases <https://www.narwc.org/narwc-databases.html> were established in 1986 as part of a cooperative right whale research program conducted by the University of Rhode Island, New England Aquarium, Center for Coastal Studies, Woods Hole Oceanographic Institution, and other organizations forming the North Atlantic Right Whale Consortium. The Sightings Database <https://www.narwc.org/sightings-database.html> was requested to the NARWC on October 2020 for use in this internal reporting *only*. Marine mammal SARA records in the databse are summarized in this report. For more informa Please consult the NARWC guide for users and contributors for a comprhensive guide about this database: <https://www.narwc.org/uploads/1/1/6/6/116623219/narwc_users_guide__v_6_.pdf>
+The North Atlantic right whale consortium (NARWC) databases <https://www.narwc.org/narwc-databases.html> were established in 1986 as part of a cooperative right whale research program conducted by the University of Rhode Island, New England Aquarium, Center for Coastal Studies, Woods Hole Oceanographic Institution, and other organizations forming the North Atlantic Right Whale Consortium. The Sightings Database <https://www.narwc.org/sightings-database.html> was requested to the NARWC on October 2020 for use in this internal reporting *only*. Marine mammal SARA records in the database are summarized in this report. For more information please consult the NARWC guide for users and contributors for a comprehensive guide about this database: <https://www.narwc.org/uploads/1/1/6/6/116623219/narwc_users_guide__v_6_.pdf>
 
 ```{r read narwc and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
 narwc <- read.csv(narwcFile)
@@ -290,7 +415,7 @@ narwc_filter <- filter_narwc(narwc)
 ```
 ```{r Fig 5 NARWC Database, fig.height=8, fig.width=11}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-site_map(PEZ_poly,site,land,5)
+site_map_old(PEZ_poly,site,land,5)
 plot_narwc(PEZ_poly,narwc_filter,5)
 ```
 
@@ -303,45 +428,45 @@ Global Biodiversity Information Facility (GBIF; https://www.gbif.org/)
 iNaturalist (https://www.inaturalist.org/)
 
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
-obis$database <- "obis"
+#obis$database <- "obis"
 #obis_df<-as.data.frame(obis)
 #df_to_shp(df= obis, file = obis, lat.field = "LATITUDE",lon.field = "LONGITUDE")
-obis_shp <- st_read("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/obis2.shp", quiet=TRUE)
-obis_intersect <- st_intersection(obis_shp,PEZ_poly_st)
+#obis_shp <- st_read("C:/Users/puncherg/Documents/NLP/Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/obis2.shp", quiet=TRUE)
+#obis_intersect <- st_intersection(obis_shp,PEZ_poly_st)
 
-x<-as.numeric(nrow(obis_intersect))
-Species<-obis_intersect$scntfcN
-obis_intersect_freq <- aggregate(
-      x = list(Records = obis_intersect$scntfcN),
-      by = list(Species = obis_intersect$scntfcN
-      ),
-      length
-      )
-obis_freq <- obis_freq[order(-obis_freq$Records),]
-Total_number_records_obis<-sum(obis_freq$Records)
-```
+#x<-as.numeric(nrow(obis_intersect))
+#Species<-obis_intersect$scntfcN
+#obis_intersect_freq <- aggregate(
+#      x = list(Records = obis_intersect$scntfcN),
+#      by = list(Species = obis_intersect$scntfcN
+#      ),
+#      length
+#      )
+#obis_freq <- obis_freq[order(-obis_freq$Records),]
+#Total_number_records_obis<-sum(obis_freq$Records)
+#```
 
-```{r} 
-kable(as.data.frame(Total_number_records_obis), digits=2, full_width = F, position = "left")
-``` 
-
-```{r} 
+#```{r} 
+#kable(as.data.frame(Total_number_records_obis), digits=2, full_width = F, position = "left")
+#``` 
+#
+#```{r} 
 #table with scientific names of species and number of records
-obispoly_SAR_records<-obis_intersect_freq %>% select(Species) %>% filter (Species %in% MARSAR_sci_low)
+#obispoly_SAR_records<-obis_intersect_freq %>% select(Species) %>% filter (Species %in% MARSAR_sci_low)
 
 #list of SAR species in polygon
-obispoly_SAR_list<-obispoly_SAR_records$Species
+#obispoly_SAR_list<-obispoly_SAR_records$Species
 
 #build table with rows containing sets in which SARs were captured 
-obis_setcounttable<-data.frame(COMMON_NAME="", SPECIES="", Ind_Count=0, Set_Occurence=0, Set_Frequency=0)
+#obis_setcounttable<-data.frame(COMMON_NAME="", SPECIES="", Ind_Count=0, Set_Occurence=0, Set_Frequency=0)
 
-obispoly_filter_sets<-obis_intersect %>% filter(Species %in% obispoly_SAR_list)
-for(i in 1:length(obispoly_SAR_list)){
-  obis_spec<-obis_intersect %>% filter(Species %in% obispoly_SAR_list[i])
-  set_count<-length(unique(obis_spec$day))
-  obis_setcounttable[i,2]<-obispoly_SAR_list[i]
-  obis_setcounttable[i,4]<-set_count
-}
+#obispoly_filter_sets<-obis_intersect %>% filter(Species %in% obispoly_SAR_list)
+#for(i in 1:length(obispoly_SAR_list)){
+#  obis_spec<-obis_intersect %>% filter(Species %in% obispoly_SAR_list[i])
+#  set_count<-length(unique(obis_spec$day))
+#  obis_setcounttable[i,2]<-obispoly_SAR_list[i]
+#  obis_setcounttable[i,4]<-set_count
+#}
 
 #print(obis_setcounttable)
 #
@@ -365,38 +490,48 @@ for(i in 1:length(obispoly_SAR_list)){
 #Total_sets<-length(unique(obis_intersect$SETNO))
 #setcounttable2<-mutate(setcounttabledf, Set_Frequency=format(round((Set_Occurence/Total_sets)*100,2), nsmall=2))
 
+#```
+
+#```{r}
+#kable(obis_setcounttable, align="l") %>%
+#  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+#```
+#
+#```{r}
+#kable(obis_freq) %>%
+#  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+#```
+#Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed #are summarized in the table above). The yellow polygon shows the locations of the human activity. The blue polygon #displays the area searched and summarized in this report. 
+#
+#```{r Fig X OBIS_iNaturalist Survey records, fig.height=8, fig.width=11}
+#site_map(PEZ_poly,site,land,2)
+#points(obis_intersect$LONGITU,obis_intersect$LATITUD, col="black",pch=16,cex=1.5)
+#
 ```
 
-```{r}
-kable(obis_setcounttable, align="l") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```
+**Table 3:** OBIS records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
 
-```{r}
-kable(obis_freq) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```
-Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed are summarized in the table above). The yellow polygon shows the locations of the human activity. The blue polygon displays the area searched and summarized in this report. 
 
-```{r Fig X OBIS_iNaturalist Survey records, fig.height=8, fig.width=11}
-site_map(PEZ_poly,site,land,2)
-points(obis_intersect$LONGITU,obis_intersect$LATITUD, col="black",pch=16,cex=1.5)
-
-```
-
-# **Open Data**
+## **Open Data**
 
 As part of its Open Government initiative, the Canadian Federal Government is committed to increasing the availability of scientific data and publications. DFO continues to support this objective by making scientific data available publically on the open government data portals in the machine-readable, simple to access, and convenient formats. Records summarized below have been published and maintained by DFO on Open Data and are available for download. For more information on open data please visit <https://open.canada.ca/en>.
+
 
 ### **Ecosystem Research Vessel Survey**
 
 Fisheries and Oceans Canada (DFO) has conducted Research Vessel (RV) surveys in the Maritimes Region using a standardized protocol. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>. The search of the Ecosystem RV Survey database resulted in the Table below that summarizes records by species or species group. 
 
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
-rv_OD_shp <- st_read("../../../Data/mar.wrangling/RVSurvey_OpenData/4VSW_2020.shp", quiet=TRUE)
-rv_OD <- read.csv("../../../Data/mar.wrangling/RVSurvey_OpenData/4VSW_2020_summaryb.csv")
+#still working to provide multiple data sources for locations and seasons (Summer, spring and fall surveys)
+#the following is specialized for this location.
+rv_OD_shp <- st_read("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020.shp", quiet=TRUE)
+rv_OD <- read.csv("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020_summary.csv")
 m <-merge(rv_OD_shp, rv_OD, by='SETNO')
 RVsf<-st_as_sf(m)
+
+#subbing in Gully for temporary demo purposes.
+#Gully<-st_read("../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp")
+#rv_intersect <- st_intersection(RVsf,Gully)
 
 rv_intersect <- st_intersection(RVsf,PEZ_poly_st)
 
@@ -463,30 +598,42 @@ setcounttable2<-mutate(setcounttabledf, Set_Frequency=format(round((Set_Occurenc
 
 ```
 
-```{r}
-kable(setcounttable2, align="l") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```
+**Table 4:** RV Survey records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
 
 ```{r}
-kable(rv_intersect_freq) %>%
+kable(setcounttable2, align="l") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
 Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed are summarized in the table above). The yellow polygon shows the locations of the human activity. The blue polygon displays the area searched and summarized in this report. 
 
 ```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11}
-site_map(PEZ_poly,site,land,2)
-points(rv_intersect$SLONG.x,rv_intersect$SLAT.x, col="black",pch=16,cex=1.5)
-points(rv_intersect$ELONG.x,rv_intersect$ELAT.x, col="red",pch=16,cex=1.5)
+site_map_old(PEZ_poly,site,land,2)
+points(rv_intersect$SLONG.x,rv_intersect$SLAT.x, col="darkgreen",pch=16,cex=1)
+points(rv_intersect$ELONG.x,rv_intersect$ELAT.x, col="firebrick4",pch=16,cex=1)
+all_pairs<-as.data.frame(unique(cbind(rv_intersect$SLONG.x,rv_intersect$SLAT.x,rv_intersect$ELONG.x,rv_intersect$ELAT.x)))
+for (i in 1:nrow(all_pairs)){
+  arrows(all_pairs[i,1],all_pairs[i,2],all_pairs[i,3],all_pairs[i,4], length=0.08, angle=20, lwd=2, col="black")
+}
 ```
 
-### **Species At Risk Distribution Range**
+### **Fisheries and Oceans Canada Species at Risk Distribution (Range) **
 
 <https://open.canada.ca/data/en/dataset/e0fabad5-9379-4077-87b9-5705f28c490b>
 
+The Species at Risk (SAR) Program is responsible for carrying out DFO’s mandate under the Species at Risk Act (SARA) to protect, recover and conserve all listed aquatic SAR in Canada. As part of this mandate, this spatial database has been developed to identify areas in which aquatic species listed under SARA may be found. 
+
+Distribution and range information are identified for species listed as Endangered, Threatened or Special Concern under SARA. 
+
+Distribution (range) polygons and lines were assembled by regional SARA biologists using the best available information, including COSEWIC status reports, recovery potential assessments, academic literature, and expert opinion. These spatial data support the protection, recovery and conservation of species listed as Endangered, Threatened or Special Concern under SARA. Species distributions are also described and displayed in Recovery Strategies, Action Plans and/or Management Plans. 
+
+Discrepancies may exist between the distribution data shown in a species’ SARA recovery document and the current spatial data. Please contact DFO for more information on any data discrepancies.
+
+COSEWIC and WildSpecies listed status are also provided in the table below. 
 
 ```{r Set up paths for SAR distribution files, echo=FALSE, include=FALSE, cache=FALSE}
+#Re-load polygon of PEZ using the st_read function.
+#PEZ_poly_st <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]), quiet=TRUE)
 #sardist<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/Distribution_FGP_fixed_clipped.shp", quiet=TRUE)
 #sardist_4326 <- st_transform(sardist, crs = 4326)
 #st_write(sardist_4326, "../../../Data/NaturalResources/Species/SpeciesAtRisk/sardist_4326.shp")
@@ -495,62 +642,56 @@ sardist<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/sardist_4
 ```
 
 ```{r echo=FALSE, results='asis'}
-intersect <- st_intersection(sardist,PEZ_poly_st)
-x<-as.numeric(nrow(intersect))
-CommonName<-intersect$Common_Nam
-intersect$Common_Nam[intersect$Common_Nam == "Sowerby`s Beaked Whale"] <- "Sowerby's Beaked Whale"
-CommonName<-intersect$Common_Nam
-Population<-intersect$Population
-Area<-intersect$Waterbody
-SARA_status<-intersect$SARA_Statu
-intersect_df<-data.table(expand.grid(CommonName = CommonName, Population = Population, Area=Area, SARA_status=SARA_status))
-Query_output_crit<-if(x < 1){
-  "Does not overlap with defined critical habitat"
+intersect_dist <- st_intersection(sardist,PEZ_poly_st)
+x<-as.numeric(nrow(intersect_dist))
+intersect_dist$Common_Nam[intersect_dist$Common_Nam == "Sowerby`s Beaked Whale"] <- "Sowerby's Beaked Whale"
+Common_Name<-intersect_dist$Common_Nam
+Scientific_Name<-intersect_dist$Scientific
+Population<-intersect_dist$Population
+Area<-intersect_dist$Waterbody
+intersect_dist_df<-as.data.frame(cbind(Common_Name, Scientific_Name, Population, Area))
+
+#append columns from listed species 
+dist_table<-merge(intersect_dist_df, listed_species, by='Scientific_Name')
+dist_table2<-dist_table %>% 
+  transmute(Common_Name, Scientific_Name, Population, Area, Schedule.status, COSEWIC.status, Wild_Species)
+dist_table3<- dist_table2 %>% rename(SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species 
+                                     )
+
+Query_output_dist<-if(x < 1){
+  "The provided polygon does not overlap with species at risk distribution range."
 } else {
-  "Overlaps with Critical Habitat"
+  "The provided polygon overlaps with species at risk distribution range."
 }
 
-Query_output_crit2<-noquote(Query_output_crit)
+Query_output_dist2<-noquote(Query_output_dist)
 
-writeLines(c(Query_output_crit2), sep = "\n")
+writeLines(c(Query_output_dist2), sep = "\n")
 ```
+
+**Table 5:** Species at Risk for which the provided polygon overlaps with their distribution.
+
 ```{r echo=FALSE, results='asis'}
 Query_output_table<-if(x < 1){
   ""
 } else {
-  kable(intersect_df[!duplicated(intersect_df),]) %>%
+  kable(dist_table3[!duplicated(dist_table3),]) %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
   
 }
 
 Query_output_table
-```
-
-```{r read for sardist, echo=FALSE, include=FALSE, cache=FALSE}
-source("plot_sardist.R")
-```
-
-```{r Fig X PEZ polygon with all maritime SAR distribution polygons, fig.height=8, fig.width=11}
-plot_sardist(sardist, PEZ_poly_st, land_sf)
 
 ```
-
-```{r read for zoom of sardist, echo=FALSE, include=FALSE, cache=FALSE}
-source("plot_sardist_zoom.R")
-```
-
-```{r Fig X close up of PEZ polygon with sardist, fig.height=8, fig.width=11}
-plot_sardist_zoom(sardist, PEZ_poly_st, land_sf)
-```
-
 
 ### **Species At Risk Critical Habitat**
 
-###Critical habitat data retrived from https://open.canada.ca/data/en/dataset/db177a8c-5d7d-49eb-8290-31e6a45d786c###
+Critical habitat data retrieved from https://open.canada.ca/data/en/dataset/db177a8c-5d7d-49eb-8290-31e6a45d786c
 
 ```{r Set up paths for Crithab files, echo=FALSE, include=FALSE, cache=FALSE}
-#Re-load polygon of PEZ using the st_read function.
-ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/ClippedCritHab.shp", quiet=TRUE)
+ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/ClipCritHab.shp", quiet=TRUE)
 
 ```
 
@@ -563,9 +704,9 @@ Area<-intersect$Waterbody
 SARA_status<-intersect$SARA_Statu
 intersect_df<-data.table(expand.grid(CommonName = CommonName, Population = Population, Area=Area, SARA_status=SARA_status))
 Query_output_crit<-if(x < 1){
-  "Does not overlap with defined critical habitat"
+  "The provided polygon does not overlap with defined critical habitat"
 } else {
-  "Overlaps with Critical Habitat"
+  "The provided polygon overlaps with Critical Habitat"
 }
 
 Query_output_crit2<-noquote(Query_output_crit)
@@ -578,10 +719,13 @@ Query_output_table<-if(x < 1){
 } else {
   kable(intersect_df[!duplicated(intersect_df),]) %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-  
+
 }
 
-Query_output_table
+Query_output_table2<-noquote(Query_output_table)
+Query_output_table2
+
+
 ```
 
 ```{r read for crithab , echo=FALSE, include=FALSE, cache=FALSE}
@@ -603,9 +747,86 @@ plot_crithab_zoom(ClippedCritHab, PEZ_poly_st, land_sf)
 
 ### **Priority Areas to Enhance Monitoring of Cetaceans**
 
-Species Distribution Models  were used to predict and identify priority areas for enhanced monitoring of cetaceans in eastern Canadian waters off Nova Scotia, Newfoundland and Labrador (Gomez et al. 2020) <https://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf>. Outputs from this report are available in the Open Data record <https://open.canada.ca/data/en/dataset/c094782e-0d6f-4cc0-b5a3-58908493a433> and summarized in this report for cetacean SAR. 
+Report: <https://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf>
 
-TBA: priorityCetaceanFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP","...")
+Data: <https://open.canada.ca/data/en/dataset/c094782e-0d6f-4cc0-b5a3-58908493a433>
+
+The report and open data link have all the appropriate caveats and metadata. Any data products that may be displayed should include links to the report and open data record. 
+
+Important disclaimers:
+
+-	Habitats with high suitability are to be interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts.
+-	Due to the many reasons listed in the discussion section of the tech report (https://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf), these cetacean modelling outputs do not represent a complete and current distribution of cetaceans in the region. They represent priority areas to direct cetacean monitoring efforts. Their use in marine spatial planning processes should be accompanied by complimentary approaches such as acoustic and visual validation of the SDM results as well as additional monitoring and modeling efforts. For example, important habitat for blue whales (provide link to that open data record) in the Northwest Atlantic was identified using a combination of approaches related to blue whale distribution and krill aggregation (observed or predicted) (Plourde et al. 2016, Lesage et al. 2018, Moors-Murphy et. al 2019), including the SDM approach described in this report. Consequently, SDM predictions presented in this report should not be used on their own. Rather, outputs should be used together with other sources of information (such as: prey distribution, tagging data, detections from acoustic monitoring, other data on cetacean occurrence, and other modeling efforts already available for the area) to delineate important habitat or for decision making. The use of multiple sources of information in Lesage et al. (2018), in addition to SDM predictions, represents a good framework in which to properly use the outputs of this report in marine spatial planning processes. 
+Additional information, also provided in the open data record, is below:
+
+-	Species Distribution Models (SDM) were used to predict and identify priority areas for enhanced monitoring of cetaceans in eastern Canadian waters off Nova Scotia, Newfoundland and Labrador. This data set represents information presented in Gomez et al. (2020) and includes sighting records and SDM outputs for ten cetacean species with sufficient records (n > 450) and sightings only for an additional six species. For more information about sighting records including which were included in each SDM, please see Gomez et al. 2020.
+-	This study used a compilation of aerial- and vessel-based cetacean sightings data from 1975-2015 assembled in Gomez et al. (2017) from variety of sources. Note that sightings data from many of these sources are not effort-corrected and apparent distribution patterns based on these opportunistic sightings data are biased by when and where survey activities were conducted. Unfavorable weather and reduced visual effort in winter, spring, and autumn likely account for the fewer sighting records in these seasons compared to summer. The dataset does not include dead animal, stranding, entanglement or entrapment data. While some of the databases include records obtained during the whaling period (catches or sightings recorded prior to 1975), for all analyses/modelling conducted in this study, only sightings of free-swimming whales obtained during the post-whaling period (1975-2015) were used. Quality control checks included discarding all records outside of our study area and removing redundant records (identical species, day, month, latitude and longitude).The data used do not reflect any updates or corrections to the databases that have occurred since the data were compiled in 2016. Sightings are not available for download here, please contact the original data sources listed below to obtain raw sightings data.
+-	This study represents an important initiative in eastern Canada to highlight key areas for cetacean monitoring in waters off Nova Scotia, Newfoundland and Labrador. Habitats with high suitability are interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts. These model outputs used cetacean sightings from several decades and dynamic environmental predictors that used seasonal averages across multiple years. As proxies for prey availability, five predictor environmental variables were selected for the SDM: ocean depth, compound topographic index, sea surface temperature, areas of persistently high chlorophyll-a concentration, and regional chlorophyll-a magnitude. See Gomez et al. (2020) for further details on modelling methods. Persistent patterns over time (between 1975-2015) are the main patterns expected to be captured by these models. Further, SDM results presented here are not the same as species density maps; rather, they portray predicted suitable habitat based on environmental characteristics and sightings data that were not always derived from effort-based surveys. Consequently, the use of these models in marine spatial planning processes should be accompanied by complimentary approaches such as acoustic and visual validation of the SDM results as well as additional monitoring and modeling efforts. Please refer to Gomez et al. (2020) for examples on how to best use these data outputs. Future efforts will focus on using more recent data and improving these models to facilitate the inclusion of cetaceans in marine spatial planning processes that are currently underway.
+Data sources:
+-	Fisheries and Oceans Canada Maritimes region and Newfoundland and Labrador region (Whale Sightings Database, Ocean and Ecosystem Sciences Division, Dartmouth, NS; http://www.inter.dfo-mpo.gc.ca/Maritimes/SABS/popec/sara/Database, MacDonald et. al. 2017)
+-	Ocean Biogeographic Information System (OBIS; http://www.iobis.org/),
+-	North Atlantic Right Whale Consortium (NARWC; http://www.narwc.org/)
+-	Whitehead Lab at Dalhousie University (http://whitelab.biology.dal.ca/)
+-	Environment and Climate Change Canada’s (Canadian Wildlife Service) Eastern Canada Seabirds at Sea (ECSAS) program (Gjerdrum et al. 2012).
+
+Associated publication: Gomez, C., Konrad, C.M., Vanderlaan, A., Moors-Murphy, H.B., Marotte, E., Lawson, J., Kouwenberg, A-L., Fuentes-Yaco, C., Buren, A. 2020. Identifying priority areas to enhance monitoring of cetaceans in the Northwest Atlantic Ocean. Can. Tech. Rep.Fish. Aquat. Sci. 3370: vi + 103 p. http://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf
+
+```{r Set up paths for Priority Areas to Enhance Monitoring of Cetaceans files, echo=FALSE, include=FALSE, cache=FALSE}
+#convert fin whale raster to sf object
+fin_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Fin_Whale.tif")
+fin_whale[fin_whale==0] <- NA
+fin_whale_sf<-st_as_stars(fin_whale)%>%st_as_sf()
+#convert harbour porpoise raster to sf object
+harbour_porpoise<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Harbour_Porpoise.tif")
+harbour_porpoise[harbour_porpoise==0] <- NA
+harbour_porpoise_sf<-st_as_stars(harbour_porpoise)%>%st_as_sf()
+#convert humpback whale raster to sf object
+humpback_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Humpback_Whale.tif")
+humpback_whale[humpback_whale==0] <- NA
+humpback_whale_sf<-st_as_stars(humpback_whale)%>%st_as_sf()
+#convert sei whale raster to sf object
+sei_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Sei_Whale.tif")
+sei_whale[sei_whale==0] <- NA
+sei_whale_sf<-st_as_stars(sei_whale)%>%st_as_sf()
+
+```
+
+```{r read functions for Priority Areas to Enhance Monitoring of Cetaceans overlap assessment, echo=FALSE, include=FALSE, cache=FALSE}
+source("cetacean_priority_areas.R")
+```
+
+```{r echo=FALSE, results='asis'}
+#function for overlap
+fin_area<-fin_overlap(fin_whale_sf, PEZ_poly_st)
+harbour_area<-harbour_overlap(harbour_porpoise_sf, PEZ_poly_st)
+humpback_area<-humpback_overlap(humpback_whale_sf, PEZ_poly_st)
+sei_area<-sei_overlap(sei_whale_sf, PEZ_poly_st)
+cetacean_matrix<-data.frame(Fin_Whale="",Habour_Porpoise="", Humpback_Whale="", Sei_Whale="")
+cetacean_matrix[1,1]<-fin_area
+cetacean_matrix[1,2]<-harbour_area
+cetacean_matrix[1,3]<-humpback_area
+cetacean_matrix[1,4]<-sei_area
+
+```
+
+**Table 6:** Results showing if the provided polygon overlaps with areas defined as Priority Areas to Enhance Monitoring of several species of cetaceans (Fin whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; TRUE = polygon does NOT overlap with priority area.
+
+```{r}
+kable(cetacean_matrix, align="c") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+```{r read for priority areas for cetaceans, echo=FALSE, include=FALSE, cache=FALSE}
+source("plot_cetaceans_4grid.R")
+```
+
+```{r Fig X priority areas for cetaceans, fig.height=8, fig.width=11}
+plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, PEZ_poly_st, land_sf)
+```
+
+
+
+
 
 ### **Blue Whale Important Habitat**
 
@@ -618,28 +839,30 @@ Blue_4326b<-setNames(Blue_4326, replace(names(Blue_4326), names(Blue_4326) == 'a
 ```
 
 ```{r read functions for bw_habitat overlap assessment, echo=FALSE, include=FALSE, cache=FALSE}
-source("Blue_Whale_habitat_GP.R")
+source("Blue_Whale_habitat.R")
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for overlap
-blue_whale_habitat_overlap_GP(Blue_Whale_shp=Blue_4326b, PEZ_poly_st= PEZ_poly_st)
+blue_whale_habitat_overlap(Blue_Whale_shp=Blue_4326b, PEZ_poly_st= PEZ_poly_st)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for sector
-blue_whale_habitat_sector_GP(Blue_Whale_shp=Blue_4326b, PEZ_poly_st= PEZ_poly_st)
+blue_whale_habitat_sector(Blue_Whale_shp=Blue_4326b, PEZ_poly_st= PEZ_poly_st)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for activity
-blue_whale_habitat_activity_GP(Blue_Whale_shp=Blue_4326b, PEZ_poly_st= PEZ_poly_st)
+blue_whale_habitat_activity(Blue_Whale_shp=Blue_4326b, PEZ_poly_st= PEZ_poly_st)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for months
-blue_whale_habitat_months_GP(Blue_Whale_shp=Blue_4326, PEZ_poly_st= PEZ_poly_st)
+blue_whale_habitat_months(Blue_Whale_shp=Blue_4326, PEZ_poly_st= PEZ_poly_st)
 ```
+
+NOTE: Colour code polygons for different activities.
 
 ```{r read for bw habitat in maritime region, echo=FALSE, include=FALSE, cache=FALSE}
 source("plot_bw_hab.R")
@@ -658,24 +881,24 @@ source("plot_bw_hab_zoom.R")
 plot_bw_hab_zoom(Blue_4326, PEZ_poly_st, land_sf)
 ```
 
-### **Leatherback Sea Turtle Important Habitat**
+### **Draft: Leatherback Sea Turtle Important Habitat**
 
 ```{r Set up paths for leatherback turtle files, echo=FALSE, include=FALSE, cache=FALSE}
 leatherback_shp <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
 ```
 
 ```{r read functions for leatherback_habitat overlap assessment, echo=FALSE, include=FALSE, cache=FALSE}
-source("leatherback_GP.R")
+source("leatherback.R")
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for overlap
-leatherback_overlap_GP(leatherback_shp=leatherback_shp, PEZ_poly_st= PEZ_poly_st)
+leatherback_overlap(leatherback_shp=leatherback_shp, PEZ_poly_st= PEZ_poly_st)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for sector
-leatherback_area_GP(leatherback_shp=leatherback_shp, PEZ_poly_st= PEZ_poly_st)
+leatherback_area(leatherback_shp=leatherback_shp, PEZ_poly_st= PEZ_poly_st)
 ```
 
 ```{r read for leatherback , echo=FALSE, include=FALSE, cache=FALSE}
@@ -694,22 +917,32 @@ EBSA_shp <- st_transform(EBSA, crs = 4326)
 ```
 
 ```{r read functions for EBSA overlap assessment, echo=FALSE, include=FALSE, cache=FALSE}
-source("EBSA_GP.R")
+source("EBSA.R")
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for overlap
-EBSA_overlap_GP(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
+EBSA_overlap(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
+```
+
+```{r echo=FALSE, results='asis'}
+#function for report
+EBSA_report(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
+```
+
+```{r echo=FALSE, results='asis'}
+#function for report url
+EBSA_reporturl(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for location
-EBSA_location_GP(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
+EBSA_location(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for bioregion
-EBSA_bioregion_GP(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
+EBSA_bioregion(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
 ```
 
 ```{r read for EBSA , echo=FALSE, include=FALSE, cache=FALSE}
@@ -719,6 +952,38 @@ source("plot_EBSA.R")
 ```{r Fig X PEZ polygon with all maritime EBSA polygons, fig.height=8, fig.width=11}
 plot_EBSA(EBSA_shp, PEZ_poly_st, land_sf)
 ```
+
+
+#### **For information about seabirds please contact Environment and Climate Change Canada. Link: **
+
+<https://open.canada.ca/data/en/dataset/f612e2b4-5c67-46dc-9a84-1154c649ab4e>
+
+## **Databases yet to be included**
+
+#### **Intertidal vegetation maps derived from remote sensing.**
+
+#### **Ecosystem Management interactive ArcGIS maps**
+
+-developed for 1) Regulatory Review projects and 2) SAR program. Currently, maps are for internal use only by Maritimes SARP.
+
+#### **Province's data is openx**
+
+(https://data.novascotia.ca/w/jgyj-d4fh/default?cur=8JS4clBZaD9&from=l6_um6e8ufx)
+
+#### **Tracking data, OTN**
+
+(https://obis.org/dataset/80997ac3-87cb-411c-ab1f-334adec45050) via ERDDAP and R package rerddap
+
+#### **Electrofishing**
+
+(Jeremy Bloome)
+
+#### **eDNA**
+
+#### **Lobster and scallop programs**
+
+#### **Salmon**
+
 
 # **Resources and Sources of Uncertainty**
 
@@ -771,7 +1036,7 @@ It may be possible to provide you instead with an aggregated product that combin
 
 This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/MSP/tree/master/SearchPEZ>. The full document can be updated rapidly as more or different information becomes available.
 
-This document was prepared by the Science MSP Team: <Catalina.Gomez@dfo-mpo.gc.ca>, <Gordana.Lazin@dfo-mpo.gc.ca>, <Brian.Bower@dfo-mpo.gc.ca>, <Philip.Greyson@dfo-mpo.gc.ca>, and <Tana.Worcester@dfo-mpo.gc.ca>
+This document was prepared by the Science MSP Team: <Gregory.Puncher@dfo-mpo.gc.ca>, <Catalina.Gomez@dfo-mpo.gc.ca>, <Gordana.Lazin@dfo-mpo.gc.ca>, <Brian.Bower@dfo-mpo.gc.ca>, <Philip.Greyson@dfo-mpo.gc.ca>, and <Tana.Worcester@dfo-mpo.gc.ca>
 
 ###**References**
 
@@ -786,3 +1051,30 @@ Kennedy R.D. 2019. The North Atlantic Right Whale Consortium Database: A Guide f
 <Mike.McMahon@dfo-mpo.gc.ca>! for providing code and advice in the use of `Mar.datawrangling`: A suite of tools for extracting, filtering and aggregating data from the Maritimes fisheries science databases <https://github.com/Maritimes/Mar.datawrangling>
 
 The Atlantic R Learning & Development Initiative <https://github.com/AtlanticR>.  
+
+
+# **Appendix**
+
+**Table S1:** ISDB observation records contained within the polygon summarized by species or species group.
+
+```{r}
+kable(isdb_freq) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+**Table S2:** MARFIS observation records contained within the polygon summarized by species or species group.
+
+```{r}
+kable(marfis_freq) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+**Table S3:** OBIS observation records contained within the polygon summarized by species or species group.
+
+
+**Table S4:** RV survey observation records contained within the polygon summarized by species or species group.
+
+```{r}
+kable(rv_intersect_freq) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
