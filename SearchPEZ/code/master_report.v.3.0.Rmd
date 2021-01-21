@@ -608,7 +608,11 @@ kable(setcounttable2, align="l") %>%
 Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed are summarized in the table above). The yellow polygon shows the locations of the human activity. The blue polygon displays the area searched and summarized in this report. 
 
 ```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11}
+<<<<<<< HEAD
 site_map_old(PEZ_poly,site,land,2)
+=======
+site_map(PEZ_poly,site,land,2)
+>>>>>>> 4d47e1604babbd973a5b20f7d267ac54f0fc0ebf
 points(rv_intersect$SLONG.x,rv_intersect$SLAT.x, col="darkgreen",pch=16,cex=1)
 points(rv_intersect$ELONG.x,rv_intersect$ELAT.x, col="firebrick4",pch=16,cex=1)
 all_pairs<-as.data.frame(unique(cbind(rv_intersect$SLONG.x,rv_intersect$SLAT.x,rv_intersect$ELONG.x,rv_intersect$ELAT.x)))
@@ -1051,6 +1055,7 @@ Kennedy R.D. 2019. The North Atlantic Right Whale Consortium Database: A Guide f
 <Mike.McMahon@dfo-mpo.gc.ca>! for providing code and advice in the use of `Mar.datawrangling`: A suite of tools for extracting, filtering and aggregating data from the Maritimes fisheries science databases <https://github.com/Maritimes/Mar.datawrangling>
 
 The Atlantic R Learning & Development Initiative <https://github.com/AtlanticR>.  
+<<<<<<< HEAD
 
 
 # **Appendix**
@@ -1078,3 +1083,5 @@ kable(marfis_freq) %>%
 kable(rv_intersect_freq) %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
+=======
+>>>>>>> 4d47e1604babbd973a5b20f7d267ac54f0fc0ebf
