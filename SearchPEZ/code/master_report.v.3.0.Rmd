@@ -163,7 +163,7 @@ obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBI
 
 ### **Industry Survey Database (ISDB)**
 
-ISDB is a DFO database that contains at-sea fish catch observations from commercial fishing vessels operating in the North West Atlantic. The data provided by ISDB is confidential and cannot be communicated outside of the DFO, given teh direct implications of the Rule of 5.
+ISDB is a DFO database that contains at-sea fish catch observations from commercial fishing vessels operating in the North West Atlantic. The data provided by ISDB is confidential and cannot be communicated outside of the DFO, given the direct implications of the Rule of 5.
 
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
 ##skip all of these steps and create an isdb file for all of the MAR region.
@@ -205,7 +205,7 @@ isdb_poly_SAR_list<-unique(isdb_poly_SAR_records$SCIENTIFI1)
 
 
 #build table with rows containing sets in which SARs were captured 
-isdb_setcounttable<-data.frame(Common_Name="", Scientific_Name_upper="", SARA_listing="", COSEWIC_listing="", Wild_Species_listing="", Set_Occurence=0, Set_Frequency=0)
+isdb_setcounttable<-data.frame(Common_Name="", Scientific_Name_upper="", SARA_listing="", COSEWIC_listing="", Wild_Species_listing="")
 
 isdb_poly_filter_sets<-isdb_intersect %>% filter(SCIENTIFI1 %in% isdb_poly_SAR_list)
 
@@ -235,10 +235,9 @@ Total_sets<-length(unique(isdb_intersect$SET_NO))
 ```
 
 ```{r}
-isdb_set_summary_table<-data.frame(Sets_recorded_in_polygon="", Organisms_recorded_in_polygon="", Listed_organisms_recorded_in_polygon="")
-isdb_set_summary_table[1,1]<-Total_sets
-isdb_set_summary_table[1,2]<-Total_number_records_isdb
-isdb_set_summary_table[1,3]<-Total_number_SAR_records_isdb
+isdb_set_summary_table<-data.frame(Organisms_recorded_in_polygon="", Listed_organisms_recorded_in_polygon="")
+isdb_set_summary_table[1,1]<-Total_number_records_isdb
+isdb_set_summary_table[1,2]<-Total_number_SAR_records_isdb
 
 ```
 
@@ -255,14 +254,12 @@ isdb_table2<-isdb_table %>%
 isdb_table3<- isdb_table2 %>% rename(Common_Name=Common_Name.y,
                                      SARA_listing=Schedule.status,
                                      COSEWIC_listing=COSEWIC.status,
-                                     Wild_Species_listing=Wild_Species,
-                                     Set_occurence=Set_Occurence,
-                                     Set_frequency=Set_Frequency
+                                     Wild_Species_listing=Wild_Species
                                      )
 
 ```
 
- **Table 1:** ISDB records of species observed within the provided polygon which have a listed status wotj SARA, COSEWIC or Wild Species. Data is summarized by species or species group.
+ **Table 1:** ISDB records of species observed within the provided polygon which have a listed status with SARA, COSEWIC or Wild Species. Data is summarized by species or species group.
 
 ```{r}
 kable(isdb_table3, align="l") %>%
@@ -608,11 +605,8 @@ kable(setcounttable2, align="l") %>%
 Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed are summarized in the table above). The yellow polygon shows the locations of the human activity. The blue polygon displays the area searched and summarized in this report. 
 
 ```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11}
-<<<<<<< HEAD
 site_map_old(PEZ_poly,site,land,2)
-=======
-site_map(PEZ_poly,site,land,2)
->>>>>>> 4d47e1604babbd973a5b20f7d267ac54f0fc0ebf
+#site_map(PEZ_poly,PEZ_poly_st,site,land,2)
 points(rv_intersect$SLONG.x,rv_intersect$SLAT.x, col="darkgreen",pch=16,cex=1)
 points(rv_intersect$ELONG.x,rv_intersect$ELAT.x, col="firebrick4",pch=16,cex=1)
 all_pairs<-as.data.frame(unique(cbind(rv_intersect$SLONG.x,rv_intersect$SLAT.x,rv_intersect$ELONG.x,rv_intersect$ELAT.x)))
@@ -813,7 +807,7 @@ cetacean_matrix[1,4]<-sei_area
 
 ```
 
-**Table 6:** Results showing if the provided polygon overlaps with areas defined as Priority Areas to Enhance Monitoring of several species of cetaceans (Fin whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; TRUE = polygon does NOT overlap with priority area.
+**Table 6:** Results showing if the provided polygon overlaps with areas defined as Priority Areas to Enhance Monitoring of several species of cetaceans (Fin whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; FALSE = polygon does NOT overlap with priority area.
 
 ```{r}
 kable(cetacean_matrix, align="c") %>%
@@ -827,10 +821,6 @@ source("plot_cetaceans_4grid.R")
 ```{r Fig X priority areas for cetaceans, fig.height=8, fig.width=11}
 plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, PEZ_poly_st, land_sf)
 ```
-
-
-
-
 
 ### **Blue Whale Important Habitat**
 
@@ -1055,7 +1045,6 @@ Kennedy R.D. 2019. The North Atlantic Right Whale Consortium Database: A Guide f
 <Mike.McMahon@dfo-mpo.gc.ca>! for providing code and advice in the use of `Mar.datawrangling`: A suite of tools for extracting, filtering and aggregating data from the Maritimes fisheries science databases <https://github.com/Maritimes/Mar.datawrangling>
 
 The Atlantic R Learning & Development Initiative <https://github.com/AtlanticR>.  
-<<<<<<< HEAD
 
 
 # **Appendix**
@@ -1083,5 +1072,4 @@ kable(marfis_freq) %>%
 kable(rv_intersect_freq) %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
-=======
->>>>>>> 4d47e1604babbd973a5b20f7d267ac54f0fc0ebf
+
