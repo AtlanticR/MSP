@@ -63,6 +63,9 @@ wsdbFile <- file.path("C:/RProjects/MSP/SearchPEZ/inputs","WSDB_GLazin_AllSpecie
 ```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
 landGDB <- "C:/RProjects/data/Boundaries/Coast50K/Coastline50k.gdb"
 land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
+
+GDB10k <- "C:/RProjects/data/Boundaries/Coast10k/Coastline10k.gdb"
+Ocean10k <- readOGR(dsn=GDB10k,layer="Ocean10k_Maritimes",stringsAsFactors=F)
 ```
 ```{r Define PEZ!, echo=FALSE, include=FALSE, cache=FALSE}
 pl <- list.files(polyPath,"*.shp")

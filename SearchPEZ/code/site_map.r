@@ -48,6 +48,10 @@ site_map <- function(studyArea,site,land,buf) {
   # add axis labels - does not want to add y label???
   title(xlab="Longitude [deg]",ylab="Latitude [deg]")
   
+  #watermark
+  watermark("For Internal Use Only", col="grey")
+  
+  
 
  
 }
