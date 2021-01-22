@@ -14,7 +14,7 @@
 # Output: map 
 
 
-site_map <- function(studyArea,studyArea_st,site,land,buf) {
+site_map_new <- function(studyArea,studyArea_st,site,land,buf) {
 
   # buf is in km, and now converted to degrees
   buf=buf/100
