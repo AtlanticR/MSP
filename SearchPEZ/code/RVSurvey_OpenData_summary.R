@@ -5,7 +5,7 @@ data.dir = "../../../Data/mar.wrangling/RVSurvey_OpenData"
 
 #Provide survey prefix ("FALL_2020", "SPRING_2020", "4VSW_2020")
 
-SurveyPrefix<-"FALL_2020"
+SurveyPrefix<-"SUMMER_2020"
 
 #Load necessary csv files
 GSCAT<-read.csv(file.path(data.dir, paste(SurveyPrefix, "_GSCAT.csv", sep = "", collapse = NULL)))

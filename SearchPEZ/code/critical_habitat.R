@@ -1,5 +1,5 @@
 #This function identifies whether a PEZ polygon overlaps with identified critical habitat. It also identifies
-#the name of the critical habitat and the concerned SAR species.
+#the name of the critical habitat and the SAR species.
 
 #Multipolygon of Canadian critical habitats cropped to the maritime region.
 

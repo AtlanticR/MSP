@@ -1,9 +1,9 @@
-#This function plots the PEZ polygon relative to MAR critical habitats.
+#This function plots the PEZ polygon relative to Ecologically and Biologically Significant Areas (EBSA).
 
-plot_crithab <- function(ClippedCritHab, PEZ_poly_st, ClippedCritLand) {
+plot_EBSA <- function(EBSA_shp, PEZ_poly_st, ClippedCritLand) {
 
 ggplot()+
-geom_sf(data=ClippedCritHab,fill="red",col="red")+
+geom_sf(data=EBSA_shp,fill="plum1",col="plum1")+
 geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
 geom_sf(data=ClippedCritLand,fill=c("grey90"), col="black")+
 annotation_scale(location="br")+
