@@ -50,7 +50,7 @@ site_map <- function(studyArea,site,land,buf) {
   
   #watermark
   watermark("For Internal Use Only", col="grey")
-  
+  #watermark(show = TRUE, lab = "DFO Internal Use Only")
   
 
  
