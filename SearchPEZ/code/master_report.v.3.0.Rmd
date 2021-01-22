@@ -139,6 +139,7 @@ cat(AquaSiteName)
 ```
 
 ```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11}
+
 site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,40)
 
 ```
@@ -218,10 +219,10 @@ isdb_poly_SAR_list_com<-unique(isdb_poly_SAR_records$COMMON)
 for(i in 1:length(isdb_poly_SAR_list)){
   isdb_com<-isdb_intersect %>% filter(COMMON %in% isdb_poly_SAR_list_com[i])
   isdb_setcounttable[i,1]<-isdb_poly_SAR_list_com[i]
+
 }
 
 isdb_setcounttabledf<-as.data.frame(isdb_setcounttable)
-
 
 }
 ```
@@ -1063,4 +1064,3 @@ kable(marfis_freq) %>%
 kable(rv_intersect_freq) %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
-
