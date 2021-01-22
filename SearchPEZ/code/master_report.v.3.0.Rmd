@@ -152,11 +152,11 @@ marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
 marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
 isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
 isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
-rv <- read.csv(file.path(dataPath,fl[grep("rv_",fl)]))
-rv <- rv[which(year(rv$SDATE)>=minYear),]
+#rv <- read.csv(file.path(dataPath,fl[grep("rv_",fl)]))
+#rv <- rv[which(year(rv$SDATE)>=minYear),]
 #Load RV Open Data summary file prepared using RVSurvey_OpenData_summary.R script.
-rv_OD <- read.csv(file.path(opendataPath,("rv_OD_summary.csv")))
-rv_OD <- rv[which(year(rv$SDATE)>=minYear),]
+#rv_OD <- read.csv(file.path(opendataPath,("rv_OD_summary.csv")))
+#rv_OD <- rv[which(year(rv$SDATE)>=minYear),]
 #Word from Remi Daigle is that this data set is not ready yet.
 obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_CBIF_iNaturalist.csv")
 #obis <- obis[which(year(obis$year)>=minYear),]
@@ -181,80 +181,40 @@ isdb_freq <- aggregate(
       length)
 isdb_freq <- isdb_freq[order(-isdb_freq$Records),]
 rownames(isdb_freq) <- c()
+isdb_freq_table<- isdb_freq %>% rename(Scientific_Name_upper=Species)
+isdb_freq_table<-merge(isdb_freq_table, listed_species, by='Scientific_Name_upper')
+isdb_freq_table2<-isdb_freq_table %>% 
+  transmute(Scientific_Name, Common_Name, Schedule.status, COSEWIC.status, Wild_Species, Records)
+isdb_record_table<- isdb_freq_table2 %>% rename(SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species)
 Total_number_records_isdb <- sum(isdb_freq$Records)
 isdb_poly_SAR_total<-isdb_freq %>% select(Species, Records) %>% filter (Species %in% MARSAR_sci_up)
 Total_number_SAR_records_isdb<-sum(isdb_poly_SAR_total$Records)
 ```
 
 ```{r}
-#table with scientific names of species and number of records
-isdb_poly_SAR_records<-isdb_intersect %>% select(SCIENTIFI1, COMMON) %>% filter (SCIENTIFI1 %in% MARSAR_sci_up)
-
-x<-as.numeric(nrow(isdb_poly_SAR_records))
-
-Report_isdb<-if(x < 1){
-    "There are no records of Species at Risk in the Industry Survey Database (ISDB) for this polygon."
-  } else {
-    
-CommonName<-isdb_intersect$COMMON
-Species<-isdb_intersect$SCIENTIFI1
-
-#list of SAR species in polygon
-isdb_poly_SAR_list<-unique(isdb_poly_SAR_records$SCIENTIFI1)
-
-
-#build table with rows containing sets in which SARs were captured 
-isdb_setcounttable<-data.frame(Common_Name="", Scientific_Name_upper="", SARA_listing="", COSEWIC_listing="", Wild_Species_listing="")
-
-isdb_poly_filter_sets<-isdb_intersect %>% filter(SCIENTIFI1 %in% isdb_poly_SAR_list)
-
-#scientific names column
-for(i in 1:length(isdb_poly_SAR_list)){
-  isdb_spec<-isdb_intersect %>% filter(SCIENTIFI1 %in% isdb_poly_SAR_list[i])
-  isdb_setcounttable[i,2]<-isdb_poly_SAR_list[i]
-}
-
-#common names column
-isdb_poly_SAR_list_com<-unique(isdb_poly_SAR_records$COMMON)
-for(i in 1:length(isdb_poly_SAR_list)){
-  isdb_com<-isdb_intersect %>% filter(COMMON %in% isdb_poly_SAR_list_com[i])
-  isdb_setcounttable[i,1]<-isdb_poly_SAR_list_com[i]
-
-}
-
-isdb_setcounttabledf<-as.data.frame(isdb_setcounttable)
-
-}
-```
-
-```{r}
-isdb_set_summary_table<-data.frame(Organisms_recorded_in_polygon="", Listed_organisms_recorded_in_polygon="")
+isdb_set_summary_table<-data.frame(Total_organisms_recorded_in_polygon="", LISTED_organisms_recorded_in_polygon="")
 isdb_set_summary_table[1,1]<-Total_number_records_isdb
 isdb_set_summary_table[1,2]<-Total_number_SAR_records_isdb
 
 ```
 
 ```{r}
-kable(isdb_set_summary_table, align="c") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+#table with scientific names of species and number of records
+isdb_poly_SAR_records<-isdb_intersect %>% select(SCIENTIFI1, COMMON) %>% filter (SCIENTIFI1 %in% MARSAR_sci_up)
+x<-as.numeric(nrow(isdb_poly_SAR_records))
+Report_isdb<-if(x < 1){
+    "There are no records of Species at Risk in the Industry Survey Database (ISDB) for this polygon."
+  } else {
+print(kable(isdb_set_summary_table, align="c") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
+}
 ```
-
-```{r}
-isdb_table<-merge(isdb_setcounttabledf, listed_species, by='Scientific_Name_upper')
-isdb_table2<-isdb_table %>% 
-  transmute(Scientific_Name, Common_Name.y, Schedule.status, COSEWIC.status, Wild_Species)
-isdb_table3<- isdb_table2 %>% rename(Common_Name=Common_Name.y,
-                                     SARA_listing=Schedule.status,
-                                     COSEWIC_listing=COSEWIC.status,
-                                     Wild_Species_listing=Wild_Species
-                                     )
-
-```
-
  **Table 1:** ISDB records of species observed within the provided polygon which have a listed status with SARA, COSEWIC or Wild Species. Data is summarized by species or species group.
 
 ```{r}
-kable(isdb_table3, align="l") %>%
+kable(isdb_record_table, align="l") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 **Note:** A complete list of ISDB observation records of all species within the provided polygon can be found in the Appendix.
@@ -278,81 +238,40 @@ marfis_freq <- aggregate(
       length)
 marfis_freq <- marfis_freq[order(-marfis_freq$Records),]
 rownames(marfis_freq) <- c()
+marfis_freq_table<- marfis_freq %>% rename(Common_Name_upper=Species)
+marfis_freq_table<-merge(marfis_freq_table, listed_species, by='Common_Name_upper')
+marfis_freq_table2<-marfis_freq_table %>% 
+  transmute(Scientific_Name, Common_Name, Schedule.status, COSEWIC.status, Wild_Species, Records)
+marfis_record_table<- marfis_freq_table2 %>% rename(SARA_listing=Schedule.status,
+                                                    COSEWIC_listing=COSEWIC.status,
+                                                    Wild_Species_listing=Wild_Species)
 Total_number_records_marfis <- sum(marfis_freq$Records)
 marfis_poly_SAR_total<-marfis_freq %>% select(Species, Records) %>% filter (Species %in% MARSAR_com_up)
 Total_number_SAR_records_marfis<-sum(marfis_poly_SAR_total$Records)
 ```
 
 ```{r}
+marfis_record_summary_table<-data.frame(Total_organisms_recorded_in_polygon="", LISTED_organisms_recorded_in_polygon="")
+marfis_record_summary_table[1,1]<-Total_number_records_marfis
+marfis_record_summary_table[1,2]<-Total_number_SAR_records_marfis
+
+```
+
+```{r}
 #table with scientific names of species and number of records
 marfis_poly_SAR_records<-marfis_intersect %>% select(SPECIENAME) %>% filter (SPECIENAME %in% MARSAR_com_up)
-
 x<-as.numeric(nrow(marfis_poly_SAR_records))
-
-Report_marfis<-if(x < 1){
-    "There are no records of Species at Risk in the Industry Survey Database (ISDB) for this polygon."
+Report_isdb<-if(x < 1){
+    "There are no records of Species at Risk in MARFIS for this polygon."
   } else {
-    
-CommonName<-marfis_intersect$SPECIENAME
-
-#list of SAR species in polygon
-marfis_poly_SAR_list<-unique(marfis_poly_SAR_records$SPECIENAME)
-
-
-#build table with rows containing sets in which SARs were captured 
-marfis_setcounttable<-data.frame(Common_Name="", Scientific_Name_upper="", SARA_listing="", COSEWIC_listing="", Wild_Species_listing="", Set_Occurence=0, Set_Frequency=0)
-marfis_poly_filter_sets<-marfis_intersect %>% filter(SPECIENAME %in% marfis_poly_SAR_list)
-marfis_poly_filter_sets<- marfis_poly_filter_sets %>% rename(Common_Name_upper=SPECIENAME)
-marfis_poly_filter_sets$Common_Name_upper
-listed_species$Common_Name_upper
-marfis_SAR_master<-merge(marfis_poly_filter_sets, listed_species, by='Common_Name_upper')
-
-#common names column
-for(i in 1:length(marfis_poly_SAR_list)){
-  marfis_spec<-marfis_SAR_master %>% filter(Common_Name_upper %in% marfis_poly_SAR_list[i])
-  set_count<-length(unique(marfis_spec$LOGEFRTSID))
-  marfis_setcounttable[i,1]<-marfis_poly_SAR_list[i]
-  marfis_setcounttable[i,6]<-set_count
+print(kable(marfis_record_summary_table, align="c") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
 }
-
-marfis_setcounttable<- marfis_setcounttable %>% rename(Common_Name_upper=Common_Name)
-marfis_setcounttable2<-merge(marfis_setcounttable, listed_species, by='Common_Name_upper')
-col_order<-c("Scientific_Name", "Common_Name", "Schedule.status","COSEWIC.status", "Wild_Species", "Set_Occurence", "Set_Frequency")
-marfis_setcounttable3<-marfis_setcounttable2[,col_order]
-
-#Count sets
-Total_sets<-length(unique(marfis_intersect$LOGEFRTSID))
-}
-```
-
-```{r}
-marfis_set_summary_table<-data.frame(Sets_recorded_in_polygon="", Organisms_recorded_in_polygon="", Listed_organisms_recorded_in_polygon="")
-marfis_set_summary_table[1,1]<-Total_sets
-marfis_set_summary_table[1,2]<-Total_number_records_marfis
-marfis_set_summary_table[1,3]<-Total_number_SAR_records_marfis
-
-```
-
-```{r}
-kable(marfis_set_summary_table, align="c") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```
-
-```{r}
-marfis_setcounttable4<-mutate(marfis_setcounttable3, Set_Frequency=format(round((Set_Occurence/Total_sets)*100,1), nsmall=1))
-marfis_setcounttable5<- marfis_setcounttable4 %>% rename(
-                                     SARA_listing=Schedule.status,
-                                     COSEWIC_listing=COSEWIC.status,
-                                     Wild_Species_listing=Wild_Species,
-                                     Set_occurence=Set_Occurence,
-                                     Set_frequency=Set_Frequency
-                                     )
-
 ```
  **Table 2:** MARFIS observation records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
 
 ```{r}
-kable(marfis_setcounttable5, align="l") %>%
+kable(marfis_record_table, align="l") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
@@ -362,7 +281,7 @@ kable(marfis_setcounttable5, align="l") %>%
 The map below shows the location of samples recorded in the MARFIS and ISDB databases (tables above summarize records per species or species group). Map below is for internal DFO use only (rule of five was not applied). Please read the "resources and sources of uncertainty" section for additional information. 
 
 ```{r Fig 3 MARFIS and ISDB records, fig.height=8, fig.width=11}
-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
   geom_point(data = isdb_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, fill = "black")+
   geom_point(data = marfis_sites, aes(x = longitude, y = latitude), size = 3, 
@@ -388,7 +307,7 @@ wsdb_filter <- filter_wsdb(wsdb)
 ```{r Fig 4 Whale Sightings Database, fig.height=8, fig.width=11}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 #par(mar = c(5.1, 4.1, 4.1, 2.1))
-site_map_old(PEZ_poly,site,land,5)
+site_map(PEZ_poly,site,land,5)
 plot_wsdb(PEZ_poly,wsdb_filter,5)
 
 ```
@@ -404,7 +323,7 @@ narwc_filter <- filter_narwc(narwc)
 ```
 ```{r Fig 5 NARWC Database, fig.height=8, fig.width=11}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-site_map_old(PEZ_poly,site,land,5)
+site_map(PEZ_poly,site,land,5)
 plot_narwc(PEZ_poly,narwc_filter,5)
 ```
 
@@ -515,7 +434,8 @@ Fisheries and Oceans Canada (DFO) has conducted Research Vessel (RV) surveys in 
 #the following is specialized for this location.
 rv_OD_shp <- st_read("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020.shp", quiet=TRUE)
 rv_OD <- read.csv("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020_summary.csv")
-m <-merge(rv_OD_shp, rv_OD, by='SETNO')
+rv_OD_min_year <- rv_OD[which(year(rv_OD$SDATE)>=minYear),]
+m <-merge(rv_OD_shp, rv_OD_min_year, by='SETNO')
 RVsf<-st_as_sf(m)
 
 #subbing in Gully for temporary demo purposes.
@@ -597,7 +517,7 @@ kable(setcounttable2, align="l") %>%
 Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed are summarized in the table above). The yellow polygon shows the locations of the human activity. The blue polygon displays the area searched and summarized in this report. 
 
 ```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11}
-site_map_old(PEZ_poly,site,land,2)
+site_map(PEZ_poly,site,land,2)
 #site_map(PEZ_poly,PEZ_poly_st,site,land,2)
 points(rv_intersect$SLONG.x,rv_intersect$SLAT.x, col="darkgreen",pch=16,cex=1)
 points(rv_intersect$ELONG.x,rv_intersect$ELAT.x, col="firebrick4",pch=16,cex=1)
