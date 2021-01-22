@@ -43,6 +43,9 @@ library(gridExtra)
 library(dplyr)
 library(stars)
 library(ggspatial)
+#install.packages("remotes")
+#remotes::install_github("terminological/standard-print-output")
+#library(standardPrintOutput)
 ###These next two lines are necessary for the generation of the water mark on all plots.#######
 #install.packages("devtools")
 #devtools::install_github("JosephCrispell/basicPlotteR")
@@ -207,10 +210,15 @@ x<-as.numeric(nrow(isdb_poly_SAR_records))
 Report_isdb<-if(x < 1){
     "There are no records of Species at Risk in the Industry Survey Database (ISDB) for this polygon."
   } else {
-print(kable(isdb_set_summary_table, align="c") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
+    "There are records of Species at Risk in the Industry Survey Database (ISDB) for this polygon."
 }
 ```
+
+```{r}
+(kable(isdb_set_summary_table, align="c") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
+```
+
  **Table 1:** ISDB records of species observed within the provided polygon which have a listed status with SARA, COSEWIC or Wild Species. Data is summarized by species or species group.
 
 ```{r}
@@ -264,10 +272,15 @@ x<-as.numeric(nrow(marfis_poly_SAR_records))
 Report_isdb<-if(x < 1){
     "There are no records of Species at Risk in MARFIS for this polygon."
   } else {
-print(kable(marfis_record_summary_table, align="c") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
+    "There are records of Species at Risk in MARFIS for this polygon."
 }
 ```
+
+```{r}
+(kable(marfis_record_summary_table, align="c") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
+```
+
  **Table 2:** MARFIS observation records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
 
 ```{r}
@@ -304,6 +317,7 @@ wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
 #wsdb <- remove_landPoints(wsdb,land) # work in progress
 wsdb_filter <- filter_wsdb(wsdb)
 ```
+
 ```{r Fig 4 Whale Sightings Database, fig.height=8, fig.width=11}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 #par(mar = c(5.1, 4.1, 4.1, 2.1))
