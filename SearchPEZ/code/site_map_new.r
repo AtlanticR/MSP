@@ -35,7 +35,7 @@ site_map_new <- function(studyArea,studyArea_st,site,land,buf) {
   latmax<-bb$max[2]+buf
   
 ggplot()+
-  geom_sf(data=studyArea_st,fill="deepskyblue", col="black", size=0.6)+
+  geom_sf(data=studyArea_st,fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
   geom_sf(data=site,fill="yellow",col="black", size=0.6)+
   geom_sf(data=land,fill=c("lightgrey"), col="black", size=0.7)+
   annotation_scale(location="bl")+
