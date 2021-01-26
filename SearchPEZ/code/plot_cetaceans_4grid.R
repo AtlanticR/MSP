@@ -6,7 +6,7 @@ plot_cetaceans_4grid <- function(fin_whale_sf, harbour_porpoise_sf, humpback_wha
 #Fin Whale
 
 fin_whale_plot <- ggplot()+
-  geom_sf(data=fin_whale_sf,fill="yellowgreen",col="yellowgreen")+
+  geom_sf(data=fin_whale_sf,fill="#F3E73B",col="#F3E73B")+
   geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
   geom_sf(data=land_sf,fill=c("grey90"), col="black")+
   annotation_scale(location="br")+
@@ -21,7 +21,7 @@ fin_whale_plot
 #Harbour Porpoise
 
 harbour_porpoise_plot <- ggplot()+
-    geom_sf(data=harbour_porpoise_sf,fill="aquamarine",col="aquamarine")+
+    geom_sf(data=harbour_porpoise_sf,fill="#F3E73B",col="#F3E73B")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
     geom_sf(data=land_sf,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -35,7 +35,7 @@ harbour_porpoise_plot <- ggplot()+
 #humpback whale
 
 humpback_whale_plot <- ggplot()+
-    geom_sf(data=humpback_whale_sf,fill="royalblue1",col="royalblue1")+
+    geom_sf(data=humpback_whale_sf,fill="#F3E73B",col="#F3E73B")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
     geom_sf(data=land_sf,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -49,7 +49,7 @@ humpback_whale_plot <- ggplot()+
 #Sei Whale
 
 sei_whale_plot <- ggplot()+
-    geom_sf(data=sei_whale_sf,fill="blue4",col="blue4")+
+    geom_sf(data=sei_whale_sf,fill="#F3E73B",col="#F3E73B")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
     geom_sf(data=land_sf,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
