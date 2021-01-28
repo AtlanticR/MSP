@@ -22,6 +22,7 @@ AquaSiteName <- "FarmersLedge"
 PEZversion <- "4748m"
 #make sure you delete all shp.xml files in the folder to be able to run this code
 minYear <- 1970
+maxYear <- 2020
 cat(AquaSiteName)
 ```
 ```{r setup, echo=FALSE, include=FALSE, cache=FALSE}
@@ -158,14 +159,15 @@ marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
 marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
 isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
 isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
-#rv <- read.csv(file.path(dataPath,fl[grep("rv_",fl)]))
-#rv <- rv[which(year(rv$SDATE)>=minYear),]
 #Load RV Open Data summary file prepared using RVSurvey_OpenData_summary.R script.
 #rv_OD <- read.csv(file.path(opendataPath,("rv_OD_summary.csv")))
 #rv_OD <- rv[which(year(rv$SDATE)>=minYear),]
-#Word from Remi Daigle is that this data set is not ready yet.
 obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
-#obis <- obis[which(year(obis$year)>=minYear),]
+obis<-subset(obis,year>minYear,year<maxYear)
+cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
+cws<-subset(cws,year>minYear,year<maxYear)
+inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
+inat<-subset(inat,datetime>minYear,datetime<maxYear)
 ```
 
 ### **Industry Survey Database (ISDB)**
@@ -273,9 +275,9 @@ marfis_record_summary_table[1,2]<-Total_number_SAR_records_marfis
 marfis_poly_SAR_records<-marfis_intersect %>% select(SPECIENAME) %>% filter (SPECIENAME %in% MARSAR_com_up)
 x<-as.numeric(nrow(marfis_poly_SAR_records))
 Report_isdb<-if(x < 1){
-    "There are no records of Species at Risk in MARFIS for this polygon."
+    "There are no records of priority species in this polygon in the MARFIS database."
   } else {
-    "There are records of Species at Risk in MARFIS for this polygon."
+    "There are records of priority species in MARFIS for this polygon."
 }
 ```
 
@@ -512,9 +514,139 @@ plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
 ```
 **Fig.5:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with OBIS records shown as black points.
 
-**GBIF and iNaturalist**
-Global Biodiversity Information Facility (GBIF; https://www.gbif.org/)
+### **CWS/ECCC**
+
+```{r, echo=FALSE, include=FALSE, cache=FALSE}
+#Select columns of interest from OBIS file
+cws_edit<-cws %>% 
+  transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
+cws_plot_locations<-st_as_sf(cws_edit, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+intersect_cws <- st_intersection(cws_plot_locations,PEZ_poly_st)
+x<-as.numeric(nrow(intersect_cws))
+
+#summarize individual counts
+#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
+
+#append columns from listed species
+intersect_cws<- intersect_cws %>% rename(Scientific_Name=scientificName)
+
+cws_table<-merge(intersect_cws, listed_species, by='Scientific_Name')
+cws_table2<-cws_table %>% 
+  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+cws_table3<- cws_table2 %>% rename(SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species 
+                                     )
+cws_table3$geometry<-NULL
+cws_table4<-unique(cws_table3)
+
+Query_output_cws<-if(x < 1){
+  "There are no records of priority specues in the CWS/ECCC database for the provided search area."
+} else {
+  "The CWS/ECCC database contains records of priority species in the provided search area."
+}
+
+Query_output_cws2<-noquote(Query_output_cws)
+
+writeLines(c(Query_output_cws2), sep = "\n")
+```
+
+**Table 5:** Priority species with observations contained in the CWS_ECCC database within the search polygon area.
+
+```{r echo=FALSE, results='asis'}
+CWS_query_output_table<-if(x < 1){
+  ""
+} else {
+  kable(cws_table4, row.names = F) %>%
+    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+  
+}
+
+CWS_query_output_table
+
+```
+```{r read for cws , echo=FALSE, include=FALSE, cache=FALSE}
+source("plot_cws.R")
+```
+
+```{r Fig 5 CWS_ECCC records in PEZ polygon, fig.height=8, fig.width=11}
+plot_cws(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_cws,2)
+
+```
+**Fig.6:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with CWS_ECCC records shown as black points.
+
+**iNaturalist**
+
 iNaturalist (https://www.inaturalist.org/)
+
+Filtered by quality grade = research
+
+```{r, echo=FALSE, include=FALSE, cache=FALSE}
+#Select columns of interest from OBIS file
+inat_edit<-inat %>% 
+  transmute(scientific_name, datetime, latitude, longitude, common_name, url)
+inat_plot_locations<-st_as_sf(inat_edit, coords = c("longitude", "latitude"), crs = 4326)
+intersect_inat <- st_intersection(inat_plot_locations,PEZ_poly_st)
+x<-as.numeric(nrow(intersect_inat))
+
+#summarize individual counts
+#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
+
+#append columns from listed species
+intersect_inat<- intersect_inat %>% rename(Scientific_Name=scientific_name)
+inat_table<-merge(intersect_inat, listed_species, by='Scientific_Name')
+inat_table2<-inat_table %>% 
+  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+inat_table3<- inat_table2 %>% rename(SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species 
+                                     )
+inat_table3$geometry<-NULL
+inat_table4<-unique(inat_table3)
+
+Query_output_inat<-if(x < 1){
+  "There are no records of priority specues in the iNaturalist database for the provided search area."
+} else {
+  "The iNaturalist database contains records of priority species in the provided search area."
+}
+
+Query_output_inat2<-noquote(Query_output_inat)
+
+writeLines(c(Query_output_inat2), sep = "\n")
+```
+
+**Table 6:** Priority species with observations contained in the iNaturalist database within the search polygon area.
+
+```{r echo=FALSE, results='asis'}
+INAT_query_output_table<-if(x < 1){
+  ""
+} else {
+  kable(inat_table4, row.names = F) %>%
+    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+  
+}
+
+INAT_query_output_table
+
+```
+```{r read for inat , echo=FALSE, include=FALSE, cache=FALSE}
+source("plot_inat.R")
+```
+
+```{r Fig 5 INAT records in PEZ polygon, fig.height=8, fig.width=11}
+plot_inat(PEZ_poly,PEZ_poly_st,site_sf,land_sf,inat_table,2)
+
+```
+**Fig.7:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points.
+
+
+
+
+**GBIF**
+
+Global Biodiversity Information Facility (GBIF; https://www.gbif.org/)
+
+
 
 ## **Open Data**
 
@@ -526,6 +658,7 @@ As part of its Open Government initiative, the Canadian Federal Government is co
 Fisheries and Oceans Canada (DFO) has conducted Research Vessel (RV) surveys in the Maritimes Region using a standardized protocol. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>. The search of the Ecosystem RV Survey database resulted in the Table below that summarizes records by species or species group. 
 
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
+
 #still working to provide multiple data sources for locations and seasons (Summer, spring and fall surveys)
 #the following is specialized for this location.
 rv_OD_shp <- st_read("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020.shp", quiet=TRUE)
@@ -617,14 +750,14 @@ kable(RV_setcounttable, align="l") %>%
 Map below shows the location of sets performed in the Ecosystem RV Survey database (records for all sets displayed are summarized in the table above). The yellow polygon shows the locations of the human activity. The blue polygon displays the area searched and summarized in this report. 
 
 ```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11}
-site_map(PEZ_poly,site,land,2)
-#site_map(PEZ_poly,PEZ_poly_st,site,land,2)
-points(rv_intersect$SLONG.x,rv_intersect$SLAT.x, col="darkgreen",pch=16,cex=1)
-points(rv_intersect$ELONG.x,rv_intersect$ELAT.x, col="firebrick4",pch=16,cex=1)
-all_pairs<-as.data.frame(unique(cbind(rv_intersect$SLONG.x,rv_intersect$SLAT.x,rv_intersect$ELONG.x,rv_intersect$ELAT.x)))
-for (i in 1:nrow(all_pairs)){
-  arrows(all_pairs[i,1],all_pairs[i,2],all_pairs[i,3],all_pairs[i,4], length=0.08, angle=20, lwd=2, col="black")
-}
+#site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)
+#site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)
+#points(rv_intersect$SLONG.x,rv_intersect$SLAT.x, col="darkgreen",pch=16,cex=1)
+#points(rv_intersect$ELONG.x,rv_intersect$ELAT.x, col="firebrick4",pch=16,cex=1)
+#all_pairs<-as.data.frame(unique(cbind(rv_intersect$SLONG.x,rv_intersect$SLAT.x,rv_intersect$ELONG.x,rv_intersect$ELAT.x)))
+#for (i in 1:nrow(all_pairs)){
+#  arrows(all_pairs[i,1],all_pairs[i,2],all_pairs[i,3],all_pairs[i,4], length=0.08, angle=20, lwd=2, col="black")
+#}
 ```
 **Fig. 5:** Map showing trawl paths from the Research Vessel (RV) surveys (arrows with start and end points in green and red, respectively) within the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow). 
 
