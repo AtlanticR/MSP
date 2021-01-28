@@ -101,7 +101,7 @@ PEZ_poly_st<-st_as_sf(PEZ_poly)
 
 ```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, echo=FALSE, include=FALSE, cache=FALSE}
 
-listed_species<-read.csv("../../../Data/NaturalResources/Species/SAR_MAR_Region_SORTED.csv")
+listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 MARSAR_com <- listed_species$Common_Name
 MARSAR_com_up <- listed_species$Common_Name_upper
 MARSAR_sci <- listed_species$Scientific_Name
