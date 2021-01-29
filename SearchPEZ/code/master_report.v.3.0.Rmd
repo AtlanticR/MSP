@@ -182,7 +182,7 @@ MARSAR_sci_up <- listed_species$Scientific_Name_upper
 ```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11}
 site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,40)
 ```
-**Fig. 1:** Map showing the defined Potential Exposure Zone (PEZ) polygon (blue) used to search regional databases and summarize recorded species.
+**Figure:** Map showing the defined Potential Exposure Zone (PEZ) polygon (blue) used to search regional databases and summarize recorded species.
 
 # **Search Results for Species at Risk**  
 
@@ -261,7 +261,7 @@ Query_output_dist2<-noquote(Query_output_dist)
 writeLines(c(Query_output_dist2), sep = "\n")
 ```
 
-**Table 1:** Species at Risk for which the provided polygon overlaps with their distribution.
+**Table:** Species at Risk for which the provided polygon overlaps with their distribution.
 
 ```{r echo=FALSE, results='asis'}
 Query_output_table<-if(x < 1){
@@ -313,12 +313,12 @@ Query_output_table2
 plot_crithab(ClippedCritHab, PEZ_poly_st, land_sf)
 
 ```
-**Fig. 2:** Map showing Species At Risk Critical Habitat (red), the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
+**Figure:** Map showing Species At Risk Critical Habitat (red), the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
 
 ```{r Fig X close up of PEZ polygon, fig.height=8, fig.width=11}
 plot_crithab_zoom(ClippedCritHab, PEZ_poly_st, land_sf)
 ```
-**Fig. 3:** Map showing Species At Risk Critical Habitat (red), the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
+**Figure:** Map showing Species At Risk Critical Habitat (red), the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
 
 
 ## **Fish and Invertebrate Section**
@@ -341,7 +341,6 @@ inat<-subset(inat,datetime>minYear,datetime<maxYear)
 ```
 
 Data products used in this section:
-
 ### **Ecosystem Research Vessel (RV) Survey**  
 Contact: Don Clark  
 Tier of confidence: **High**  
@@ -380,7 +379,6 @@ kable(Tiers, align="l") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-Disclaimers, caveats, sources of uncertainty
 
 For more information on RV survey data visit: <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>
 
@@ -500,7 +498,7 @@ RV_setcounttable<- RV_setcounttable %>% rename(SARA_listing=Schedule.status,
 
 ```
 
-**Table 3:** RV Survey records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
+**Table:** RV Survey records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
 
 ```{r}
 kable(RV_setcounttable, align="l") %>%
@@ -517,7 +515,7 @@ kable(RV_setcounttable, align="l") %>%
 #  arrows(all_pairs[i,1],all_pairs[i,2],all_pairs[i,3],all_pairs[i,4], length=0.08, angle=20, lwd=2, col="black")
 #}
 ```
-**Fig. 4:** Map showing trawl paths from the Research Vessel (RV) surveys (arrows with start and end points in green and red, respectively) within the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
+**Figure:** Map showing trawl paths from the Research Vessel (RV) surveys (arrows with start and end points in green and red, respectively) within the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
 
 #### **ISDB Search Results**
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
@@ -646,7 +644,7 @@ site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
         shape = 16, fill = "black")
 
 ```
-**Fig.5:** Map of the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with MARFIS and ISDB observation events shown as black points. The data from both data bases has been aggregated to respect confidentiality rules. Note: This map is for internal DFO use only (rule of five was not applied). Please read the "resources and sources of uncertainty" section for additional information. 
+**Figure:** Map of the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with MARFIS and ISDB observation events shown as black points. The data from both data bases has been aggregated to respect confidentiality rules. Note: This map is for internal DFO use only (rule of five was not applied). Please read the "resources and sources of uncertainty" section for additional information. 
 
 #### **OBIS Search Results**
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
@@ -695,7 +693,7 @@ Query_output_obis2<-noquote(Query_output_obis)
 writeLines(c(Query_output_obis2), sep = "\n")
 ```
 
-**Table 5:** Priority species with observations contained in the OBIS database within the search polygon area.
+**Table:** Priority species with observations contained in the OBIS database within the search polygon area.
 
 ```{r echo=FALSE, results='asis'}
 OBIS_query_output_table<-if(x < 1){
@@ -714,7 +712,7 @@ OBIS_query_output_table
 plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
 
 ```
-**Fig.6:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with OBIS records shown as black points.
+**Figure:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with OBIS records shown as black points.
 
 
 ## **Sea Turtle Section**
@@ -724,14 +722,7 @@ leatherback_shp <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk
 
 Data products used in this section:
 
-## **Sea Turtle Section**
-```{r Set up paths for leatherback turtle files, echo=FALSE, include=FALSE, cache=FALSE}
-leatherback_shp <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
-```
-
-Data products used in this section:
-
-### **Leatherback Sea Turtle Important Habitat**  
+### **Leatherback Sea Turtle Important Habitat** 
 Contact:  
 Tier of confidence: **High**  
 Search year: 
@@ -752,7 +743,7 @@ leatherback_area(leatherback_shp=leatherback_shp, PEZ_poly_st= PEZ_poly_st)
 ```{r Fig X PEZ polygon with all maritime leatherback polygons, fig.height=8, fig.width=11}
 plot_leatherback(leatherback_shp, PEZ_poly_st, land_sf)
 ```
-**Fig. 7:** Map showing Leatherback Sea Turtle Important Habitat (green) relative to the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
+**Figure:** Map showing Leatherback Sea Turtle Important Habitat (green) relative to the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
 
 
 ## **Cetacean Section**
@@ -804,7 +795,7 @@ Data products used in this section:
 
 #### **North Atlantic Right Whale Consortium (NARWC) Database**  
 Contact: <https://www.narwc.org/sightings-database.html>  
-Last retrieved on: September 18 2020
+Last retrieved on: September 18 2020  
 Tier of confidence: **High**  
 Search year: 2000-2019 
 
@@ -931,7 +922,7 @@ Query_output_narwc2<-noquote(Query_output_narwc)
 writeLines(c(Query_output_narwc2), sep = "\n")
 ```
 
-**Table 7:** Cetaceans with observations contained in the NARWC database within the search polygon area.
+**Table:** Cetaceans with observations contained in the NARWC database within the search polygon area.
 
 ```{r echo=FALSE, results='asis'}
 NARWC_query_output_table<-if(x < 1){
@@ -953,11 +944,11 @@ narwc_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
 print(narwc_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))
 
 ```
-**Fig. 4:** The tier of confidence of this map for internal use only is **High**. Map represents cetacean sightings from the North Atlantic Right Whale Consortium (NARWC) sightings database. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. field efforts were primarily conducted towards the Northeast US, sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). For more information, please visit: https://www.narwc.org/sightings-database.html
+**Figure:** The tier of confidence of this map for internal use only is **High**. Map represents cetacean sightings from the North Atlantic Right Whale Consortium (NARWC) sightings database. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. field efforts were primarily conducted towards the Northeast US, sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). For more information, please visit: https://www.narwc.org/sightings-database.html
 
 #### **Whitehead Lab Search Results**
 
-**Fig. X**: The tier of confidence of this map for internal use only is **High**. Map represents cetacean sightings from the Whitehead Lab. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. field efforts were primarily conducted in the Gully MPA, and adjacent canyons along the edge of the eastern Scotian Shelf, sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). For more information, please visit: https://whiteheadlab.weebly.com/contact.html
+**Figure:**: The tier of confidence of this map for internal use only is **High**. Map represents cetacean sightings from the Whitehead Lab. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. field efforts were primarily conducted in the Gully MPA, and adjacent canyons along the edge of the eastern Scotian Shelf, sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). For more information, please visit: https://whiteheadlab.weebly.com/contact.html
 
 #### **WSDB Search Results**
 ```{r read wsdb and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
@@ -991,7 +982,7 @@ Query_output_wsdb2<-noquote(Query_output_wsdb)
 writeLines(c(Query_output_wsdb2), sep = "\n")
 ```
 
-**Table 6:** Cetaceans with observations contained in the WSDB within the search polygon area.
+**Table:** Cetaceans with observations contained in the WSDB within the search polygon area.
 
 ```{r echo=FALSE, results='asis'}
 WSDB_query_output_table<-if(x < 1){
@@ -1011,7 +1002,7 @@ wsdb_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
 print(wsdb_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))
 
 ```
-**Fig. 3:** The tier of confidence of this map for internal use only is **Low**. Map represents cetacean sightings from the Whale Sightings Database (WSDB) (including sightings of groups of animals) in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked. 
+**Figure:** The tier of confidence of this map for internal use only is **Low**. Map represents cetacean sightings from the Whale Sightings Database (WSDB) (including sightings of groups of animals) in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked. 
 
 #### **OBIS Search Results**
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
@@ -1060,7 +1051,7 @@ Query_output_obis2<-noquote(Query_output_obis)
 writeLines(c(Query_output_obis2), sep = "\n")
 ```
 
-**Table 5:** Priority species with observations contained in the OBIS database within the search polygon area.
+**Table:** Priority species with observations contained in the OBIS database within the search polygon area.
 
 ```{r echo=FALSE, results='asis'}
 OBIS_query_output_table<-if(x < 1){
@@ -1079,7 +1070,7 @@ OBIS_query_output_table
 plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
 
 ```
-**Fig.5:** The tier of confidence of this map is **Medium**. Map represents cetacean sightings from OBIS in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked.
+**Figure:** The tier of confidence of this map is **Medium**. Map represents cetacean sightings from OBIS in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked.
 
 #### **CWS/ECCC Search Results**
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
@@ -1117,7 +1108,7 @@ Query_output_cws2<-noquote(Query_output_cws)
 writeLines(c(Query_output_cws2), sep = "\n")
 ```
 
-**Table 5:** Priority species with observations contained in the CWS_ECCC database within the search polygon area.
+**Table:** Priority species with observations contained in the CWS_ECCC database within the search polygon area.
 
 ```{r echo=FALSE, results='asis'}
 CWS_query_output_table<-if(x < 1){
@@ -1136,7 +1127,7 @@ CWS_query_output_table
 plot_cws(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_cws,2)
 
 ```
-**Fig.6:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with CWS_ECCC records shown as black points.
+**Figure:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with CWS_ECCC records shown as black points.
 
 
 #### **iNaturalist Search Results**
@@ -1174,7 +1165,7 @@ Query_output_inat2<-noquote(Query_output_inat)
 writeLines(c(Query_output_inat2), sep = "\n")
 ```
 
-**Table 6:** Priority species with observations contained in the iNaturalist database within the search polygon area.
+**Table:** Priority species with observations contained in the iNaturalist database within the search polygon area.
 
 ```{r echo=FALSE, results='asis'}
 INAT_query_output_table<-if(x < 1){
@@ -1193,7 +1184,7 @@ INAT_query_output_table
 plot_inat(PEZ_poly,PEZ_poly_st,site_sf,land_sf,inat_table,2)
 
 ```
-**Fig.7:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points.
+**Figure:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points.
 
 #### **Priority Areas to Enhance Monitoring of Cetaceans Search Results**
 
@@ -1210,7 +1201,7 @@ cetacean_matrix[1,3]<-humpback_area
 cetacean_matrix[1,4]<-sei_area
 ```
 
-**Table 6:** Results showing if the search area overlap with areas predicted as Priority Areas to Enhance Monitoring of several species of cetaceans (Fin whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; FALSE = polygon does NOT overlap with priority area.  
+**Table:** Results showing if the search area overlap with areas predicted as Priority Areas to Enhance Monitoring of several species of cetaceans (Fin whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; FALSE = polygon does NOT overlap with priority area.  
 Important usage considerations: model predictions in this section should not be used on their own for this report, marine spatial planning purposes, and/or to delineate important habitat for cetacean species. Rather, outputs should be used together with other sources of information such as prey distribution, tagging data, detections from acoustic monitoring, other data on cetacean occurrence, and other modeling efforts already available for the area. In fact, the data product summarized below represents an excellent framework in which to properly use the outputs of this section. 
 
 
@@ -1222,7 +1213,7 @@ kable(cetacean_matrix, align="c") %>%
 ```{r Fig X priority areas for cetaceans, fig.height=8, fig.width=11}
 plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, PEZ_poly_st, land_sf)
 ```
-**Fig. 8:** The tier of confidence of this map is **Low**. Yellow indicates consolidated Species Distribution Modelling outputs (60-100% relative predicted occurrence rate). These habitats with high suitability are to be interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts. Due to the many reasons listed in the discussion section in Gomez et al. 2020, these cetacean modelling outputs do not represent a complete and current distribution of cetaceans in the region. They represent priority areas to direct cetacean monitoring efforts. Their use in marine spatial planning processes should be accompanied by complementary approaches such as the process summarized in the section below. Source: Gomez, C., Konrad, C.M., Vanderlaan, A., Moors-Murphy, H.B., Marotte, E., Lawson, J., Kouwenberg, A-L., Fuentes-Yaco, C., Buren, A. 2020. Identifying priority areas to enhance monitoring of cetaceans in the Northwest Atlantic Ocean. Can. Tech. Rep.Fish. Aquat. Sci. 3370: vi + 103 p. http://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf
+**Figure:** The tier of confidence of this map is **Low**. Yellow indicates consolidated Species Distribution Modelling outputs (60-100% relative predicted occurrence rate). These habitats with high suitability are to be interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts. Due to the many reasons listed in the discussion section in Gomez et al. 2020, these cetacean modelling outputs do not represent a complete and current distribution of cetaceans in the region. They represent priority areas to direct cetacean monitoring efforts. Their use in marine spatial planning processes should be accompanied by complementary approaches such as the process summarized in the section below. Source: Gomez, C., Konrad, C.M., Vanderlaan, A., Moors-Murphy, H.B., Marotte, E., Lawson, J., Kouwenberg, A-L., Fuentes-Yaco, C., Buren, A. 2020. Identifying priority areas to enhance monitoring of cetaceans in the Northwest Atlantic Ocean. Can. Tech. Rep.Fish. Aquat. Sci. 3370: vi + 103 p. http://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf
 
 
 #### **Search Results for Blue Whale Important Habitat**
@@ -1255,19 +1246,19 @@ NOTE: Colour code polygons for different activities.
 plot_bw_hab(Blue_4326, PEZ_poly_st, land_sf)
 
 ```
-**Fig. 9:** The tier of confidence of this map is **High**. Polygons delimit areas in Canadian waters that are important to blue whales for foraging (green) and transit (blue): (1) lower St. Lawrence Estuary – northwestern Gulf of St. Lawrence, (2) Mecatina Trough, (3) south and southwestern Newfoundland, (4) continental shelf edge, (5) Honguedo Strait, (6) Cabot Strait. These six habitat areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of blue whales from the western North Atlantic population. Blue whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population. Source: Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourde, S., Sears. R. et Y. Simard. 2018. Habitats important to blue whales (Balaenoptera musculus) in the Western North Atlantic. DFO Can. Sci. Advis. Sec. Res. Doc. 2016/080: iv + 50 p. <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>
+**Figure:** The tier of confidence of this map is **High**. Polygons delimit areas in Canadian waters that are important to blue whales for foraging (green) and transit (blue): (1) lower St. Lawrence Estuary – northwestern Gulf of St. Lawrence, (2) Mecatina Trough, (3) south and southwestern Newfoundland, (4) continental shelf edge, (5) Honguedo Strait, (6) Cabot Strait. These six habitat areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of blue whales from the western North Atlantic population. Blue whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population. Source: Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourde, S., Sears. R. et Y. Simard. 2018. Habitats important to blue whales (Balaenoptera musculus) in the Western North Atlantic. DFO Can. Sci. Advis. Sec. Res. Doc. 2016/080: iv + 50 p. <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>
 
 ```{r Fig X close up of PEZ polygon and bw habitat, fig.height=8, fig.width=11}
 plot_bw_hab_zoom(Blue_4326, PEZ_poly_st, land_sf)
 ```
-**Fig. 10:** The tier of confidence of this map is **High**. Polygons delimit areas in Canadian waters that are important to blue whales for foraging (green) and transit (blue): (1) lower St. Lawrence Estuary – northwestern Gulf of St. Lawrence, (2) Mecatina Trough, (3) south and southwestern Newfoundland, (4) continental shelf edge, (5) Honguedo Strait, (6) Cabot Strait. These six habitat areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of blue whales from the western North Atlantic population. Blue whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population. Source: Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourde, S., Sears. R. et Y. Simard. 2018. Habitats important to blue whales (Balaenoptera musculus) in the Western North Atlantic. DFO Can. Sci. Advis. Sec. Res. Doc. 2016/080: iv + 50 p. <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>
+**Figure:** The tier of confidence of this map is **High**. Polygons delimit areas in Canadian waters that are important to blue whales for foraging (green) and transit (blue): (1) lower St. Lawrence Estuary – northwestern Gulf of St. Lawrence, (2) Mecatina Trough, (3) south and southwestern Newfoundland, (4) continental shelf edge, (5) Honguedo Strait, (6) Cabot Strait. These six habitat areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of blue whales from the western North Atlantic population. Blue whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population. Source: Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourde, S., Sears. R. et Y. Simard. 2018. Habitats important to blue whales (Balaenoptera musculus) in the Western North Atlantic. DFO Can. Sci. Advis. Sec. Res. Doc. 2016/080: iv + 50 p. <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>
 
 
 ## **Other Species Section**
 
 Data products used in this section:
 
-## **Ecologically and Biologically Significant Areas (EBSA)**  
+### **Ecologically and Biologically Significant Areas (EBSA)**  
 Contact: <https://open.canada.ca/data/en/dataset/d2d6057f-d7c4-45d9-9fd9-0a58370577e0>  
 Tier of confidence: **High**  
 Search year:  
@@ -1310,28 +1301,28 @@ EBSA_bioregion(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
 ```{r Fig X PEZ polygon with all maritime EBSA polygons, fig.height=8, fig.width=11}
 plot_EBSA(EBSA_shp, PEZ_poly_st, land_sf)
 ```
-**Fig. 12:** Map showing Ecologically and Biologically Significant Areas (EBSA; pink) relative to the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
+**Figure:** Map showing Ecologically and Biologically Significant Areas (EBSA; pink) relative to the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
 
-### **Document Notes**
+# **Document Notes**
 
 This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/MSP/tree/master/SearchPEZ>. The full document can be updated rapidly as more or different information becomes available.
 
 This document was prepared by the Science MSP Team: <Gregory.Puncher@dfo-mpo.gc.ca>, <Catalina.Gomez@dfo-mpo.gc.ca>, <Gordana.Lazin@dfo-mpo.gc.ca>, <Brian.Bower@dfo-mpo.gc.ca>, <Philip.Greyson@dfo-mpo.gc.ca>, and <Tana.Worcester@dfo-mpo.gc.ca>
 
-### **Additional sources of information: to be included in future reports**
+# **Additional sources of information: to be included in future reports**
 
 For information about seabirds please contact Environment and Climate Change Canada. Link: <https://open.canada.ca/data/en/dataset/f612e2b4-5c67-46dc-9a84-1154c649ab4e>
 
 There are sources of data and information that were not included in this report. These include data from past studies/publications, acoustic detections, prey sampling and tagging. While the value of these data in predicting and describing cetacean occurrence is vital, these types of data are not available for all species and are not yet available for data querying. In the future, as information from other data sources becomes available, it too will help to provide a more comprehensive understanding of cetacean use and occurrence in the search areas.
 
-### **Additional Notes**
+# **Additional Notes**
 Should you receive a request for set-level Observer data (ISDB) and MARFIS, please just forward to Peter Comeau and <XMARComData@dfo-mpo.gc.ca>, respectively. Please feel free to use the email template below. Note that the template includes an attachment which you can download here - Informal Release Guidelines <\\ent.dfo-mpo.ca\ATLShares\Shared\ATIP Information\Informal_Release_Guidelines-eng.docx>.
 
 Hi,
 
 I apologize, but we can not provide you with the level of detail as it has been requested.  Fisheries catch and effort information for an individual licence holder is considered personal information and is protected under section 19 of the Access to Information Act. Fisheries catch and effort information for a corporate licence holder is considered to be sensitive, proprietary information and protected under Section 20 of the Access to Information Act.  Without written consent, DFO is not permitted to release information or data products (e.g., maps and data layers) that might reveal personal or third party information such as catch, landed values, and vessel-specific fishing locations.  All of this is spelled out to DFO staff the attached document (i.e. Appendix B – “Catch and Effort and Quota Information: Do’s and Don’ts for Informal Release”)
 
-### **References**
+# **References**
 
 Gomez, C., Konrad, C.M., Vanderlaan, A., Moors-Murphy, H.B., Marotte, E., Lawson, J., Kouwenberg, A-L., Fuentes-Yaco, C., Buren, A. 2020. Identifying priority areas to enhance monitoring of cetaceans in the Northwest Atlantic Ocean. Can. Tech. Rep.Fish. Aquat. Sci. 3370: vi + 103 p. http://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf
 
@@ -1341,7 +1332,7 @@ Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourd
 
 MacDonald, D., Emery, P., Themelis, D., Smedbol, R.K., Harris, L.E., and McCurdy, Q. 2017. Marine mammal and pelagic animal sightings (Whalesightings) database: a user’s guide. Can. Tech. Rep. Fish. Aquat. Sci. 3244: v + 44 p.<https://waves-vagues.dfo-mpo.gc.ca/Library/40642999.pdf> 
 
-### **Acknowledgements**
+# **Acknowledgements**
 
 <Mike.McMahon@dfo-mpo.gc.ca>! for providing code and advice in the use of `Mar.datawrangling`: A suite of tools for extracting, filtering and aggregating data from the Maritimes fisheries science databases <https://github.com/Maritimes/Mar.datawrangling>
 
@@ -1349,7 +1340,7 @@ The Atlantic R Learning & Development Initiative <https://github.com/AtlanticR>.
 
 Cetacean section: Shelley Lang, Hilary Moors-Murphy, Susan Heaslip, Emma Marotte, Amanda Babin, Nick Jeffery, Angelia Vanderlaan
 
-### **Future databases and data products to be included**  
+# **Future databases and data products to be included**  
 
 Examples:  
 

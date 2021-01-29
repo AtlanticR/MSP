@@ -168,7 +168,7 @@ Data products used in this section:
 
 #### **North Atlantic Right Whale Consortium (NARWC) Database**  
 Contact: <https://www.narwc.org/sightings-database.html>  
-Last retrieved on: September 18 2020
+Last retrieved on: September 18 2020  
 Tier of confidence: **High**  
 Search year: 2000-2019 
 
