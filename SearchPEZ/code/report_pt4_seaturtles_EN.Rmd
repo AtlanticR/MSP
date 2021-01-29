@@ -1,0 +1,150 @@
+---
+title: "Reproducible Report for Species in Maritimes Region - for Internal DFO use only"
+author: Synthesis prepared by the Reproducible Reporting Team, steering committee and advisors.
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output:
+  html_document:
+    theme: paper
+    toc: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+---
+```{r Clean up environment for new report, echo=FALSE, include=FALSE, cache=FALSE}
+rm(list=ls(all=TRUE))
+```
+```{r setup, echo=FALSE, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
+library(Mar.datawrangling)
+library(Mar.utils)
+library(knitr)
+library(kableExtra)
+library(rgdal)
+library(maps)
+library(lubridate)
+library(raster)
+library(RCurl)
+library(sf)
+library(stringr)
+library(ggplot2)
+library(data.table)
+library(gridExtra)
+library(dplyr)
+library(stars)
+library(ggspatial)
+#install.packages("remotes")
+#remotes::install_github("terminological/standard-print-output")
+#library(standardPrintOutput)
+#These next two lines are necessary for the generation of the water mark on all plots.
+#install.packages("devtools")
+#devtools::install_github("JosephCrispell/basicPlotteR")
+library(basicPlotteR)
+```
+```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
+# the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
+source("site_map.r")
+source("site_map_new.r")
+source("plot_wsdb.r")
+source("filter_wsdb.r")
+source("plot_narwc.r")
+source("plot_narwc.r")
+source("filter_narwc_new.r")
+# ## Another option is to load directly from the web and read in using Rcurl
+#function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
+#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/plot_wsdb.r",
+#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
+#for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
+source("EBSA.R")
+source("plot_EBSA.R")
+source("leatherback.R")
+source("plot_leatherback.R")
+source("plot_obis.R")
+source("plot_cws.R")
+source("plot_crithab.R")
+source("plot_crithab_zoom.R")
+source("plot_inat.R")
+source("cetacean_priority_areas.R")
+source("plot_cetaceans_4grid.R")
+source("Blue_Whale_habitat.R")
+source("plot_bw_hab.R")
+source("plot_bw_hab_zoom.R")
+```
+```{r Define Site, echo=FALSE, include=FALSE, cache=FALSE}
+#HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
+#output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
+#AquaSiteName <- "TestGully"
+#PEZversion <- "Polygon"
+AquaSiteName <- "FarmersLedge"
+PEZversion <- "4748m"
+UserComments <- "Example - First search effort for suitability of a site for a project planned for 2025. Project is expected to have positive/negative impacts on surrounding area. It is likely that some kind of monitoring will be required during operations. Make sure to follow up on all sections pertaining to a particular taxonomic group as this seems to be a concern of the stakeholders."
+#make sure you delete all shp.xml files in the folder to be able to run this code
+minYear <- 1970
+maxYear <- 2020
+```
+```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
+mspPath <- "../"
+data.dir = "../../../Data/mar.wrangling"
+#create a folder in outputs with the name of the site and buffer area search
+dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
+# setwd(dataPath) #not needed?
+polyPath <- "../../../Data/Zones/SearchPEZpolygons"
+site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
+site_sf <- st_as_sf(site)
+opendataPath = "../../../Data/mar.wrangling/RVSurvey_OpenData"
+#wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
+wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
+narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
+```
+```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
+landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
+land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
+land_sf <- st_as_sf(land)
+```
+```{r Define PEZ!, echo=FALSE, include=FALSE, cache=FALSE}
+pl <- list.files(polyPath,"*.shp")
+pl <- pl[-grep("xml",pl)]
+PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
+#PEZ_poly_st<-st_read(../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp", quiet=TRUE)
+PEZ_poly_st<-st_as_sf(PEZ_poly)
+```
+```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, echo=FALSE, include=FALSE, cache=FALSE}
+
+listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
+MARSAR_com <- listed_species$Common_Name
+MARSAR_com_up <- listed_species$Common_Name_upper
+MARSAR_sci <- listed_species$Scientific_Name
+MARSAR_sci_up <- listed_species$Scientific_Name_upper
+```
+
+# **Search Results for Species at Risk**  
+
+## **Sea Turtle Section**
+```{r Set up paths for leatherback turtle files, echo=FALSE, include=FALSE, cache=FALSE}
+leatherback_shp <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
+```
+
+Data products used in this section:
+
+### **Leatherback Sea Turtle Important Habitat**  
+Contact:  
+Tier of confidence: **High**  
+Search year: 
+Disclaimers, caveats, sources of uncertainty  
+
+#### **Draft: Leatherback Search Results**  
+
+```{r echo=FALSE, results='asis'}
+#function for overlap
+leatherback_overlap(leatherback_shp=leatherback_shp, PEZ_poly_st= PEZ_poly_st)
+```
+
+```{r echo=FALSE, results='asis'}
+#function for sector
+leatherback_area(leatherback_shp=leatherback_shp, PEZ_poly_st= PEZ_poly_st)
+```
+
+```{r Fig X PEZ polygon with all maritime leatherback polygons, fig.height=8, fig.width=11}
+plot_leatherback(leatherback_shp, PEZ_poly_st, land_sf)
+```
+**Fig. 7:** Map showing Leatherback Sea Turtle Important Habitat (green) relative to the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
