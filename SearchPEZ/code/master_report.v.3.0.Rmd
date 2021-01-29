@@ -1216,7 +1216,7 @@ plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_w
 **Figure:** The tier of confidence of this map is **Low**. Yellow indicates consolidated Species Distribution Modelling outputs (60-100% relative predicted occurrence rate). These habitats with high suitability are to be interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts. Due to the many reasons listed in the discussion section in Gomez et al. 2020, these cetacean modelling outputs do not represent a complete and current distribution of cetaceans in the region. They represent priority areas to direct cetacean monitoring efforts. Their use in marine spatial planning processes should be accompanied by complementary approaches such as the process summarized in the section below. Source: Gomez, C., Konrad, C.M., Vanderlaan, A., Moors-Murphy, H.B., Marotte, E., Lawson, J., Kouwenberg, A-L., Fuentes-Yaco, C., Buren, A. 2020. Identifying priority areas to enhance monitoring of cetaceans in the Northwest Atlantic Ocean. Can. Tech. Rep.Fish. Aquat. Sci. 3370: vi + 103 p. http://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf
 
 
-#### **Search Results for Blue Whale Important Habitat**
+#### **Blue Whale Important Habitat Search Results**
 
 Table x. Results showing if the search area overlap with Important areas of Blue Whale feeding, foraging and migration in eastern Canada. TRUE = polygon does overlap with the area; FALSE = polygon does NOT overlap with the area.  
 
