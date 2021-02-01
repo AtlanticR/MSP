@@ -17,6 +17,7 @@ ggplot()+
   coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
   labs(x=expression(paste("Longitude ",degree,"W",sep="")),
        y=expression(paste("Latitude ",degree,"N",sep="")),
-       col="")
+       col="")+
+watermark(show = TRUE, lab = "DFO Internal Use Only")
 
 }

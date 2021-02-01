@@ -44,8 +44,8 @@ ggplot()+
   coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
   labs(x="Longitude", y="Latitude", col="")+
   theme(axis.title.y = element_text(size = 13))+
-  theme(axis.title.x = element_text(size = 13))
-  #watermark(show = TRUE, lab = "DFO Internal Use Only")
+  theme(axis.title.x = element_text(size = 13))+
+  watermark(show = TRUE, lab = "DFO Internal Use Only")
   
  
 }
