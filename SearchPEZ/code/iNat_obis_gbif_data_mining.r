@@ -5,6 +5,7 @@ MARSAR_com <- listed_species$Common_Name
 MARSAR_com_up <- listed_species$Common_Name_upper
 MARSAR_sci <- listed_species$Scientific_Name
 
+
 # ==== iNaturalist ====
 
 library(rinat)
@@ -132,8 +133,9 @@ obis_edit3<-obis_edit2 %>%
 library(rgbif)
 
 # extract from GBIF
-gbif <- occ_data(scientificName=species, geometry="POLYGON ((-68.59863 41.42625, -66.79688 48.40003, -50.91064 48.15143, -53.23975 39.97712, -68.59863 41.42625))")
-
+gbif <- occ_data(scientificName=MARSAR_sci, geometry="POLYGON ((-68.59863 41.42625, -66.79688 48.40003, -50.91064 48.15143, -53.23975 39.97712, -68.59863 41.42625))")
+getwd()
+save(gbif, file = "gbif.RData")
 
 #  remove iNaturalist records
 ina=which(gdf$institutionCode=="iNaturalist")

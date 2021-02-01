@@ -15,7 +15,8 @@ fin_whale_plot <- ggplot()+
   coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
   labs(x=expression(paste("Longitude ",degree,"W",sep="")),
      y=expression(paste("Latitude ",degree,"N",sep="")),
-     col="")
+     col="")+
+  watermark(show = TRUE, lab = "DFO Internal Use Only")
   
 fin_whale_plot
 #Harbour Porpoise
@@ -30,7 +31,8 @@ harbour_porpoise_plot <- ggplot()+
     coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
-         col="")
+         col="")+
+    watermark(show = TRUE, lab = "DFO Internal Use Only")
 
 #humpback whale
 
@@ -44,7 +46,8 @@ humpback_whale_plot <- ggplot()+
     coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
-         col="")
+         col="")+
+    watermark(show = TRUE, lab = "DFO Internal Use Only")
 
 #Sei Whale
 
@@ -58,7 +61,8 @@ sei_whale_plot <- ggplot()+
     coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
-         col="")
+         col="")+
+    watermark(show = TRUE, lab = "DFO Internal Use Only")
 
 grid.arrange(fin_whale_plot, harbour_porpoise_plot, humpback_whale_plot,
              sei_whale_plot,

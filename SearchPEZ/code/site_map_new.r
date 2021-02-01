@@ -38,13 +38,12 @@ ggplot()+
   geom_sf(data=studyArea_st,fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
   geom_sf(data=site,fill="yellow",col="black", size=0.6)+
   geom_sf(data=land,fill=c("lightgrey"), col="black", size=0.7)+
+  watermark(show = TRUE, lab = "DFO Internal Use Only")+
   annotation_scale(location="bl")+
   theme_bw()+
   coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
   labs(x="Longitude", y="Latitude", col="")+
   theme(axis.title.y = element_text(size = 13))+
   theme(axis.title.x = element_text(size = 13))
-  #watermark(show = TRUE, lab = "DFO Internal Use Only")
   
- 
 }
