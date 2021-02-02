@@ -33,6 +33,7 @@ library(gridExtra)
 library(dplyr)
 library(stars)
 library(ggspatial)
+library(tidyverse)
 #install.packages("remotes")
 #remotes::install_github("terminological/standard-print-output")
 library(standardPrintOutput)
@@ -45,10 +46,7 @@ library(standardPrintOutput)
 # the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
 source("site_map.r")
 source("site_map_new.r")
-source("plot_wsdb.r")
 source("filter_wsdb.r")
-source("plot_narwc.r")
-source("plot_narwc.r")
 source("filter_narwc_new.r")
 # ## Another option is to load directly from the web and read in using Rcurl
 #function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
@@ -56,19 +54,11 @@ source("filter_narwc_new.r")
 #                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
 #for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
 source("EBSA.R")
-source("plot_EBSA.R")
 source("leatherback.R")
-source("plot_leatherback.R")
-source("plot_obis.R")
-source("plot_cws.R")
-source("plot_crithab.R")
-source("plot_crithab_zoom.R")
-source("plot_inat.R")
 source("cetacean_priority_areas.R")
-source("plot_cetaceans_4grid.R")
 source("Blue_Whale_habitat.R")
-source("plot_bw_hab.R")
-source("plot_bw_hab_zoom.R")
+source("fn_SearchRVData.r")
+source("fn_maps.r")
 ```
 
 ```{r Define Site, echo=FALSE, include=FALSE, cache=FALSE}
@@ -153,7 +143,6 @@ dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 site_sf <- st_as_sf(site)
-opendataPath = "../../../Data/mar.wrangling/RVSurvey_OpenData"
 #wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
 wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
 narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
@@ -326,9 +315,6 @@ plot_crithab_zoom(ClippedCritHab, PEZ_poly_st, land_sf)
 
 ```{r read fish and invertebrate files, echo=FALSE, include=FALSE, cache=FALSE}
 fl <- list.files(dataPath,".csv")
-rv_OD_shp <- st_read("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020.shp", quiet=TRUE)
-rv_OD <- read.csv("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020_summary.csv")
-rv_OD_min_year <- rv_OD[which(year(rv_OD$SDATE)>=minYear),]
 isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
 isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
 marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
@@ -420,101 +406,93 @@ For more information about OBIS, visit: <https://obis.org>
 
 #### **RV Survey Search Results**
 ```{r, echo=FALSE, include=FALSE, cache=FALSE}
+SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
+File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
+RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear)
+RVCatch$database<-"rv"
+rv_freq <- aggregate(
+        x = list(Records = RVCatch$COMM),
+      by = list(Scientific_Name = RVCatch$SPEC, Common_Name=RVCatch$COMM, Individuals=RVCatch$TOTNO, Set_No=RVCatch$SETNO
+      ),
+      length
+      )
+rv_freq_SAR<-rv_freq %>% select(Scientific_Name, Common_Name, Individuals, Records, Set_No) %>% filter (Scientific_Name %in% MARSAR_sci_up)
 
-#still working to provide multiple data sources for locations and seasons (Summer, spring and fall surveys)
-#the following is specialized for this location.
-m <-merge(rv_OD_shp, rv_OD_min_year, by='SETNO')
-RVsf<-st_as_sf(m)
+rv_freq2<-aggregate(x=rv_freq[,sapply(rv_freq,is.numeric)],
+                   by=c(rv_freq["Scientific_Name"], rv_freq["Common_Name"]),
+                    sum)
+rv_freq_table<-select(rv_freq2, Scientific_Name, Common_Name, Individuals, Records)
+rv_freq_table<-arrange(rv_freq_table, Scientific_Name)
+rv_freq_SAR2<-aggregate(x=rv_freq_SAR[,sapply(rv_freq_SAR,is.numeric)],
+                   by=c(rv_freq_SAR["Scientific_Name"], rv_freq_SAR["Common_Name"]),
+                    sum)
 
-#subbing in Gully for temporary demo purposes.
-#Gully<-st_read("../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp")
-#rv_intersect <- st_intersection(RVsf,Gully)
+rv_freq_SAR2<-arrange(rv_freq_SAR2, Scientific_Name)
 
-rv_intersect <- st_intersection(RVsf,PEZ_poly_st)
-x<-as.numeric(nrow(rv_intersect))
-CommonName<-rv_intersect$COMM
-Species<-rv_intersect$SPEC_GS
+#Table with scientific name, common name, individual counts and number of records
+Total_number_records_RV <- sum(rv_freq[[4]])
+Total_number_individuals_RV <- sum(rv_freq[[3]])
+Total_number_sets_RV<-length(unique(rv_freq$Set_No))
+Total_number_SAR_records_RV <- sum(rv_freq_SAR2[[4]])
+Total_number_SAR_individuals_RV <- sum(rv_freq_SAR2[[3]])
+Total_number_SAR_sets_RV<-length(unique(rv_freq_SAR$Set_No))
 
-rv_intersect_freq <- aggregate(
-  x = list(Records = rv_intersect$COMM),
-  by = list(Species = rv_intersect$COMM),
-  length)
+RV_summarytable<-data.frame(matrix(ncol = 3, nrow = 2)) 
+colnames(RV_summarytable)<-c("Total Individuals", "Total Records", "Total Sets")
+rownames(RV_summarytable)<-c("Species at Risk", "All Species")
 
-rv_intersect_freq <- aggregate(
-  x = list(Records = rv_intersect$COMM),
-  by = list(CommonName = rv_intersect$COMM, Species = rv_intersect$SPEC.GSSPECIES),
-  length)
-
-rv_intersect_freq <- rv_intersect_freq[order(-rv_intersect_freq$Records),]
-rownames(rv_intersect_freq) <- c()
-
-Total_number_records_RV_OD <- sum(rv_intersect_freq$Records)
+RV_summarytable[2,2]<-Total_number_records_RV
+RV_summarytable[2,1]<-Total_number_individuals_RV
+RV_summarytable[2,3]<-Total_number_sets_RV
+RV_summarytable[1,2]<-Total_number_SAR_records_RV
+RV_summarytable[1,1]<-Total_number_SAR_individuals_RV
+RV_summarytable[1,3]<-Total_number_SAR_sets_RV
 ```
 
 ```{r}
-kable(as.data.frame(Total_number_records_RV_OD, digits=2, full_width = F, position = "left"))
+kable(as.data.frame(RV_summarytable, position = "left"))  %>%
+kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
 ```{r}
-#table with scientific names of species and number of records
-RVpoly_SAR_records<-rv_intersect_freq %>% select(CommonName, Species, Records) %>% filter (Species %in% MARSAR_sci_up)
-#list of SAR species in polygon
-RVpoly_SAR_list<-RVpoly_SAR_records$Species
-
-#build table with rows containing sets in which SARs were captured 
-RV_setcounttable<-data.frame(Common_Name_upper="", Scientific_Name_upper="", Ind_Count=0, Set_Occurence=0, Set_Frequency=0)
-
-RVpoly_filter_sets<-rv_intersect %>% filter(SPEC.GSSPECIES %in% RVpoly_SAR_list)
-for(i in 1:length(RVpoly_SAR_list)){
-  rv_spec<-rv_intersect %>% filter(SPEC.GSSPECIES %in% RVpoly_SAR_list[i])
-  set_count<-length(unique(rv_spec$SETNO))
-  RV_setcounttable[i,2]<-RVpoly_SAR_list[i]
-  RV_setcounttable[i,4]<-set_count
-}
-
-RVpoly_SAR_list_com<-RVpoly_SAR_records$CommonName
-for(i in 1:length(RVpoly_SAR_list_com)){
-  rv_com<-rv_intersect %>% filter(COMM %in% RVpoly_SAR_list_com[i])
-  set_count<-length(unique(rv_com$SETNO))
-  RV_setcounttable[i,1]<-RVpoly_SAR_list_com[i]
-}
-
-RVpoly_SAR_list_rec<-RVpoly_SAR_records$Records
-for(i in 1:length(RVpoly_SAR_list_rec)){
-  rv_com<-rv_intersect %>% filter(COMM %in% RVpoly_SAR_list_rec[i])
-  set_count<-length(unique(rv_com$SETNO))
-  RV_setcounttable[i,3]<-RVpoly_SAR_list_rec[i]
-}
-
-#Count sets
-Total_sets<-length(unique(rv_intersect$SETNO))
-
-#Develop fianl RV table
-RV_setcounttable<-mutate(RV_setcounttable, Set_Frequency=format(round((Set_Occurence/Total_sets)*100,1), nsmall=1))
-RV_setcounttable<-merge(RV_setcounttable, listed_species, by='Scientific_Name_upper')
-RV_setcounttable<-select(RV_setcounttable, Scientific_Name, Common_Name,COSEWIC.status, Schedule.status,Wild_Species,Ind_Count, Set_Occurence, Set_Frequency)
-RV_setcounttable<- RV_setcounttable %>% rename(SARA_listing=Schedule.status,
-                                               COSEWIC_listing=COSEWIC.status,
-                                               Wild_Species_listing=Wild_Species)
+#Develop final RV SAR table
+rv_SAR_table<-as.data.frame(rv_freq_SAR2)
+rv_SAR_table<-rv_SAR_table %>% rename(Scientific_Name_upper=Scientific_Name)
+rv_SAR_table<-mutate(rv_SAR_table, Catch_Frequency=format(round((Records/Total_number_SAR_sets_RV)*100,1), nsmall=1))
+rv_SAR_table<-merge(rv_SAR_table, listed_species, by='Scientific_Name_upper')
+rv_SAR_table<-select(rv_SAR_table, Scientific_Name, Common_Name.y, Individuals, Records, Catch_Frequency,
+                             COSEWIC.status, Schedule.status,Wild_Species)
+colnames(rv_SAR_table)<-c("Scientific Name", "Common Name", "No. of Individuals", "Catch Events", 
+                          "Catch Frequency", "COSEWIC listing", "SARA listing", "Wild Species")
 
 ```
 
 **Table:** RV Survey records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
 
 ```{r}
-kable(RV_setcounttable, align="l") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+kable(rv_SAR_table, align="l") %>%
+  kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
+```
+
+```{r}
+#Convert geometry to latitude and longitude
+RVCatch <- RVCatch %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
+rv_start_sites<-data.frame(unique(cbind(longitude=RVCatch$lon, latitude=RVCatch$lat)))
+rv_end_sites<-data.frame(unique(cbind(longitude=RVCatch$ELONG, latitude=RVCatch$ELAT)))
+startx <- rv_start_sites$longitude
+starty <- rv_start_sites$latitude
+endx <- rv_end_sites$longitude
+endy <- rv_end_sites$latitude
 ```
 
 ```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11}
-#site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)
-#site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)
-#points(rv_intersect$SLONG.x,rv_intersect$SLAT.x, col="darkgreen",pch=16,cex=1)
-#points(rv_intersect$ELONG.x,rv_intersect$ELAT.x, col="firebrick4",pch=16,cex=1)
-#all_pairs<-as.data.frame(unique(cbind(rv_intersect$SLONG.x,rv_intersect$SLAT.x,rv_intersect$ELONG.x,rv_intersect$ELAT.x)))
-#for (i in 1:nrow(all_pairs)){
-#  arrows(all_pairs[i,1],all_pairs[i,2],all_pairs[i,3],all_pairs[i,4], length=0.08, angle=20, lwd=2, col="black")
-#}
+site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+  geom_point(data = rv_start_sites, aes(x = longitude, y = latitude), size = 3, 
+        shape = 16, colour = "darkgreen")+
+  geom_point(data = rv_end_sites, aes(x = longitude, y = latitude), size = 3, 
+        shape = 16, colour = "firebrick4")+
+  geom_segment(aes(x = startx, y = starty, xend = endx, yend = endy),arrow=arrow(), size = 1.25)
+
 ```
 **Figure:** Map showing trawl paths from the Research Vessel (RV) surveys (arrows with start and end points in green and red, respectively) within the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
 
@@ -1361,7 +1339,7 @@ Salmon
 **Table S1:** RV survey observation records contained within the polygon summarized by species or species group.
 
 ```{r}
-kable(rv_intersect_freq) %>%
+kable(rv_freq_table) %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
