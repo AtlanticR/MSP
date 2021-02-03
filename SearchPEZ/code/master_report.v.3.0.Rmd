@@ -34,13 +34,10 @@ library(dplyr)
 library(stars)
 library(ggspatial)
 library(tidyverse)
+#These next two lines are necessary for the generation of the water mark on all plots.
 #install.packages("remotes")
 #remotes::install_github("terminological/standard-print-output")
 library(standardPrintOutput)
-#These next two lines are necessary for the generation of the water mark on all plots.
-#install.packages("devtools")
-#devtools::install_github("JosephCrispell/basicPlotteR")
-#library(basicPlotteR)
 ```
 ```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
 # the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
@@ -759,6 +756,7 @@ humpback_whale_sf<-st_as_stars(humpback_whale)%>%st_as_sf()
 sei_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Sei_Whale.tif")
 sei_whale[sei_whale==0] <- NA
 sei_whale_sf<-st_as_stars(sei_whale)%>%st_as_sf()
+#convert bluewhale shape file crs
 Blue_32198 <- st_read("../../../Data/NaturalResources/Species/Cetaceans/BlueWhaleHabitat_FGP/BlueWhaleHabitat_HabitatBaleineBleue.shp", quiet=TRUE)
 Blue_4326 <- st_transform(Blue_32198, crs = 4326)
 Blue_4326b<-setNames(Blue_4326, replace(names(Blue_4326), names(Blue_4326) == 'activité', 'activite'))
@@ -866,6 +864,11 @@ Last retrieved on: October 30 2020 from Open Data <https://open.canada.ca/data/e
 Tier of confidence: **High**  
 
 The following text is verbatim from the Open Data record. The distribution of blue whales (Balaenoptera musculus) is mainly dictated by key environmental drivers such as food requirements and availability, sea ice, and sometimes predation risks. It is common to find blue whales in upwelling regions, depending on topography (banks, slopes and shallow water) and thermal fronts, which are actually related to krill aggregations. Blue whales feed almost exclusively on euphausiids (krill) and have the highest absolute metabolic demands. A shapefile on the distribution of significant perennial areas of krill aggregation is available (DFO-ECCC). Important habitats for blue whales have therefore been identified by combining information on their distribution with krill aggregation areas (observed or predicted). In the waters of the St. Lawrence estuary, the presence of blue whales for foraging, feeding and migration has been observed throughout the year, with increased activity during the summer. It has been observed that feeding rates of blue whales are higher in shallow waters and during nocturnal periods (krill at surface), confirming that foraging near the surface is beneficial when possible. Their presence, their great fidelity to this important habitat for their activities and their behavior in the waters of the St. Lawrence in all seasons, show that blue whales are vulnerable to oil spills. They are vulnerable, not only indirectly through the reduction of prey and loss of suitable habitat, but also by their behavior requiring active activity on the surface and near the coast. The data used to create the polygons using the bounding box method comes from multiple sources of information: hunting records, photo-identification, coastal, airborne and boat surveys, passive acoustic monitoring, radio and satellite telemetry , ice trapping, anecdotal observations and modeling (please see a list of all sources of information used in Lesaqe et al. 2018 and the open data record <https://open.canada.ca/data/en/dataset/8fafd919-fcbe-43a3-a911-3d9461273441>).
+
+#### **Important areas for Northern Bottlenose Whale**  
+Contact:  
+Site: <https://doi.org/10.3354/esr00823>  
+Tier of confidence: **High**  
 
 #### **NARWC Search Results**
 ```{r read narwc and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
@@ -1231,7 +1234,6 @@ plot_bw_hab(Blue_4326, PEZ_poly_st, land_sf)
 plot_bw_hab_zoom(Blue_4326, PEZ_poly_st, land_sf)
 ```
 **Figure:** The tier of confidence of this map is **High**. Polygons delimit areas in Canadian waters that are important to blue whales for foraging (green) and transit (blue): (1) lower St. Lawrence Estuary – northwestern Gulf of St. Lawrence, (2) Mecatina Trough, (3) south and southwestern Newfoundland, (4) continental shelf edge, (5) Honguedo Strait, (6) Cabot Strait. These six habitat areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of blue whales from the western North Atlantic population. Blue whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population. Source: Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourde, S., Sears. R. et Y. Simard. 2018. Habitats important to blue whales (Balaenoptera musculus) in the Western North Atlantic. DFO Can. Sci. Advis. Sec. Res. Doc. 2016/080: iv + 50 p. <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>
-
 
 ## **Other Species Section**
 
