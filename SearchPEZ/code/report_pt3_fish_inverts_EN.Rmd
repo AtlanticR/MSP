@@ -11,10 +11,7 @@ output:
   word_document:
     toc: yes
 ---
-```{r Clean up environment for new report, echo=FALSE, include=FALSE, cache=FALSE}
-rm(list=ls(all=TRUE))
-```
-```{r setup, echo=FALSE, include=FALSE, cache=FALSE}
+```{r setup, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
 library(Mar.datawrangling)
 library(Mar.utils)
@@ -33,22 +30,17 @@ library(gridExtra)
 library(dplyr)
 library(stars)
 library(ggspatial)
+library(tidyverse)
+#These next two lines are necessary for the generation of the water mark on all plots.
 #install.packages("remotes")
 #remotes::install_github("terminological/standard-print-output")
-#library(standardPrintOutput)
-#These next two lines are necessary for the generation of the water mark on all plots.
-#install.packages("devtools")
-#devtools::install_github("JosephCrispell/basicPlotteR")
-library(basicPlotteR)
+library(standardPrintOutput)
 ```
-```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
+```{r source functions, include=FALSE, cache=FALSE}
 # the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
 source("site_map.r")
 source("site_map_new.r")
-source("plot_wsdb.r")
 source("filter_wsdb.r")
-source("plot_narwc.r")
-source("plot_narwc.r")
 source("filter_narwc_new.r")
 # ## Another option is to load directly from the web and read in using Rcurl
 #function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
@@ -56,21 +48,13 @@ source("filter_narwc_new.r")
 #                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
 #for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
 source("EBSA.R")
-source("plot_EBSA.R")
 source("leatherback.R")
-source("plot_leatherback.R")
-source("plot_obis.R")
-source("plot_cws.R")
-source("plot_crithab.R")
-source("plot_crithab_zoom.R")
-source("plot_inat.R")
 source("cetacean_priority_areas.R")
-source("plot_cetaceans_4grid.R")
 source("Blue_Whale_habitat.R")
-source("plot_bw_hab.R")
-source("plot_bw_hab_zoom.R")
+source("fn_SearchRVData.r")
+source("fn_maps.r")
 ```
-```{r Define Site, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Define Site, include=FALSE, cache=FALSE}
 #HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
 #output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
 #AquaSiteName <- "TestGully"
@@ -82,7 +66,7 @@ UserComments <- "Example - First search effort for suitability of a site for a p
 minYear <- 1970
 maxYear <- 2020
 ```
-```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Set up paths, include=FALSE, cache=FALSE}
 mspPath <- "../"
 data.dir = "../../../Data/mar.wrangling"
 #create a folder in outputs with the name of the site and buffer area search
@@ -91,24 +75,23 @@ dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 site_sf <- st_as_sf(site)
-opendataPath = "../../../Data/mar.wrangling/RVSurvey_OpenData"
 #wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
 wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
 narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
 ```
-```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
+```{r read baseline data for maps, include=FALSE, cache=FALSE}
 landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
 land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
 land_sf <- st_as_sf(land)
 ```
-```{r Define PEZ!, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Define PEZ!, include=FALSE, cache=FALSE}
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
 #PEZ_poly_st<-st_read(../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp", quiet=TRUE)
 PEZ_poly_st<-st_as_sf(PEZ_poly)
 ```
-```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, include=FALSE, cache=FALSE}
 
 listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 MARSAR_com <- listed_species$Common_Name
@@ -121,11 +104,8 @@ MARSAR_sci_up <- listed_species$Scientific_Name_upper
 
 ## **Fish and Invertebrate Section**
 
-```{r read fish and invertebrate files, echo=FALSE, include=FALSE, cache=FALSE}
+```{r read fish and invertebrate files, include=FALSE, cache=FALSE}
 fl <- list.files(dataPath,".csv")
-rv_OD_shp <- st_read("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020.shp", quiet=TRUE)
-rv_OD <- read.csv("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020_summary.csv")
-rv_OD_min_year <- rv_OD[which(year(rv_OD$SDATE)>=minYear),]
 isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
 isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
 marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
@@ -178,8 +158,6 @@ kable(Tiers, align="l") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-Disclaimers, caveats, sources of uncertainty
-
 For more information on RV survey data visit: <https://waves-vagues.dfo-mpo.gc.ca/Library/4062092x.pdf>
 
 ### **Industry Survey Database (ISDB)**  
@@ -218,107 +196,96 @@ More than 20 OBIS nodes around the world connect 500 institutions from 56 countr
 For more information about OBIS, visit: <https://obis.org>
 
 #### **RV Survey Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
+SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
+File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
+RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear)
+RVCatch$database<-"rv"
+rv_freq <- aggregate(
+        x = list(Records = RVCatch$COMM),
+      by = list(Scientific_Name = RVCatch$SPEC, Common_Name=RVCatch$COMM, Individuals=RVCatch$TOTNO, Set_No=RVCatch$SETNO
+      ),
+      length
+      )
+rv_freq_SAR<-rv_freq %>% select(Scientific_Name, Common_Name, Individuals, Records, Set_No) %>% filter (Scientific_Name %in% MARSAR_sci_up)
 
-#still working to provide multiple data sources for locations and seasons (Summer, spring and fall surveys)
-#the following is specialized for this location.
-m <-merge(rv_OD_shp, rv_OD_min_year, by='SETNO')
-RVsf<-st_as_sf(m)
+rv_freq2<-aggregate(x=rv_freq[,sapply(rv_freq,is.numeric)],
+                   by=c(rv_freq["Scientific_Name"], rv_freq["Common_Name"]),
+                    sum)
+rv_freq_table<-select(rv_freq2, Scientific_Name, Common_Name, Individuals, Records)
+rv_freq_table<-arrange(rv_freq_table, Scientific_Name)
+rv_freq_SAR2<-aggregate(x=rv_freq_SAR[,sapply(rv_freq_SAR,is.numeric)],
+                   by=c(rv_freq_SAR["Scientific_Name"], rv_freq_SAR["Common_Name"]),
+                    sum)
 
-#subbing in Gully for temporary demo purposes.
-#Gully<-st_read("../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp")
-#rv_intersect <- st_intersection(RVsf,Gully)
+rv_freq_SAR2<-arrange(rv_freq_SAR2, Scientific_Name)
 
-rv_intersect <- st_intersection(RVsf,PEZ_poly_st)
-x<-as.numeric(nrow(rv_intersect))
-CommonName<-rv_intersect$COMM
-Species<-rv_intersect$SPEC_GS
+#Table with scientific name, common name, individual counts and number of records
+Total_number_records_RV <- sum(rv_freq[[4]])
+Total_number_individuals_RV <- sum(rv_freq[[3]])
+Total_number_sets_RV<-length(unique(rv_freq$Set_No))
+Total_number_SAR_records_RV <- sum(rv_freq_SAR2[[4]])
+Total_number_SAR_individuals_RV <- sum(rv_freq_SAR2[[3]])
+Total_number_SAR_sets_RV<-length(unique(rv_freq_SAR$Set_No))
 
-rv_intersect_freq <- aggregate(
-  x = list(Records = rv_intersect$COMM),
-  by = list(Species = rv_intersect$COMM),
-  length)
+RV_summarytable<-data.frame(matrix(ncol = 3, nrow = 2)) 
+colnames(RV_summarytable)<-c("Total Individuals", "Total Records", "Total Sets")
+rownames(RV_summarytable)<-c("Species at Risk", "All Species")
 
-rv_intersect_freq <- aggregate(
-  x = list(Records = rv_intersect$COMM),
-  by = list(CommonName = rv_intersect$COMM, Species = rv_intersect$SPEC.GSSPECIES),
-  length)
-
-rv_intersect_freq <- rv_intersect_freq[order(-rv_intersect_freq$Records),]
-rownames(rv_intersect_freq) <- c()
-
-Total_number_records_RV_OD <- sum(rv_intersect_freq$Records)
+RV_summarytable[2,2]<-Total_number_records_RV
+RV_summarytable[2,1]<-Total_number_individuals_RV
+RV_summarytable[2,3]<-Total_number_sets_RV
+RV_summarytable[1,2]<-Total_number_SAR_records_RV
+RV_summarytable[1,1]<-Total_number_SAR_individuals_RV
+RV_summarytable[1,3]<-Total_number_SAR_sets_RV
 ```
 
 ```{r}
-kable(as.data.frame(Total_number_records_RV_OD, digits=2, full_width = F, position = "left"))
+kable(as.data.frame(RV_summarytable, position = "left"))  %>%
+kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
 ```{r}
-#table with scientific names of species and number of records
-RVpoly_SAR_records<-rv_intersect_freq %>% select(CommonName, Species, Records) %>% filter (Species %in% MARSAR_sci_up)
-#list of SAR species in polygon
-RVpoly_SAR_list<-RVpoly_SAR_records$Species
-
-#build table with rows containing sets in which SARs were captured 
-RV_setcounttable<-data.frame(Common_Name_upper="", Scientific_Name_upper="", Ind_Count=0, Set_Occurence=0, Set_Frequency=0)
-
-RVpoly_filter_sets<-rv_intersect %>% filter(SPEC.GSSPECIES %in% RVpoly_SAR_list)
-for(i in 1:length(RVpoly_SAR_list)){
-  rv_spec<-rv_intersect %>% filter(SPEC.GSSPECIES %in% RVpoly_SAR_list[i])
-  set_count<-length(unique(rv_spec$SETNO))
-  RV_setcounttable[i,2]<-RVpoly_SAR_list[i]
-  RV_setcounttable[i,4]<-set_count
-}
-
-RVpoly_SAR_list_com<-RVpoly_SAR_records$CommonName
-for(i in 1:length(RVpoly_SAR_list_com)){
-  rv_com<-rv_intersect %>% filter(COMM %in% RVpoly_SAR_list_com[i])
-  set_count<-length(unique(rv_com$SETNO))
-  RV_setcounttable[i,1]<-RVpoly_SAR_list_com[i]
-}
-
-RVpoly_SAR_list_rec<-RVpoly_SAR_records$Records
-for(i in 1:length(RVpoly_SAR_list_rec)){
-  rv_com<-rv_intersect %>% filter(COMM %in% RVpoly_SAR_list_rec[i])
-  set_count<-length(unique(rv_com$SETNO))
-  RV_setcounttable[i,3]<-RVpoly_SAR_list_rec[i]
-}
-
-#Count sets
-Total_sets<-length(unique(rv_intersect$SETNO))
-
-#Develop fianl RV table
-RV_setcounttable<-mutate(RV_setcounttable, Set_Frequency=format(round((Set_Occurence/Total_sets)*100,1), nsmall=1))
-RV_setcounttable<-merge(RV_setcounttable, listed_species, by='Scientific_Name_upper')
-RV_setcounttable<-select(RV_setcounttable, Scientific_Name, Common_Name,COSEWIC.status, Schedule.status,Wild_Species,Ind_Count, Set_Occurence, Set_Frequency)
-RV_setcounttable<- RV_setcounttable %>% rename(SARA_listing=Schedule.status,
-                                               COSEWIC_listing=COSEWIC.status,
-                                               Wild_Species_listing=Wild_Species)
+#Develop final RV SAR table
+rv_SAR_table<-as.data.frame(rv_freq_SAR2)
+rv_SAR_table<-rv_SAR_table %>% rename(Scientific_Name_upper=Scientific_Name)
+rv_SAR_table<-mutate(rv_SAR_table, Catch_Frequency=format(round((Records/Total_number_SAR_sets_RV)*100,1), nsmall=1))
+rv_SAR_table<-merge(rv_SAR_table, listed_species, by='Scientific_Name_upper')
+rv_SAR_table<-select(rv_SAR_table, Scientific_Name, Common_Name.y, Individuals, Records, Catch_Frequency,
+                             COSEWIC.status, Schedule.status,Wild_Species)
+colnames(rv_SAR_table)<-c("Scientific Name", "Common Name", "No. of Individuals", "Catch Events", 
+                          "Catch Frequency", "COSEWIC listing", "SARA listing", "Wild Species")
 
 ```
-
-**Table 3:** RV Survey records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
 
 ```{r}
-kable(RV_setcounttable, align="l") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+kable(rv_SAR_table, align="l", caption="RV Survey records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.") %>%
+  kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
-```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11}
-#site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)
-#site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)
-#points(rv_intersect$SLONG.x,rv_intersect$SLAT.x, col="darkgreen",pch=16,cex=1)
-#points(rv_intersect$ELONG.x,rv_intersect$ELAT.x, col="firebrick4",pch=16,cex=1)
-#all_pairs<-as.data.frame(unique(cbind(rv_intersect$SLONG.x,rv_intersect$SLAT.x,rv_intersect$ELONG.x,rv_intersect$ELAT.x)))
-#for (i in 1:nrow(all_pairs)){
-#  arrows(all_pairs[i,1],all_pairs[i,2],all_pairs[i,3],all_pairs[i,4], length=0.08, angle=20, lwd=2, col="black")
-#}
+```{r}
+#Convert geometry to latitude and longitude
+RVCatch <- RVCatch %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
+rv_start_sites<-data.frame(unique(cbind(longitude=RVCatch$lon, latitude=RVCatch$lat)))
+rv_end_sites<-data.frame(unique(cbind(longitude=RVCatch$ELONG, latitude=RVCatch$ELAT)))
+startx <- rv_start_sites$longitude
+starty <- rv_start_sites$latitude
+endx <- rv_end_sites$longitude
+endy <- rv_end_sites$latitude
 ```
-**Fig. 4:** Map showing trawl paths from the Research Vessel (RV) surveys (arrows with start and end points in green and red, respectively) within the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
+
+```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11, fig.cap= "Map showing trawl paths from the Research Vessel (RV) surveys (arrows with start and end points in green and red, respectively) within the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow)."}
+site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+  geom_point(data = rv_start_sites, aes(x = longitude, y = latitude), size = 3, 
+        shape = 16, colour = "darkgreen")+
+  geom_point(data = rv_end_sites, aes(x = longitude, y = latitude), size = 3, 
+        shape = 16, colour = "firebrick4")+
+  geom_segment(aes(x = startx, y = starty, xend = endx, yend = endy),arrow=arrow(), size = 1.25)
+
+```
 
 #### **ISDB Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 ##skip all of these steps and create an isdb file for all of the MAR region.
 #df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
 isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
@@ -326,7 +293,7 @@ isdb_intersect <- st_intersection(isdb_shp,PEZ_poly_st)
 isdb_sites<-data.frame(longitude=isdb_intersect$LONGITUDE, latitude=isdb_intersect$LATITUDE)
 ```
 
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 isdb_freq <- aggregate(
       x = list(Records = isdb_intersect$SCIENTIFI1),
       by = list(Species = isdb_intersect$SCIENTIFI1),
@@ -368,16 +335,14 @@ Report_isdb<-if(x < 1){
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
 ```
 
- **Table 4:** ISDB records of species observed within the provided polygon which have a listed status with SARA, COSEWIC or Wild Species. Data is summarized by species or species group.
-
 ```{r}
-kable(isdb_record_table, align="l") %>%
+kable(isdb_record_table, align="l", caption="ISDB records of species observed within the provided polygon which have a listed status with SARA, COSEWIC or Wild Species. Data is summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 **Note:** A complete list of ISDB observation records of all species within the provided polygon can be found in the Appendix.
 
 #### **MARFIS Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 ##skip all of these steps and create an isdb file for all of the MAR region.
 #df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
 marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
@@ -385,7 +350,7 @@ marfis_intersect <- st_intersection(marfis_shp,PEZ_poly_st)
 marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
 ```
 
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 marfis_freq <- aggregate(
       x = list(Records = marfis_intersect$SPECIENAME),
       by = list(Species = marfis_intersect$SPECIENAME),
@@ -427,27 +392,23 @@ Report_isdb<-if(x < 1){
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
 ```
 
- **Table 5:** MARFIS observation records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
-
 ```{r}
-kable(marfis_record_table, align="l") %>%
+kable(marfis_record_table, align="l", caption="MARFIS observation records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
 **Note:** A complete list of MARFIS observation records of all species within the provided polygon can be found in the Appendix.
 
-```{r Fig 2 MARFIS and ISDB records, fig.height=8, fig.width=11}
+```{r Fig 2 MARFIS and ISDB records, fig.height=8, fig.width=11, fig.cap="Map of the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with MARFIS and ISDB observation events shown as black points. The data from both data bases has been aggregated to respect confidentiality rules. Note: This map is for internal DFO use only (rule of five was not applied). Please read the resources and sources of uncertainty section for additional information."}
 site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
   geom_point(data = isdb_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, fill = "black")+
   geom_point(data = marfis_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, fill = "black")
-
 ```
-**Fig.5:** Map of the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with MARFIS and ISDB observation events shown as black points. The data from both data bases has been aggregated to respect confidentiality rules. Note: This map is for internal DFO use only (rule of five was not applied). Please read the "resources and sources of uncertainty" section for additional information. 
 
 #### **OBIS Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 obis_edit<-obis %>% 
   transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
@@ -493,24 +454,18 @@ Query_output_obis2<-noquote(Query_output_obis)
 writeLines(c(Query_output_obis2), sep = "\n")
 ```
 
-**Table 5:** Priority species with observations contained in the OBIS database within the search polygon area.
-
 ```{r echo=FALSE, results='asis'}
 OBIS_query_output_table<-if(x < 1){
   ""
 } else {
-  kable(obis_table4, row.names = F) %>%
+  kable(obis_table4, row.names = F, caption="Priority species with observations contained in the OBIS database within the search polygon area.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
   
 }
 
 OBIS_query_output_table
-
 ```
 
-```{r Fig 5 OBIS records in PEZ polygon, fig.height=8, fig.width=11}
+```{r Fig 5 OBIS records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with OBIS records shown as black points."}
 plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
-
 ```
-**Fig.6:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with OBIS records shown as black points.
-

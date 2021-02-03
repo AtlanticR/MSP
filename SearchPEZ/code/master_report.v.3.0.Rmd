@@ -11,10 +11,7 @@ output:
   word_document:
     toc: yes
 ---
-```{r Clean up environment for new report, echo=FALSE, include=FALSE, cache=FALSE}
-rm(list=ls(all=TRUE))
-```
-```{r setup, echo=FALSE, include=FALSE, cache=FALSE}
+```{r setup, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
 library(Mar.datawrangling)
 library(Mar.utils)
@@ -39,7 +36,7 @@ library(tidyverse)
 #remotes::install_github("terminological/standard-print-output")
 library(standardPrintOutput)
 ```
-```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
+```{r source functions, include=FALSE, cache=FALSE}
 # the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
 source("site_map.r")
 source("site_map_new.r")
@@ -58,7 +55,7 @@ source("fn_SearchRVData.r")
 source("fn_maps.r")
 ```
 
-```{r Define Site, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Define Site, include=FALSE, cache=FALSE}
 #HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
 #output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
 #AquaSiteName <- "TestGully"
@@ -131,7 +128,7 @@ cat(PEZversion)
 cat(UserComments)
 ```
 
-```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Set up paths, include=FALSE, cache=FALSE}
 mspPath <- "../"
 data.dir = "../../../Data/mar.wrangling"
 #create a folder in outputs with the name of the site and buffer area search
@@ -144,12 +141,12 @@ site_sf <- st_as_sf(site)
 wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
 narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
 ```
-```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
+```{r read baseline data for maps, include=FALSE, cache=FALSE}
 landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
 land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
 land_sf <- st_as_sf(land)
 ```
-```{r Define PEZ!, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Define PEZ!, include=FALSE, cache=FALSE}
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
@@ -157,7 +154,7 @@ PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZver
 PEZ_poly_st<-st_as_sf(PEZ_poly)
 FFHPP_shp <- st_read("../../../Data/Infrastructure/FFHPP_Referrals/FFHPP_Referrals_0620.shp", quiet=TRUE)
 ```
-```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, include=FALSE, cache=FALSE}
 
 listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 MARSAR_com <- listed_species$Common_Name
@@ -166,10 +163,9 @@ MARSAR_sci <- listed_species$Scientific_Name
 MARSAR_sci_up <- listed_species$Scientific_Name_upper
 ```
 
-```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11}
+```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ) polygon (blue) used to search regional databases and summarize recorded species."}
 site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,40)
 ```
-**Figure:** Map showing the defined Potential Exposure Zone (PEZ) polygon (blue) used to search regional databases and summarize recorded species.
 
 # **Search Results for Species at Risk**  
 
@@ -179,7 +175,7 @@ site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,40)
 
 The information below is derived from the *National Aquatic Species at Risk tool* (URL provided above) which uses a Geographic Information System (GIS) to display the distribution, residences and Critical Habitats for aquatic species listed under the Species at Risk Act (SARA). This tool has been developed primarily to facilitate project assessments under the Fisheries Act and the SARA. Here we provide some of the outputs of that tool; however, the optimal source for these open data records is the original tool, which also creates reports.
 
-```{r Set up paths for National Aquatic Species at Risk Section, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Set up paths for National Aquatic Species at Risk Section, include=FALSE, cache=FALSE}
 fl <- list.files(dataPath,".csv")
 ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/ClipCritHab.shp", quiet=TRUE)
 #SAR distribution shapefile was clipped from National shapefile as follows:
@@ -248,13 +244,11 @@ Query_output_dist2<-noquote(Query_output_dist)
 writeLines(c(Query_output_dist2), sep = "\n")
 ```
 
-**Table:** Species at Risk for which the provided polygon overlaps with their distribution.
-
 ```{r echo=FALSE, results='asis'}
 Query_output_table<-if(x < 1){
   ""
 } else {
-  kable(dist_table3[!duplicated(dist_table3),]) %>%
+  kable(dist_table3[!duplicated(dist_table3),], caption= "Species at Risk for which the provided polygon overlaps with their distribution.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
   
 }
@@ -296,21 +290,18 @@ Query_output_table2<-noquote(Query_output_table)
 Query_output_table2
 ```
 
-```{r Fig X PEZ polygon with all maritime Critical Habitat polygons, fig.height=8, fig.width=11}
+```{r Fig X PEZ polygon with all maritime Critical Habitat polygons, fig.height=8, fig.width=11, fig.cap="Map showing Species At Risk Critical Habitat (red), the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow)."}
 plot_crithab(ClippedCritHab, PEZ_poly_st, land_sf)
 
 ```
-**Figure:** Map showing Species At Risk Critical Habitat (red), the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
 
-```{r Fig X close up of PEZ polygon, fig.height=8, fig.width=11}
+```{r Fig X close up of PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing Species At Risk Critical Habitat (red), the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow)."}
 plot_crithab_zoom(ClippedCritHab, PEZ_poly_st, land_sf)
 ```
-**Figure:** Map showing Species At Risk Critical Habitat (red), the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
-
 
 ## **Fish and Invertebrate Section**
 
-```{r read fish and invertebrate files, echo=FALSE, include=FALSE, cache=FALSE}
+```{r read fish and invertebrate files, include=FALSE, cache=FALSE}
 fl <- list.files(dataPath,".csv")
 isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
 isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
@@ -402,7 +393,7 @@ More than 20 OBIS nodes around the world connect 500 institutions from 56 countr
 For more information about OBIS, visit: <https://obis.org>
 
 #### **RV Survey Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
 File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
 RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear)
@@ -464,10 +455,8 @@ colnames(rv_SAR_table)<-c("Scientific Name", "Common Name", "No. of Individuals"
 
 ```
 
-**Table:** RV Survey records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
-
 ```{r}
-kable(rv_SAR_table, align="l") %>%
+kable(rv_SAR_table, align="l", caption="RV Survey records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
@@ -482,19 +471,17 @@ endx <- rv_end_sites$longitude
 endy <- rv_end_sites$latitude
 ```
 
-```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11}
+```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11, fig.cap= "Map showing trawl paths from the Research Vessel (RV) surveys (arrows with start and end points in green and red, respectively) within the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow)".}
 site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
   geom_point(data = rv_start_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, colour = "darkgreen")+
   geom_point(data = rv_end_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, colour = "firebrick4")+
   geom_segment(aes(x = startx, y = starty, xend = endx, yend = endy),arrow=arrow(), size = 1.25)
-
 ```
-**Figure:** Map showing trawl paths from the Research Vessel (RV) surveys (arrows with start and end points in green and red, respectively) within the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
 
 #### **ISDB Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 ##skip all of these steps and create an isdb file for all of the MAR region.
 #df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
 isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
@@ -502,7 +489,7 @@ isdb_intersect <- st_intersection(isdb_shp,PEZ_poly_st)
 isdb_sites<-data.frame(longitude=isdb_intersect$LONGITUDE, latitude=isdb_intersect$LATITUDE)
 ```
 
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 isdb_freq <- aggregate(
       x = list(Records = isdb_intersect$SCIENTIFI1),
       by = list(Species = isdb_intersect$SCIENTIFI1),
@@ -544,16 +531,14 @@ Report_isdb<-if(x < 1){
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
 ```
 
- **Table 4:** ISDB records of species observed within the provided polygon which have a listed status with SARA, COSEWIC or Wild Species. Data is summarized by species or species group.
-
 ```{r}
-kable(isdb_record_table, align="l") %>%
+kable(isdb_record_table, align="l", caption="ISDB records of species observed within the provided polygon which have a listed status with SARA, COSEWIC or Wild Species. Data is summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 **Note:** A complete list of ISDB observation records of all species within the provided polygon can be found in the Appendix.
 
 #### **MARFIS Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 ##skip all of these steps and create an isdb file for all of the MAR region.
 #df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
 marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
@@ -561,7 +546,7 @@ marfis_intersect <- st_intersection(marfis_shp,PEZ_poly_st)
 marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
 ```
 
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 marfis_freq <- aggregate(
       x = list(Records = marfis_intersect$SPECIENAME),
       by = list(Species = marfis_intersect$SPECIENAME),
@@ -603,27 +588,23 @@ Report_isdb<-if(x < 1){
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
 ```
 
- **Table 5:** MARFIS observation records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.
-
 ```{r}
-kable(marfis_record_table, align="l") %>%
+kable(marfis_record_table, align="l", caption="MARFIS observation records of Species at Risk contained within the provided polygon. Data is summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
 **Note:** A complete list of MARFIS observation records of all species within the provided polygon can be found in the Appendix.
 
-```{r Fig 2 MARFIS and ISDB records, fig.height=8, fig.width=11}
+```{r Fig 2 MARFIS and ISDB records, fig.height=8, fig.width=11, fig.cap="Map of the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with MARFIS and ISDB observation events shown as black points. The data from both data bases has been aggregated to respect confidentiality rules. Note: This map is for internal DFO use only (rule of five was not applied). Please read the resources and sources of uncertainty section for additional information."}
 site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
   geom_point(data = isdb_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, fill = "black")+
   geom_point(data = marfis_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, fill = "black")
-
 ```
-**Figure:** Map of the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with MARFIS and ISDB observation events shown as black points. The data from both data bases has been aggregated to respect confidentiality rules. Note: This map is for internal DFO use only (rule of five was not applied). Please read the "resources and sources of uncertainty" section for additional information. 
 
 #### **OBIS Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 obis_edit<-obis %>% 
   transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
@@ -663,36 +644,26 @@ Query_output_obis<-if(x < 1){
 } else {
   "The OBIS database contains records of priority species in the provided search area."
 }
-
 Query_output_obis2<-noquote(Query_output_obis)
-
 writeLines(c(Query_output_obis2), sep = "\n")
 ```
-
-**Table:** Priority species with observations contained in the OBIS database within the search polygon area.
 
 ```{r echo=FALSE, results='asis'}
 OBIS_query_output_table<-if(x < 1){
   ""
 } else {
-  kable(obis_table4, row.names = F) %>%
+  kable(obis_table4, row.names = F, caption="Species at Risk with observations contained in the OBIS database within the search polygon area.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-  
 }
-
 OBIS_query_output_table
-
 ```
 
-```{r Fig 5 OBIS records in PEZ polygon, fig.height=8, fig.width=11}
+```{r Fig 5 OBIS records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with OBIS records shown as black points."}
 plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
-
 ```
-**Figure:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with OBIS records shown as black points.
-
 
 ## **Sea Turtle Section**
-```{r Set up paths for leatherback turtle files, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Set up paths for leatherback turtle files, include=FALSE, cache=FALSE}
 leatherback_shp <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
 ```
 
@@ -716,15 +687,13 @@ leatherback_overlap(leatherback_shp=leatherback_shp, PEZ_poly_st= PEZ_poly_st)
 leatherback_area(leatherback_shp=leatherback_shp, PEZ_poly_st= PEZ_poly_st)
 ```
 
-```{r Fig X PEZ polygon with all maritime leatherback polygons, fig.height=8, fig.width=11}
+```{r Fig X PEZ polygon with all maritime leatherback polygons, fig.height=8, fig.width=11, fig.cap="Map showing Leatherback Sea Turtle Important Habitat (green) relative to the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow)."}
 plot_leatherback(leatherback_shp, PEZ_poly_st, land_sf)
 ```
-**Figure:** Map showing Leatherback Sea Turtle Important Habitat (green) relative to the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
-
 
 ## **Cetacean Section**
 
-```{r Set up paths for Cetacean section, echo=FALSE, include=FALSE, cache=FALSE}
+```{r Set up paths for Cetacean section, include=FALSE, cache=FALSE}
 #read narwc file
 narwc <- read.csv(narwcFile)
 narwc <- narwc[which(narwc$YEAR>=minYear),]
@@ -865,13 +834,8 @@ Tier of confidence: **High**
 
 The following text is verbatim from the Open Data record. The distribution of blue whales (Balaenoptera musculus) is mainly dictated by key environmental drivers such as food requirements and availability, sea ice, and sometimes predation risks. It is common to find blue whales in upwelling regions, depending on topography (banks, slopes and shallow water) and thermal fronts, which are actually related to krill aggregations. Blue whales feed almost exclusively on euphausiids (krill) and have the highest absolute metabolic demands. A shapefile on the distribution of significant perennial areas of krill aggregation is available (DFO-ECCC). Important habitats for blue whales have therefore been identified by combining information on their distribution with krill aggregation areas (observed or predicted). In the waters of the St. Lawrence estuary, the presence of blue whales for foraging, feeding and migration has been observed throughout the year, with increased activity during the summer. It has been observed that feeding rates of blue whales are higher in shallow waters and during nocturnal periods (krill at surface), confirming that foraging near the surface is beneficial when possible. Their presence, their great fidelity to this important habitat for their activities and their behavior in the waters of the St. Lawrence in all seasons, show that blue whales are vulnerable to oil spills. They are vulnerable, not only indirectly through the reduction of prey and loss of suitable habitat, but also by their behavior requiring active activity on the surface and near the coast. The data used to create the polygons using the bounding box method comes from multiple sources of information: hunting records, photo-identification, coastal, airborne and boat surveys, passive acoustic monitoring, radio and satellite telemetry , ice trapping, anecdotal observations and modeling (please see a list of all sources of information used in Lesaqe et al. 2018 and the open data record <https://open.canada.ca/data/en/dataset/8fafd919-fcbe-43a3-a911-3d9461273441>).
 
-#### **Important areas for Northern Bottlenose Whale**  
-Contact:  
-Site: <https://doi.org/10.3354/esr00823>  
-Tier of confidence: **High**  
-
 #### **NARWC Search Results**
-```{r read narwc and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
+```{r read narwc and filter SARA & COSEWIC cetacean spp, include=FALSE, cache=FALSE}
 narwc_filter <- filter_narwc_new(narwc)
 narwc_filter <- narwc_filter %>% rename(Scientific_Name = SPECCODE)
 narwc_filter <- merge(narwc_filter, listed_species, by='Scientific_Name')
@@ -904,21 +868,17 @@ Query_output_narwc2<-noquote(Query_output_narwc)
 writeLines(c(Query_output_narwc2), sep = "\n")
 ```
 
-**Table:** Cetaceans with observations contained in the NARWC database within the search polygon area.
-
 ```{r echo=FALSE, results='asis'}
 NARWC_query_output_table<-if(x < 1){
   ""
 } else {
-  kable(narwc_table3[!duplicated(narwc_table3),], row.names=F) %>%
+  kable(narwc_table3[!duplicated(narwc_table3),], row.names=F, caption="Cetaceans with observations contained in the NARWC database within the search polygon area.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-  
 }
-
 NARWC_query_output_table
 
 ```
-```{r Fig 5 NARWC Database, fig.height=8, fig.width=11}
+```{r Fig 5 NARWC Database, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map for internal use only is **High**. Map represents cetacean sightings from the North Atlantic Right Whale Consortium (NARWC) sightings database. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. field efforts were primarily conducted towards the Northeast US, sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). For more information, please visit: https://www.narwc.org/sightings-database.html"}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 narwc_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
   geom_point(data = narwc_filter, aes(x = LONGITUDE, y = LATITUDE, color=Common_Name), 
@@ -926,14 +886,13 @@ narwc_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
 print(narwc_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))
 
 ```
-**Figure:** The tier of confidence of this map for internal use only is **High**. Map represents cetacean sightings from the North Atlantic Right Whale Consortium (NARWC) sightings database. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. field efforts were primarily conducted towards the Northeast US, sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). For more information, please visit: https://www.narwc.org/sightings-database.html
 
 #### **Whitehead Lab Search Results**
 
 **Figure:**: The tier of confidence of this map for internal use only is **High**. Map represents cetacean sightings from the Whitehead Lab. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. field efforts were primarily conducted in the Gully MPA, and adjacent canyons along the edge of the eastern Scotian Shelf, sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). For more information, please visit: https://whiteheadlab.weebly.com/contact.html
 
 #### **WSDB Search Results**
-```{r read wsdb and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
+```{r read wsdb and filter SARA & COSEWIC cetacean spp, include=FALSE, cache=FALSE}
 wsdb_filter <- filter_wsdb(wsdb)
 wsdb_filter <- wsdb_filter %>% rename(Scientific_Name = SCIENTIFICNAME)
 wsdb_filter <- merge(wsdb_filter, listed_species, by='Scientific_Name')
@@ -964,19 +923,17 @@ Query_output_wsdb2<-noquote(Query_output_wsdb)
 writeLines(c(Query_output_wsdb2), sep = "\n")
 ```
 
-**Table:** Cetaceans with observations contained in the WSDB within the search polygon area.
-
 ```{r echo=FALSE, results='asis'}
 WSDB_query_output_table<-if(x < 1){
   ""
 } else {
-  kable(wsdb_table3[!duplicated(wsdb_table3),], row.names=F) %>%
+  kable(wsdb_table3[!duplicated(wsdb_table3),], row.names=F, caption="Cetaceans with observations contained in the WSDB within the search polygon area.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
 WSDB_query_output_table
 ```
 
-```{r Fig 3 Whale Sightings Database, fig.height=8, fig.width=11}
+```{r Fig 3 Whale Sightings Database, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map for internal use only is **Low**. Map represents cetacean sightings from the Whale Sightings Database (WSDB) (including sightings of groups of animals) in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 wsdb_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
   geom_point(data = wsdb_filter, aes(x = LONGITUDE, y = LATITUDE, color=Common_Name), 
@@ -984,10 +941,9 @@ wsdb_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
 print(wsdb_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))
 
 ```
-**Figure:** The tier of confidence of this map for internal use only is **Low**. Map represents cetacean sightings from the Whale Sightings Database (WSDB) (including sightings of groups of animals) in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked. 
 
 #### **OBIS Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 obis_edit<-obis %>% 
   transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
@@ -1017,8 +973,7 @@ obis_table2<-obis_table %>%
   select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
 obis_table3<- obis_table2 %>% rename(SARA_listing=Schedule.status,
                                      COSEWIC_listing=COSEWIC.status,
-                                     Wild_Species_listing=Wild_Species 
-                                     )
+                                     Wild_Species_listing=Wild_Species)
 obis_table3$geometry<-NULL
 obis_table4<-unique(obis_table3)
 
@@ -1027,35 +982,27 @@ Query_output_obis<-if(x < 1){
 } else {
   "The OBIS database contains records of priority species in the provided search area."
 }
-
 Query_output_obis2<-noquote(Query_output_obis)
-
 writeLines(c(Query_output_obis2), sep = "\n")
 ```
 
-**Table:** Priority species with observations contained in the OBIS database within the search polygon area.
-
-```{r echo=FALSE, results='asis'}
+```{r echo=FALSE, results='asis', caption="Priority species with observations contained in the OBIS database within the search polygon area."}
 OBIS_query_output_table<-if(x < 1){
   ""
 } else {
-  kable(obis_table4, row.names = F) %>%
+  kable(obis_table4, row.names = F, caption="Species at Risk with observations contained in the OBIS database within the search polygon area.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-  
 }
-
 OBIS_query_output_table
-
 ```
 
-```{r Fig 5 OBIS records for cetacean section in PEZ polygon, fig.height=8, fig.width=11}
+```{r Fig 5 OBIS records for cetacean section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents cetacean sightings from OBIS in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
 plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
 
 ```
-**Figure:** The tier of confidence of this map is **Medium**. Map represents cetacean sightings from OBIS in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked.
 
 #### **CWS/ECCC Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 cws_edit<-cws %>% 
   transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
@@ -1074,8 +1021,7 @@ cws_table2<-cws_table %>%
   select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
 cws_table3<- cws_table2 %>% rename(SARA_listing=Schedule.status,
                                      COSEWIC_listing=COSEWIC.status,
-                                     Wild_Species_listing=Wild_Species 
-                                     )
+                                     Wild_Species_listing=Wild_Species)
 cws_table3$geometry<-NULL
 cws_table4<-unique(cws_table3)
 
@@ -1084,36 +1030,26 @@ Query_output_cws<-if(x < 1){
 } else {
   "The CWS/ECCC database contains records of priority species in the provided search area."
 }
-
 Query_output_cws2<-noquote(Query_output_cws)
-
 writeLines(c(Query_output_cws2), sep = "\n")
 ```
-
-**Table:** Priority species with observations contained in the CWS_ECCC database within the search polygon area.
 
 ```{r echo=FALSE, results='asis'}
 CWS_query_output_table<-if(x < 1){
   ""
 } else {
-  kable(cws_table4, row.names = F) %>%
+  kable(cws_table4, row.names = F, caption="Priority species with observations contained in the CWS_ECCC database within the search polygon area.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-  
 }
-
 CWS_query_output_table
-
 ```
 
-```{r Fig 5 CWS_ECCC records in PEZ polygon, fig.height=8, fig.width=11}
+```{r Fig 5 CWS_ECCC records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with CWS_ECCC records shown as black points."}
 plot_cws(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_cws,2)
-
 ```
-**Figure:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with CWS_ECCC records shown as black points.
-
 
 #### **iNaturalist Search Results**
-```{r, echo=FALSE, include=FALSE, cache=FALSE}
+```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 inat_edit<-inat %>% 
   transmute(scientific_name, datetime, latitude, longitude, common_name, url)
@@ -1131,8 +1067,7 @@ inat_table2<-inat_table %>%
   select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
 inat_table3<- inat_table2 %>% rename(SARA_listing=Schedule.status,
                                      COSEWIC_listing=COSEWIC.status,
-                                     Wild_Species_listing=Wild_Species 
-                                     )
+                                     Wild_Species_listing=Wild_Species)
 inat_table3$geometry<-NULL
 inat_table4<-unique(inat_table3)
 
@@ -1141,32 +1076,23 @@ Query_output_inat<-if(x < 1){
 } else {
   "The iNaturalist database contains records of priority species in the provided search area."
 }
-
 Query_output_inat2<-noquote(Query_output_inat)
-
 writeLines(c(Query_output_inat2), sep = "\n")
 ```
 
-**Table:** Priority species with observations contained in the iNaturalist database within the search polygon area.
-
-```{r echo=FALSE, results='asis'}
+```{r echo=FALSE, results='asis', caption="Priority species with observations contained in the iNaturalist database within the search polygon area."}
 INAT_query_output_table<-if(x < 1){
   ""
 } else {
-  kable(inat_table4, row.names = F) %>%
+  kable(inat_table4, row.names = F, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-  
 }
-
 INAT_query_output_table
-
 ```
 
-```{r Fig 5 INAT records in PEZ polygon, fig.height=8, fig.width=11}
+```{r Fig 5 INAT records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points."}
 plot_inat(PEZ_poly,PEZ_poly_st,site_sf,land_sf,inat_table,2)
-
 ```
-**Figure:** Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points.
 
 #### **Priority Areas to Enhance Monitoring of Cetaceans Search Results**
 
@@ -1183,24 +1109,16 @@ cetacean_matrix[1,3]<-humpback_area
 cetacean_matrix[1,4]<-sei_area
 ```
 
-**Table:** Results showing if the search area overlap with areas predicted as Priority Areas to Enhance Monitoring of several species of cetaceans (Fin whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; FALSE = polygon does NOT overlap with priority area.  
-Important usage considerations: model predictions in this section should not be used on their own for this report, marine spatial planning purposes, and/or to delineate important habitat for cetacean species. Rather, outputs should be used together with other sources of information such as prey distribution, tagging data, detections from acoustic monitoring, other data on cetacean occurrence, and other modeling efforts already available for the area. In fact, the data product summarized below represents an excellent framework in which to properly use the outputs of this section. 
-
-
 ```{r}
-kable(cetacean_matrix, align="c") %>%
+kable(cetacean_matrix, align="c", caption="Results showing if the search area overlap with areas predicted as Priority Areas to Enhance Monitoring of several species of cetaceans (Fin whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; FALSE = polygon does NOT overlap with priority area. Important usage considerations: model predictions in this section should not be used on their own for this report, marine spatial planning purposes, and/or to delineate important habitat for cetacean species. Rather, outputs should be used together with other sources of information such as prey distribution, tagging data, detections from acoustic monitoring, other data on cetacean occurrence, and other modeling efforts already available for the area. In fact, the data product summarized below represents an excellent framework in which to properly use the outputs of this section.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-```{r Fig X priority areas for cetaceans, fig.height=8, fig.width=11}
+```{r Fig X priority areas for cetaceans, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Low**. Yellow indicates consolidated Species Distribution Modelling outputs (60-100% relative predicted occurrence rate). These habitats with high suitability are to be interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts. Due to the many reasons listed in the discussion section in Gomez et al. 2020, these cetacean modelling outputs do not represent a complete and current distribution of cetaceans in the region. They represent priority areas to direct cetacean monitoring efforts. Their use in marine spatial planning processes should be accompanied by complementary approaches such as the process summarized in the section below. Source: Gomez, C., Konrad, C.M., Vanderlaan, A., Moors-Murphy, H.B., Marotte, E., Lawson, J., Kouwenberg, A-L., Fuentes-Yaco, C., Buren, A. 2020. Identifying priority areas to enhance monitoring of cetaceans in the Northwest Atlantic Ocean. Can. Tech. Rep.Fish. Aquat. Sci. 3370: vi + 103 p. http://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf"}
 plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, PEZ_poly_st, land_sf)
 ```
-**Figure:** The tier of confidence of this map is **Low**. Yellow indicates consolidated Species Distribution Modelling outputs (60-100% relative predicted occurrence rate). These habitats with high suitability are to be interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts. Due to the many reasons listed in the discussion section in Gomez et al. 2020, these cetacean modelling outputs do not represent a complete and current distribution of cetaceans in the region. They represent priority areas to direct cetacean monitoring efforts. Their use in marine spatial planning processes should be accompanied by complementary approaches such as the process summarized in the section below. Source: Gomez, C., Konrad, C.M., Vanderlaan, A., Moors-Murphy, H.B., Marotte, E., Lawson, J., Kouwenberg, A-L., Fuentes-Yaco, C., Buren, A. 2020. Identifying priority areas to enhance monitoring of cetaceans in the Northwest Atlantic Ocean. Can. Tech. Rep.Fish. Aquat. Sci. 3370: vi + 103 p. http://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf
-
 
 #### **Blue Whale Important Habitat Search Results**
-
-Table x. Results showing if the search area overlap with Important areas of Blue Whale feeding, foraging and migration in eastern Canada. TRUE = polygon does overlap with the area; FALSE = polygon does NOT overlap with the area.  
 
 ```{r echo=FALSE, results='asis'}
 #function for overlap
@@ -1224,16 +1142,13 @@ blue_whale_habitat_months(Blue_Whale_shp=Blue_4326, PEZ_poly_st= PEZ_poly_st)
 
 NOTE: Colour code polygons for different activities.  
 
-```{r Fig X PEZ polygon with all maritime blue whale habitat polygons, fig.height=8, fig.width=11}
+```{r Fig X PEZ polygon with all maritime blue whale habitat polygons, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **High**. Polygons delimit areas in Canadian waters that are important to blue whales for foraging (green) and transit (blue): (1) lower St. Lawrence Estuary – northwestern Gulf of St. Lawrence, (2) Mecatina Trough, (3) south and southwestern Newfoundland, (4) continental shelf edge, (5) Honguedo Strait, (6) Cabot Strait. These six habitat areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of blue whales from the western North Atlantic population. Blue whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population. Source: Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourde, S., Sears. R. et Y. Simard. 2018. Habitats important to blue whales (Balaenoptera musculus) in the Western North Atlantic. DFO Can. Sci. Advis. Sec. Res. Doc. 2016/080: iv + 50 p. <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>"}
 plot_bw_hab(Blue_4326, PEZ_poly_st, land_sf)
-
 ```
-**Figure:** The tier of confidence of this map is **High**. Polygons delimit areas in Canadian waters that are important to blue whales for foraging (green) and transit (blue): (1) lower St. Lawrence Estuary – northwestern Gulf of St. Lawrence, (2) Mecatina Trough, (3) south and southwestern Newfoundland, (4) continental shelf edge, (5) Honguedo Strait, (6) Cabot Strait. These six habitat areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of blue whales from the western North Atlantic population. Blue whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population. Source: Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourde, S., Sears. R. et Y. Simard. 2018. Habitats important to blue whales (Balaenoptera musculus) in the Western North Atlantic. DFO Can. Sci. Advis. Sec. Res. Doc. 2016/080: iv + 50 p. <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>
 
-```{r Fig X close up of PEZ polygon and bw habitat, fig.height=8, fig.width=11}
+```{r Fig X close up of PEZ polygon and bw habitat, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **High**. Polygons delimit areas in Canadian waters that are important to blue whales for foraging (green) and transit (blue): (1) lower St. Lawrence Estuary – northwestern Gulf of St. Lawrence, (2) Mecatina Trough, (3) south and southwestern Newfoundland, (4) continental shelf edge, (5) Honguedo Strait, (6) Cabot Strait. These six habitat areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of blue whales from the western North Atlantic population. Blue whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population. Source: Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourde, S., Sears. R. et Y. Simard. 2018. Habitats important to blue whales (Balaenoptera musculus) in the Western North Atlantic. DFO Can. Sci. Advis. Sec. Res. Doc. 2016/080: iv + 50 p. <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>"}
 plot_bw_hab_zoom(Blue_4326, PEZ_poly_st, land_sf)
 ```
-**Figure:** The tier of confidence of this map is **High**. Polygons delimit areas in Canadian waters that are important to blue whales for foraging (green) and transit (blue): (1) lower St. Lawrence Estuary – northwestern Gulf of St. Lawrence, (2) Mecatina Trough, (3) south and southwestern Newfoundland, (4) continental shelf edge, (5) Honguedo Strait, (6) Cabot Strait. These six habitat areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of blue whales from the western North Atlantic population. Blue whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population. Source: Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourde, S., Sears. R. et Y. Simard. 2018. Habitats important to blue whales (Balaenoptera musculus) in the Western North Atlantic. DFO Can. Sci. Advis. Sec. Res. Doc. 2016/080: iv + 50 p. <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>
 
 ## **Other Species Section**
 
@@ -1249,7 +1164,7 @@ Ecologically and Biologically Significant Areas (EBSAs) are areas within Canada'
 Failure to define an area as an EBSA does not mean that it is unimportant ecologically. All areas serve ecological functions to some extent and require sustainable management. Rather, areas identified as EBSAs should be viewed as the most important areas where, with existing knowledge, regulators and marine users should be particularly risk averse to ensure ecosystems remain healthy and productive.
 
 #### **EBSA search results**
-```{r read other species database files for other species, echo=FALSE, include=FALSE, cache=FALSE}
+```{r read other species database files for other species, include=FALSE, cache=FALSE}
 EBSA <- st_read("../../../Data/Zones/DFO_EBSA/DFO_EBSA.shp", quiet=TRUE)
 EBSA_shp <- st_transform(EBSA, crs = 4326)
 ```
@@ -1279,10 +1194,9 @@ EBSA_location(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
 EBSA_bioregion(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)
 ```
 
-```{r Fig X PEZ polygon with all maritime EBSA polygons, fig.height=8, fig.width=11}
+```{r Fig X PEZ polygon with all maritime EBSA polygons, fig.height=8, fig.width=11, fig.cap=" Map showing Ecologically and Biologically Significant Areas (EBSA; pink) relative to the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow)."}
 plot_EBSA(EBSA_shp, PEZ_poly_st, land_sf)
 ```
-**Figure:** Map showing Ecologically and Biologically Significant Areas (EBSA; pink) relative to the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow).
 
 # **Document Notes**
 
@@ -1338,24 +1252,18 @@ Salmon
 
 # **Appendix**
 
-**Table S1:** RV survey observation records contained within the polygon summarized by species or species group.
-
 ```{r}
-kable(rv_freq_table) %>%
+kable(rv_freq_table, caption="RV survey observation records contained within the polygon summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-**Table S2:** ISDB observation records contained within the polygon summarized by species or species group.
-
 ```{r}
-kable(isdb_freq) %>%
+kable(isdb_freq, caption="ISDB observation records contained within the polygon summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-**Table S3:** MARFIS observation records contained within the polygon summarized by species or species group.
-
 ```{r}
-kable(marfis_freq) %>%
+kable(marfis_freq, caption="MARFIS observation records contained within the polygon summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 

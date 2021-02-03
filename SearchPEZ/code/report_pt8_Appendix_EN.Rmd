@@ -11,207 +11,25 @@ output:
   word_document:
     toc: yes
 ---
-```{r Clean up environment for new report, echo=FALSE, include=FALSE, cache=FALSE}
-rm(list=ls(all=TRUE))
-```
+
 ```{r setup, echo=FALSE, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
-library(Mar.datawrangling)
-library(Mar.utils)
 library(knitr)
-library(kableExtra)
-library(rgdal)
-library(maps)
-library(lubridate)
-library(raster)
-library(RCurl)
-library(sf)
-library(stringr)
-library(ggplot2)
-library(data.table)
-library(gridExtra)
-library(dplyr)
-library(stars)
-library(ggspatial)
-#install.packages("remotes")
-#remotes::install_github("terminological/standard-print-output")
-#library(standardPrintOutput)
-#These next two lines are necessary for the generation of the water mark on all plots.
-#install.packages("devtools")
-#devtools::install_github("JosephCrispell/basicPlotteR")
-library(basicPlotteR)
 ```
-```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
-# the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
-source("site_map.r")
-source("site_map_new.r")
-source("plot_wsdb.r")
-source("filter_wsdb.r")
-source("plot_narwc.r")
-source("plot_narwc.r")
-source("filter_narwc_new.r")
-# ## Another option is to load directly from the web and read in using Rcurl
-#function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
-#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/plot_wsdb.r",
-#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
-#for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
-source("EBSA.R")
-source("plot_EBSA.R")
-source("leatherback.R")
-source("plot_leatherback.R")
-source("plot_obis.R")
-source("plot_cws.R")
-source("plot_crithab.R")
-source("plot_crithab_zoom.R")
-source("plot_inat.R")
-source("cetacean_priority_areas.R")
-source("plot_cetaceans_4grid.R")
-source("Blue_Whale_habitat.R")
-source("plot_bw_hab.R")
-source("plot_bw_hab_zoom.R")
-```
-```{r Define Site, echo=FALSE, include=FALSE, cache=FALSE}
-#HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
-#output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
-#AquaSiteName <- "TestGully"
-#PEZversion <- "Polygon"
-AquaSiteName <- "FarmersLedge"
-PEZversion <- "4748m"
-UserComments <- "Example - First search effort for suitability of a site for a project planned for 2025. Project is expected to have positive/negative impacts on surrounding area. It is likely that some kind of monitoring will be required during operations. Make sure to follow up on all sections pertaining to a particular taxonomic group as this seems to be a concern of the stakeholders."
-#make sure you delete all shp.xml files in the folder to be able to run this code
-minYear <- 1970
-maxYear <- 2020
-```
-```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
-mspPath <- "../"
-data.dir = "../../../Data/mar.wrangling"
-#create a folder in outputs with the name of the site and buffer area search
-dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
-# setwd(dataPath) #not needed?
-polyPath <- "../../../Data/Zones/SearchPEZpolygons"
-site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
-site_sf <- st_as_sf(site)
-opendataPath = "../../../Data/mar.wrangling/RVSurvey_OpenData"
-#wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
-wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
-narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
-```
-```{r read baseline data for maps, echo=FALSE, include=FALSE, cache=FALSE}
-landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
-land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
-land_sf <- st_as_sf(land)
-```
-```{r Define PEZ!, echo=FALSE, include=FALSE, cache=FALSE}
-pl <- list.files(polyPath,"*.shp")
-pl <- pl[-grep("xml",pl)]
-PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
-#PEZ_poly_st<-st_read(../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp", quiet=TRUE)
-PEZ_poly_st<-st_as_sf(PEZ_poly)
-```
-```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, echo=FALSE, include=FALSE, cache=FALSE}
-
-listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
-MARSAR_com <- listed_species$Common_Name
-MARSAR_com_up <- listed_species$Common_Name_upper
-MARSAR_sci <- listed_species$Scientific_Name
-MARSAR_sci_up <- listed_species$Scientific_Name_upper
-```
-
 
 # **Appendix**
-```{r read fish and invertebrate files, echo=FALSE, include=FALSE, cache=FALSE}
-fl <- list.files(dataPath,".csv")
-rv_OD_shp <- st_read("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020.shp", quiet=TRUE)
-rv_OD <- read.csv("../../../Data/mar.wrangling/RVSurvey_OpenData/SUMMER_2020_summary.csv")
-rv_OD_min_year <- rv_OD[which(year(rv_OD$SDATE)>=minYear),]
-isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
-isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
-marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
-marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
-obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
-obis<-subset(obis,year>minYear,year<maxYear)
-cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
-cws<-subset(cws,year>minYear,year<maxYear)
-inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
-inat<-subset(inat,datetime>minYear,datetime<maxYear)
-```
-
-```{r RV Survey Search Results, echo=FALSE, include=FALSE, cache=FALSE}
-#still working to provide multiple data sources for locations and seasons (Summer, spring and fall surveys)
-#the following is specialized for this location.
-m <-merge(rv_OD_shp, rv_OD_min_year, by='SETNO')
-RVsf<-st_as_sf(m)
-
-#subbing in Gully for temporary demo purposes.
-#Gully<-st_read("../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp")
-#rv_intersect <- st_intersection(RVsf,Gully)
-
-rv_intersect <- st_intersection(RVsf,PEZ_poly_st)
-x<-as.numeric(nrow(rv_intersect))
-CommonName<-rv_intersect$COMM
-Species<-rv_intersect$SPEC_GS
-
-rv_intersect_freq <- aggregate(
-  x = list(Records = rv_intersect$COMM),
-  by = list(Species = rv_intersect$COMM),
-  length)
-
-rv_intersect_freq <- aggregate(
-  x = list(Records = rv_intersect$COMM),
-  by = list(CommonName = rv_intersect$COMM, Species = rv_intersect$SPEC.GSSPECIES),
-  length)
-
-rv_intersect_freq <- rv_intersect_freq[order(-rv_intersect_freq$Records),]
-rownames(rv_intersect_freq) <- c()
-```
-
-```{r ISDB survey search results, echo=FALSE, include=FALSE, cache=FALSE}
-##skip all of these steps and create an isdb file for all of the MAR region.
-#df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
-isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
-isdb_intersect <- st_intersection(isdb_shp,PEZ_poly_st)
-isdb_sites<-data.frame(longitude=isdb_intersect$LONGITUDE, latitude=isdb_intersect$LATITUDE)
-isdb_freq <- aggregate(
-      x = list(Records = isdb_intersect$SCIENTIFI1),
-      by = list(Species = isdb_intersect$SCIENTIFI1),
-      length)
-isdb_freq <- isdb_freq[order(-isdb_freq$Records),]
-rownames(isdb_freq) <- c()
-```
-
-```{r MARFIS search results, echo=FALSE, include=FALSE, cache=FALSE}
-##skip all of these steps and create an isdb file for all of the MAR region.
-#df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
-marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
-marfis_intersect <- st_intersection(marfis_shp,PEZ_poly_st)
-marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
-marfis_freq <- aggregate(
-      x = list(Records = marfis_intersect$SPECIENAME),
-      by = list(Species = marfis_intersect$SPECIENAME),
-      length)
-marfis_freq <- marfis_freq[order(-marfis_freq$Records),]
-rownames(marfis_freq) <- c()
-```
-
-**Table S1:** RV survey observation records contained within the polygon summarized by species or species group.
 
 ```{r}
-kable(rv_intersect_freq) %>%
+kable(rv_freq_table, caption="RV survey observation records contained within the polygon summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-**Table S2:** ISDB observation records contained within the polygon summarized by species or species group.
-
 ```{r}
-kable(isdb_freq) %>%
+kable(isdb_freq, caption="ISDB observation records contained within the polygon summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-**Table S3:** MARFIS observation records contained within the polygon summarized by species or species group.
-
 ```{r}
-kable(marfis_freq) %>%
+kable(marfis_freq, caption="MARFIS observation records contained within the polygon summarized by species or species group.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
-
-
