@@ -365,6 +365,7 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
                nrow = 2)
 }
 
+
 #Blue whale habitat
 
 plot_bw_hab <- function(Blue_4326, PEZ_poly_st, Landshp) {
