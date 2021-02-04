@@ -1,23 +1,3 @@
-# Lines 352-354 will not be needed
-# Lines 450-451 not needed
-# Line 457 replaced by function call
-
-
-
-###############################################################
-# These variable assignments would go in your main Rmd code
-#SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
-#File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
-
-# THESE GET PASSED FROM THE FUNCTION CALL
-#AquaSiteName <- "FarmersLedge"
-#PEZversion <- "4748m"
-#MinYear <- 2010 #user-defined
-###############################################################
-
-###############################################################
-# This function call would replace your Line 457
-#RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear)
 ###############################################################
 
 # Select RV data function
@@ -27,6 +7,13 @@
 # create an sf object
 # clip with PEZ polygon
 # then join with GSCAT and species name
+
+
+# To Do ##############################################--
+#
+# Add in some error catches for when Intersection results in zero
+# data points
+# END To Do ##########################################--
 
 SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear) {
 
@@ -89,12 +76,16 @@ SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear) {
   GSINF_sf = st_as_sf(GSINF, coords = c("SLONG", "SLAT"), crs = 4326) #WGS84
   RVsf <- GSINF_sf
 
+  # import PEZ polygon
+  dsn <- "../../Data/Zones/SearchPEZpolygons"
+  PEZ_poly_sf <- st_read(dsn, layer=paste0("PEZ_",AquaSiteName, PEZversion))
+  
   # Select all RV survey points within the Exposure Zone (PEZ) using st_intersect
-  rv_intersect <- st_intersection(RVsf,PEZ_poly_st)
+  PEZ_intersect <- st_intersection(RVsf,PEZ_poly_sf)
   
   # Join all GSCAT records that match those RV survey points AND join species
   # names to those records
-  Catch <- left_join(rv_intersect, GSCAT, by = "MISSION_SET")
+  Catch <- left_join(PEZ_intersect, GSCAT, by = "MISSION_SET")
   Catch <- left_join(Catch, GSSPECIES, by = "CODE")
   
   return(Catch)
