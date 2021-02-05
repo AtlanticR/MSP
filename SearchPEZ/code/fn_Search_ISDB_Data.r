@@ -17,7 +17,7 @@
 
 
 Function call from Rmd
-ISDBCatch <-  SelectISDB_fn(AquaSiteName, PEZversion, MinYear)
+ISDBCatch <-  SelectISDB_fn(AquaSiteName, PEZversion, minYear)
 
 library(Mar.datawrangling)
 library(sf)
@@ -28,10 +28,10 @@ PEZversion <- "4748m"
 MinYear <- 2000
 
 
-wd <- getwd() # store main project directory
+
 
 SelectISDB_fn <- function(AquaSiteName, PEZversion, MinYear) {
-  
+  wd <- getwd() # store main project directory
   data.dir = "../../Data/mar.wrangling"  # location of ISDB datafiles
 
   # Import PEZ polygon

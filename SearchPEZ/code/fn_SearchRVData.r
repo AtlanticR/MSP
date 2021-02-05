@@ -15,7 +15,7 @@
 # data points
 # END To Do ##########################################--
 
-SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear) {
+SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, minYear) {
 
   RVdata.dir = "../../../Data/mar.wrangling/RVSurvey_FGP"
   

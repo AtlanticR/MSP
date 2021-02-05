@@ -17,7 +17,7 @@
 
 
 Function call from Rmd
-MARFISCatch <-  SelectMARFIS_fn(AquaSiteName, PEZversion, MinYear)
+MARFISCatch <-  SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
 
 library(Mar.datawrangling)
 library(sf)
@@ -28,10 +28,8 @@ PEZversion <- "4748m"
 MinYear <- 2000
 
 
-wd <- getwd() # store main project directory
-
 SelectMARFIS_fn <- function(AquaSiteName, PEZversion, MinYear) {
-  
+  wd <- getwd() # store main project directory
   data.dir = "../../Data/mar.wrangling"  # location of MARFIS datafiles
   
   # Import PEZ polygon
