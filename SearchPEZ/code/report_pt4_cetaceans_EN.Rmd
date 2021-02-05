@@ -75,9 +75,6 @@ dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 site_sf <- st_as_sf(site)
-#wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
-wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
-narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
 ```
 ```{r read baseline data for maps, include=FALSE, cache=FALSE}
 landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
@@ -106,9 +103,11 @@ MARSAR_sci_up <- listed_species$Scientific_Name_upper
 
 ```{r Set up paths for Cetacean section, include=FALSE, cache=FALSE}
 #read narwc file
+narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
 narwc <- read.csv(narwcFile)
 narwc <- narwc[which(narwc$YEAR>=minYear),]
 #read wsdb file
+wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
 wsdb <- read.csv(wsdbFile)
 wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
 #read obis file
