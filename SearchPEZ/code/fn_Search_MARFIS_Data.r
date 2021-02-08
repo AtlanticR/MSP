@@ -1,54 +1,26 @@
-
-# To Do ##############################################--
-#
-# Instead of using the save_data() fn,  for current data
-# perhaps look
-# at what fields are necessary in MARFIS and ISDB and do the joins
-# myself
-# look at my SQL code for MARFIS and ISDB (Observer) data to 
-# figure out joins
-#
-# Put in an if statement to separate out Current from Archvied Data
-# use an argument from the function being passed?
-#
-# Add in some error catches for when Intersection results in zero
-# data points
-# END To Do ##########################################--
-
-
-Function call from Rmd
-MARFISCatch <-  SelectMARFIS_fn(AquaSiteName, PEZversion, MinYear)
-
-library(Mar.datawrangling)
-library(sf)
-library(rgdal)
-
-AquaSiteName <- "FarmersLedge"
-PEZversion <- "4748m"
-MinYear <- 2000
-
-
-wd <- getwd() # store main project directory
-
-SelectMARFIS_fn <- function(AquaSiteName, PEZversion, MinYear) {
-  
-  data.dir = "../../Data/mar.wrangling"  # location of MARFIS datafiles
+SelectMARFIS_fn <- function(AquaSiteName, PEZversion, minYear) {
+  wd <- getwd()
+  data.dir = "../Data/mar.wrangling"  # location of MARFIS datafiles
   
   # Import PEZ polygon
   # Mar.datawrangling uses sp objects
-  dsn <- "../../Data/Zones/SearchPEZpolygons"
-  PEZ_poly <- readOGR(dsn,layer=paste0("PEZ_",AquaSiteName, PEZversion))
+  dsn <- "../Data/Zones/SearchPEZpolygons"
+  #PEZ_poly <- readOGR(dsn,layer=paste0("PEZ_",AquaSiteName, PEZversion))
   # convert SP PEZ poly to sf object for final intersection
-  PEZ_poly_sf <- st_as_sf(PEZ_poly)
+  #PEZ_poly_sf <- st_as_sf(PEZ_poly)
   
   # ############################################################### #
   # Using current data
   
   # Import the MARFIS tables
+  #This command did not work for me
   get_data('marfis', data.dir=data.dir)
-  # limit data by MinYear and clip to PEZPoly
+  #I developed these instead
+  #filenames <- list.files(data.dir, pattern="MARFIS*", full.names=TRUE)
+  #lapply(filenames,load,.GlobalEnv)
+    # limit data by MinYear and clip to PEZPoly
   PRO_SPC_INFO <- PRO_SPC_INFO[PRO_SPC_INFO$YEAR 
-                                         >= MinYear,]
+                                         >= minYear,]
   PRO_SPC_INFO <-  clip_by_poly(df = PRO_SPC_INFO
                                      , lat.field = "LATITUDE"
                                      , lon.field = "LONGITUDE"
@@ -75,7 +47,7 @@ SelectMARFIS_fn <- function(AquaSiteName, PEZversion, MinYear) {
   for(i in 1:length(fl)) {
     file.remove(fl[i])
   }  
-  setwd(wd) #revert to origional working directory
+  setwd(wd) #revert to original working directory
   
   # # ############################################################### #  
   # # using archived data

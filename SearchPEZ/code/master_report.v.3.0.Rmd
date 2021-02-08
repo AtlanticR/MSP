@@ -53,6 +53,7 @@ source("cetacean_priority_areas.R")
 source("Blue_Whale_habitat.R")
 source("fn_SearchRVData.r")
 source("fn_maps.r")
+source("fn_Search_MARFIS_Data.r")
 ```
 
 ```{r Define Site, include=FALSE, cache=FALSE}
@@ -64,7 +65,7 @@ AquaSiteName <- "FarmersLedge"
 PEZversion <- "4748m"
 UserComments <- "Example - First search effort for suitability of a site for a project planned for 2025. Project is expected to have positive/negative impacts on surrounding area. It is likely that some kind of monitoring will be required during operations. Make sure to follow up on all sections pertaining to a particular taxonomic group as this seems to be a concern of the stakeholders."
 #make sure you delete all shp.xml files in the folder to be able to run this code
-minYear <- 1970
+minYear <- 2002
 maxYear <- 2020
 ```
 
@@ -150,6 +151,7 @@ obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBI
 obis<-subset(obis,year>minYear,year<maxYear)
 #FFHPP_shp <- st_read("../../../Data/Infrastructure/FFHPP_Referrals/FFHPP_Referrals_0620.shp", quiet=TRUE)
 ```
+
 ```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, include=FALSE, cache=FALSE}
 
 listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
@@ -329,8 +331,8 @@ plot_leatherback(leatherback_shp, PEZ_poly_st, land_sf)
 fl <- list.files(dataPath,".csv")
 isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
 isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
-marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
-marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
+#marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
+#marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
 obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
 obis<-subset(obis,year>minYear,year<maxYear)
 cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
@@ -511,6 +513,7 @@ site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
 ##skip all of these steps and create an isdb file for all of the MAR region.
 #df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
 isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
+#ISDBCatch <-  SelectISDB_fn(AquaSiteName, PEZversion, minYear)
 isdb_intersect <- st_intersection(isdb_shp,PEZ_poly_st)
 isdb_sites<-data.frame(longitude=isdb_intersect$LONGITUDE, latitude=isdb_intersect$LATITUDE)
 ```
@@ -565,10 +568,10 @@ kable(isdb_record_table, align="l", caption="ISDB observation records of Species
 
 #### **MARFIS Search Results**
 ```{r, include=FALSE, cache=FALSE}
-##skip all of these steps and create an isdb file for all of the MAR region.
-#df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
-marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
-marfis_intersect <- st_intersection(marfis_shp,PEZ_poly_st)
+#source("fn_Search_MARFIS_Data.r")
+#marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
+#marfis_intersect <- st_intersection(marfis_shp,PEZ_poly_st)
+MARFISCatch <-  SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
 marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
 ```
 

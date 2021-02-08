@@ -1,23 +1,6 @@
-###############################################################
-
-# Select RV data function
-# bring in the four RV sets of data, add a column to GSINF for each MISSION, SETNO combination
-# add SEASON and YEAR to the table
-# merge all the tables together
-# create an sf object
-# clip with PEZ polygon
-# then join with GSCAT and species name
-
-
-# To Do ##############################################--
-#
-# Add in some error catches for when Intersection results in zero
-# data points
-# END To Do ##########################################--
-
 SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear) {
 
-  RVdata.dir = "../../../Data/mar.wrangling/RVSurvey_FGP"
+  RVdata.dir = "../Data/mar.wrangling/RVSurvey_FGP"
   
   # Create single GSCAT table, rename the SPEC field to CODE
   f = File[1]
@@ -77,7 +60,7 @@ SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear) {
   RVsf <- GSINF_sf
 
   # import PEZ polygon
-  dsn <- "../../Data/Zones/SearchPEZpolygons"
+  dsn <- "../Data/Zones/SearchPEZpolygons"
   PEZ_poly_sf <- st_read(dsn, layer=paste0("PEZ_",AquaSiteName, PEZversion))
   
   # Select all RV survey points within the Exposure Zone (PEZ) using st_intersect

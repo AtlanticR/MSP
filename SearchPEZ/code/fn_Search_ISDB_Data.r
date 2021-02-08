@@ -1,42 +1,11 @@
-
-# To Do ##############################################--
-#
-# Instead of using the save_data() fn,  for current data
-# perhaps look
-# at what fields are necessary in MARFIS and ISDB and do the joins
-# myself
-# look at my SQL code for MARFIS and ISDB (Observer) data to 
-# figure out joins
-#
-# Put in an if statement to separate out Current from Archvied Data
-# use an argument from the function being passed?
-#
-# Add in some error catches for when Intersection results in zero
-# data points
-# END To Do ##########################################--
-
-
-Function call from Rmd
-ISDBCatch <-  SelectISDB_fn(AquaSiteName, PEZversion, MinYear)
-
-library(Mar.datawrangling)
-library(sf)
-library(rgdal)
-
-AquaSiteName <- "FarmersLedge"
-PEZversion <- "4748m"
-MinYear <- 2000
-
-
-wd <- getwd() # store main project directory
-
-SelectISDB_fn <- function(AquaSiteName, PEZversion, MinYear) {
+SelectISDB_fn <- function(AquaSiteName, PEZversion, minYear) {
   
-  data.dir = "../../Data/mar.wrangling"  # location of ISDB datafiles
+  wd <- getwd() # store main project directory
+  data.dir = "../Data/mar.wrangling"  # location of ISDB datafiles
 
   # Import PEZ polygon
   # Mar.datawrangling uses sp objects
-  dsn <- "../../Data/Zones/SearchPEZpolygons"
+  dsn <- "../Data/Zones/SearchPEZpolygons"
   PEZ_poly <- readOGR(dsn,layer=paste0("PEZ_",AquaSiteName, PEZversion))
   # convert SP PEZ poly to sf object for final intersection
   PEZ_poly_sf <- st_as_sf(PEZ_poly)
@@ -45,10 +14,14 @@ SelectISDB_fn <- function(AquaSiteName, PEZversion, MinYear) {
   # Using current data
   
   # Import the ISDB tables
+  #This command did not work for me
   get_data('isdb', data.dir=data.dir)
-  # limit data by MinYear and clip to PEZPoly
+  #I developed these instead
+  #filenames <- list.files(data.dir, pattern="ISDB*", full.names=TRUE)
+  #lapply(filenames,load,.GlobalEnv)
+    # limit data by MinYear and clip to PEZPoly
   ISSETPROFILE_WIDE <- ISSETPROFILE_WIDE[ISSETPROFILE_WIDE$YEAR 
-                                         >= MinYear,]
+                                         >= minYear,]
   ISSETPROFILE_WIDE <-  clip_by_poly(df = ISSETPROFILE_WIDE
                                    , lat.field = "LATITUDE"
                                    , lon.field = "LONGITUDE"
