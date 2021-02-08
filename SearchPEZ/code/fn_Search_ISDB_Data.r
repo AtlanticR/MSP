@@ -1,6 +1,6 @@
 SelectISDB_fn <- function(AquaSiteName, PEZversion, minYear) {
   wd <- getwd() # store main project directory
-  data.dir = "../../Data/mar.wrangling"  # location of ISDB datafiles
+  data.dir = "../Data/mar.wrangling"  # location of ISDB datafiles
 
   # Import PEZ polygon
   # Mar.datawrangling uses sp objects
