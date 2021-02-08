@@ -1,4 +1,25 @@
+<<<<<<< HEAD
 SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear) {
+=======
+###############################################################
+
+# Select RV data function
+# bring in the four RV sets of data, add a column to GSINF for each MISSION, SETNO combination
+# add SEASON and YEAR to the table
+# merge all the tables together
+# create an sf object
+# clip with PEZ polygon
+# then join with GSCAT and species name
+
+
+# To Do ##############################################--
+#
+# Add in some error catches for when Intersection results in zero
+# data points
+# END To Do ##########################################--
+
+SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, minYear) {
+>>>>>>> 99791445bfe5ba008e07c16acee69e3346e7a038
 
   RVdata.dir = "../Data/mar.wrangling/RVSurvey_FGP"
   

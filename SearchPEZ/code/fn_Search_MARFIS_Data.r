@@ -1,6 +1,42 @@
+<<<<<<< HEAD
 SelectMARFIS_fn <- function(AquaSiteName, PEZversion, minYear) {
   wd <- getwd()
   data.dir = "../Data/mar.wrangling"  # location of MARFIS datafiles
+=======
+
+# To Do ##############################################--
+#
+# Instead of using the save_data() fn,  for current data
+# perhaps look
+# at what fields are necessary in MARFIS and ISDB and do the joins
+# myself
+# look at my SQL code for MARFIS and ISDB (Observer) data to 
+# figure out joins
+#
+# Put in an if statement to separate out Current from Archvied Data
+# use an argument from the function being passed?
+#
+# Add in some error catches for when Intersection results in zero
+# data points
+# END To Do ##########################################--
+
+
+Function call from Rmd
+MARFISCatch <-  SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
+
+library(Mar.datawrangling)
+library(sf)
+library(rgdal)
+
+AquaSiteName <- "FarmersLedge"
+PEZversion <- "4748m"
+MinYear <- 2000
+
+
+SelectMARFIS_fn <- function(AquaSiteName, PEZversion, MinYear) {
+  wd <- getwd() # store main project directory
+  data.dir = "../../Data/mar.wrangling"  # location of MARFIS datafiles
+>>>>>>> 99791445bfe5ba008e07c16acee69e3346e7a038
   
   # Import PEZ polygon
   # Mar.datawrangling uses sp objects
