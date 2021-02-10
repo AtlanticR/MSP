@@ -14,7 +14,7 @@ output:
 ```{r setup, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
 library(Mar.datawrangling)
-library(Mar.utils)
+#library(Mar.utils)
 library(knitr)
 library(kableExtra)
 library(rgdal)
@@ -227,7 +227,6 @@ Please read the section above about the definition of Critical Habitat under the
 
 ```{r echo=FALSE, results='asis'}
 intersect_dist <- st_intersection(sardist,PEZ_poly_st)
-x<-as.numeric(nrow(intersect_dist))
 intersect_dist$Common_Nam[intersect_dist$Common_Nam == "Sowerby`s Beaked Whale"] <- "Sowerby's Beaked Whale"
 Common_Name<-intersect_dist$Common_Nam
 Scientific_Name<-intersect_dist$Scientific
@@ -237,6 +236,7 @@ intersect_dist_df<-as.data.frame(cbind(Common_Name, Scientific_Name, Population,
 
 #append columns from listed species 
 dist_table<-merge(intersect_dist_df, listed_species, by='Scientific_Name')
+x<-as.numeric(nrow(dist_table))
 dist_table2<-dist_table %>% 
   transmute(Common_Name, Scientific_Name, Population, Area, Schedule.status, COSEWIC.status, Wild_Species)
 dist_table3<- dist_table2 %>% rename(SARA_listing=Schedule.status,
@@ -260,9 +260,7 @@ Query_output_table<-if(x < 1){
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
 
-if(x > 1){
-  Query_output_table
-}
+if(x > 1){Query_output_table}
 
 ```
 
@@ -295,9 +293,7 @@ Query_output_table<-if(x < 1){
 }
 Query_output_table2<-noquote(Query_output_table)
 
-if(x > 1){
-  print(Query_output_table2)
-}
+if(x > 1){print(Query_output_table2)}
 ```
 
 ```{r Fig X PEZ polygon with all maritime Critical Habitat polygons, fig.height=8, fig.width=11, fig.cap="Map showing Species At Risk Critical Habitat (red), the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow)."}
@@ -339,6 +335,8 @@ cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_rec
 cws<-subset(cws,year>minYear,year<maxYear)
 inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
 inat<-subset(inat,datetime>minYear,datetime<maxYear)
+gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/GBIF_MAR_priority_records.csv")
+gbif<-subset(gbif,year>minYear,year<maxYear)
 ```
 
 Data products used in this section:  
@@ -687,14 +685,101 @@ OBIS_query_output_table<-if(x < 1){
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
 
-if(x > 1){
-  OBIS_query_output_table
-}
+if(x > 1){OBIS_query_output_table}
 ```
 ```{r Fig OBIS records for fish and invertebrates in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Confidence Tier = Medium. Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with OBIS records of fish and/or invertebrates shown as black points. The absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area. Records shown on land are an indicator that the data have not yet been completely error-checked."}
-if(x > 1){
-plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
+if(x > 1){plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)}
+```
+#### **iNaturalist fish and invertebrate Search Results**
+```{r, include=FALSE, cache=FALSE}
+#Select columns of interest from OBIS file
+inat_edit<-inat %>% 
+  transmute(scientific_name, datetime, latitude, longitude, common_name, url)
+inat_plot_locations<-st_as_sf(inat_edit, coords = c("longitude", "latitude"), crs = 4326)
+intersect_inat <- st_intersection(inat_plot_locations,PEZ_poly_st)
+
+
+#summarize individual counts
+#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
+
+#append columns from listed species
+intersect_inat<- intersect_inat %>% rename(Scientific_Name=scientific_name)
+inat_table<-merge(intersect_inat, listed_fish_invert_species, by='Scientific_Name')
+x<-as.numeric(nrow(inat_table))
+inat_table2<-inat_table %>% 
+  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+inat_table3<- inat_table2 %>% rename(SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species)
+inat_table3$geometry<-NULL
+inat_table4<-unique(inat_table3)
+
+Query_output_inat<-if(x < 1){
+  "There are no records of priority specues in the iNaturalist database for the provided search area."
+} else {
+  "The iNaturalist database contains records of priority species in the provided search area."
 }
+Query_output_inat2<-noquote(Query_output_inat)
+writeLines(c(Query_output_inat2), sep = "\n")
+```
+
+```{r echo=FALSE, results='asis'}
+INAT_query_output_table<-if(x < 1){
+  ""
+} else {
+  kable(inat_table4, row.names = F, caption="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points.") %>%
+    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+}
+if(x > 1){INAT_query_output_table}
+```
+
+```{r Fig 5 INAT records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points."}
+if(x > 1){plot_inat(PEZ_poly,PEZ_poly_st,site_sf,land_sf,inat_table,2)}
+```
+
+#### **GBIF fish and invertebrate Search Results**
+```{r, include=FALSE, cache=FALSE}
+#Select columns of interest from OBIS file
+gbif_sf<-st_as_sf(gbif, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+intersect_gbif <- st_intersection(gbif_sf,PEZ_poly_st)
+
+#summarize individual counts
+#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
+
+#append columns from listed species
+intersect_gbif<- intersect_gbif %>% rename(Scientific_Name=species)
+gbif_table<-merge(intersect_gbif, listed_fish_invert_species, by='Scientific_Name')
+x<-as.numeric(nrow(gbif_table))
+gbif_table2<-gbif_table %>% 
+  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+gbif_table3<- gbif_table2 %>% rename(SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species)
+gbif_table3$geometry<-NULL
+gbif_table4<-unique(gbif_table3)
+
+Query_output_gbif<-if(x < 1){
+  "There are no records of species at risk in the GBIF database for the provided search area."
+} else {
+  "The GBIF database contains records of species at risk in the provided search area."
+}
+Query_output_gbif2<-noquote(Query_output_gbif)
+writeLines(c(Query_output_gbif2), sep = "\n")
+```
+
+```{r echo=FALSE, results='asis'}
+GBIF_query_output_table<-if(x < 1){
+  ""
+} else {
+  kable(gbif_table4, row.names = F, caption="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with GBIF records shown as black points.") %>%
+    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+}
+
+if(x > 1){GBIF_query_output_table}
+```
+
+```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other species of Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
+if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```
 
 ## **Cetacean Section**
@@ -851,13 +936,13 @@ narwc_filter <- merge(narwc_filter, listed_species, by='Scientific_Name')
 ```{r echo=FALSE, results='asis'}
 narwc_plot_locations<-st_as_sf(narwc_filter, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
 intersect_narwc <- st_intersection(narwc_plot_locations,PEZ_poly_st)
-x<-as.numeric(nrow(intersect_narwc))
 Common_Name<-intersect_narwc$Common_Name
 Scientific_Name<-intersect_narwc$Scientific_Name
 intersect_narwc_df<-as.data.frame(cbind(Common_Name, Scientific_Name, row.names = FALSE))
 
 #append columns from listed species 
 narwc_table<-merge(intersect_narwc_df, listed_species, by='Scientific_Name')
+x<-as.numeric(nrow(narwc_table))
 narwc_table2<-narwc_table %>% 
   transmute(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
 narwc_table3<- narwc_table2 %>% rename(SARA_listing=Schedule.status,
@@ -866,9 +951,9 @@ narwc_table3<- narwc_table2 %>% rename(SARA_listing=Schedule.status,
                                      )
 
 Query_output_narwc<-if(x < 1){
-  "There are no records in the NARWC data base for this search area."
+  "There are no records in the NARWC data base for the defiend search area."
 } else {
-  "The NARWC database contains records of whales in this search area."
+  "The NARWC database contains records of cetaceans in the defined search area."
 }
 
 Query_output_narwc2<-noquote(Query_output_narwc)
@@ -883,16 +968,15 @@ NARWC_query_output_table<-if(x < 1){
   kable(narwc_table3[!duplicated(narwc_table3),], row.names=F, caption="Cetaceans with observations contained in the NARWC database within the search polygon area.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
-NARWC_query_output_table
-
+if(x > 1){NARWC_query_output_table}
 ```
+
 ```{r Fig 5 NARWC Database, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map for internal use only is **High**. Map represents cetacean sightings from the North Atlantic Right Whale Consortium (NARWC) sightings database. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. field efforts were primarily conducted towards the Northeast US, sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). For more information, please visit: https://www.narwc.org/sightings-database.html"}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 narwc_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
   geom_point(data = narwc_filter, aes(x = LONGITUDE, y = LATITUDE, color=Common_Name), 
              size = 3.5)
-print(narwc_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))
-
+if(x > 1){print(narwc_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))}
 ```
 
 #### **Whitehead Lab Search Results**
@@ -909,13 +993,13 @@ wsdb_filter <- merge(wsdb_filter, listed_cetacean_species, by='Scientific_Name')
 ```{r echo=FALSE, results='asis'}
 wsdb_plot_locations<-st_as_sf(wsdb_filter, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
 intersect_wsdb <- st_intersection(wsdb_plot_locations,PEZ_poly_st)
-x<-as.numeric(nrow(intersect_wsdb))
 Common_Name<-intersect_wsdb$Common_Name
 Scientific_Name<-intersect_wsdb$Scientific_Name
 intersect_wsdb_df<-as.data.frame(cbind(Common_Name, Scientific_Name, row.names = FALSE))
 
 #append columns from listed species 
 wsdb_table<-merge(intersect_wsdb_df, listed_cetacean_species, by='Scientific_Name')
+x<-as.numeric(nrow(wsdb_table))
 wsdb_table2<-wsdb_table %>% 
   transmute(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
 wsdb_table3<- wsdb_table2 %>% rename(SARA_listing=Schedule.status,
@@ -938,7 +1022,8 @@ WSDB_query_output_table<-if(x < 1){
   kable(wsdb_table3[!duplicated(wsdb_table3),], row.names=F, caption="Cetaceans with observations contained in the WSDB within the search polygon area.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
-WSDB_query_output_table
+
+if(x > 1){WSDB_query_output_table}
 ```
 
 ```{r Fig 3 Whale Sightings Database, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map for internal use only is **Low**. Map represents cetacean sightings from the Whale Sightings Database (WSDB) (including sightings of groups of animals) in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
@@ -946,11 +1031,11 @@ par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 wsdb_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
   geom_point(data = wsdb_filter, aes(x = LONGITUDE, y = LATITUDE, color=Common_Name), 
              size = 3.5)
-print(wsdb_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))
+if(x > 1){print(wsdb_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))}
 
 ```
 
-#### **OBIS Search Results**
+#### **OBIS cetacean Search Results**
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 obis_edit<-obis %>% 
@@ -1003,9 +1088,7 @@ OBIS_query_output_table<-if(x < 1){
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
 
-if(x > 1){
-  OBIS_query_output_table
-}
+if(x > 1){OBIS_query_output_table}
 ```
 
 ```{r Fig 5 OBIS records for cetacean section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents cetacean sightings from OBIS in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
@@ -1015,7 +1098,7 @@ if(x > 1){
 }
 ```
 
-#### **CWS/ECCC Search Results**
+#### **CWS/ECCC cetacean Search Results**
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 cws_edit<-cws %>% 
@@ -1062,7 +1145,7 @@ CWS_query_output_table
 plot_cws(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_cws,2)
 ```
 
-#### **iNaturalist Search Results**
+#### **iNaturalist cetacean Search Results**
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 inat_edit<-inat %>% 
@@ -1094,11 +1177,11 @@ Query_output_inat2<-noquote(Query_output_inat)
 writeLines(c(Query_output_inat2), sep = "\n")
 ```
 
-```{r echo=FALSE, results='asis', caption="Priority species with observations contained in the iNaturalist database within the search polygon area."}
+```{r echo=FALSE, results='asis'}
 INAT_query_output_table<-if(x < 1){
   ""
 } else {
-  kable(inat_table4, row.names = F, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points.") %>%
+  kable(inat_table4, row.names = F, caption="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
 INAT_query_output_table
@@ -1106,6 +1189,52 @@ INAT_query_output_table
 
 ```{r Fig 5 INAT records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points."}
 plot_inat(PEZ_poly,PEZ_poly_st,site_sf,land_sf,inat_table,2)
+```
+
+#### **GBIF cetacean Search Results**
+```{r, include=FALSE, cache=FALSE}
+#Select columns of interest from OBIS file
+gbif_sf<-st_as_sf(gbif, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+intersect_gbif <- st_intersection(gbif_sf,PEZ_poly_st)
+x<-as.numeric(nrow(intersect_gbif))
+
+#summarize individual counts
+#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
+
+#append columns from listed species
+intersect_gbif<- intersect_gbif %>% rename(Scientific_Name=species)
+gbif_table<-merge(intersect_gbif, listed_cetacean_species, by='Scientific_Name')
+x<-as.numeric(nrow(gbif_table))
+gbif_table2<-gbif_table %>% 
+  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+gbif_table3<- gbif_table2 %>% rename(SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species)
+gbif_table3$geometry<-NULL
+gbif_table4<-unique(gbif_table3)
+
+Query_output_gbif<-if(x < 1){
+  "There are no records of species at risk in the GBIF database for the provided search area."
+} else {
+  "The GBIF database contains records of species at risk in the provided search area."
+}
+Query_output_gbif2<-noquote(Query_output_gbif)
+writeLines(c(Query_output_gbif2), sep = "\n")
+```
+
+```{r echo=FALSE, results='asis'}
+GBIF_query_output_table<-if(x < 1){
+  ""
+} else {
+  kable(gbif_table4, row.names = F, caption="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with GBIF records shown as black points.") %>%
+    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+}
+
+if(x > 1){GBIF_query_output_table}
+```
+
+```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents GBIF records within the search area where cetacean Species at Risk may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections)."}
+if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```
 
 #### **Priority Areas to Enhance Monitoring of Cetaceans Search Results**
@@ -1248,12 +1377,59 @@ if(x > 1){
 }
 ```
 
-```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other species of Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
+```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
 
 if(x > 1){
   plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
 }
 
+```
+
+#### **GBIF other species Search Results**
+```{r, include=FALSE, cache=FALSE}
+#Select columns of interest from OBIS file
+gbif_sf<-st_as_sf(gbif, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+intersect_gbif <- st_intersection(gbif_sf,PEZ_poly_st)
+
+#summarize individual counts
+#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
+
+#append columns from listed species
+intersect_gbif<- intersect_gbif %>% rename(Scientific_Name=species)
+gbif_table<-merge(intersect_gbif, listed_other_species, by='Scientific_Name')
+x<-as.numeric(nrow(gbif_table))
+gbif_table2<-gbif_table %>% 
+  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+gbif_table3<- gbif_table2 %>% rename(SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species)
+gbif_table3$geometry<-NULL
+gbif_table4<-unique(gbif_table3)
+
+Query_output_gbif<-if(x < 1){
+  "There are no records of species at risk in the GBIF database for the provided search area."
+} else {
+  "The GBIF database contains records of species at risk in the provided search area."
+}
+
+Query_output_gbif2<-noquote(Query_output_gbif)
+
+writeLines(c(Query_output_gbif2), sep = "\n")
+```
+
+```{r echo=FALSE, results='asis'}
+GBIF_query_output_table<-if(x < 1){
+  ""
+} else {
+  kable(gbif_table4, row.names = F, caption="Map showing the defined search area with GBIF records shown as black points.") %>%
+    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+}
+
+if(x > 1){GBIF_query_output_table}
+```
+
+```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents GBIF records within the search area where other Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area)."}
+if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```
 
 #### **EBSA search results**
@@ -1322,11 +1498,22 @@ MacDonald, D., Emery, P., Themelis, D., Smedbol, R.K., Harris, L.E., and McCurdy
 
 # **Acknowledgements**
 
-<Mike.McMahon@dfo-mpo.gc.ca>! for providing code and advice in the use of `Mar.datawrangling`: A suite of tools for extracting, filtering and aggregating data from the Maritimes fisheries science databases <https://github.com/Maritimes/Mar.datawrangling>
+Science MSP Reproducible Reports Development Team: 
+Catalina Gomez <Catalina.Gomez@dfo-mpo.gc.ca>
+Gregory Puncher <Gregory.Puncher@dfo-mpo.gc.ca> 
+Gordana Lazin <Gordana.Lazin@dfo-mpo.gc.ca>
+Philip Greyson <Philip.Greyson@dfo-mpo.gc.ca>
+Brian Bower <Brian.Bower@dfo-mpo.gc.ca>
+Tana Worcester <Tana.Worcester@dfo-mpo.gc.ca> 
 
-The Atlantic R Learning & Development Initiative <https://github.com/AtlanticR>.  
+Additional steering committee members:
 
-Cetacean section: Shelley Lang, Hilary Moors-Murphy, Susan Heaslip, Emma Marotte, Amanda Babin, Nick Jeffery, Angelia Vanderlaan
+Christine Stortini, Ryan Stanley, Rémi Daigle, Lindsay Brager, Sarah Tuziak, Adrian Hamer, Hilary Moors-Murphy,  Brent Law, Nancy Shackell, Blair Greenan.
+
+Advisory board members: 
+Shelley Lang, Hilary Moors-Murphy, Susan Heaslip, Emma Marotte, Amanda Babin, Nick Jeffery, Angelia Vanderlaan, Heath Stone, Mike McMahon, Koren Spence, Pam Emery, Diane Amirault-Langalis, Colin O’Neil, Andrea Morden, Sean Butler, Ross Claytor, Dwayne Lepitzki, Dave Fraser, Nick Mandrack, Tanya Pelrine, Peter O'Blenis, Karen Compton, David Fishman.
+The Atlantic R Learning & Development Initiative <https://github.com/AtlanticR> provided essential assistance with R code and advice.
+
 
 # **Future databases and data products to be included**  
 
