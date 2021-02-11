@@ -24,9 +24,24 @@ log
 *.grd
 *.gri
 
+# files in ESRI geodatabase
+*.gdb
+*.gdb*
+*.spx
+gdb
+timestamps
+*.Cat*
+*.FDO*
+*.freelist
+*.atx
+
+
+# data
 *.rdata
 *.csv
 *.pptx
+*.accdb
+
 
 *.dcf
 *.html

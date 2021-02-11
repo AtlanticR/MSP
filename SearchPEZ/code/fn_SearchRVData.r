@@ -1,6 +1,6 @@
 SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, minYear) {
 
-  RVdata.dir = "../Data/mar.wrangling/RVSurvey_FGP"
+  RVdata.dir = "../../../Data/mar.wrangling/RVSurvey_FGP"
   
   # Create single GSCAT table, rename the SPEC field to CODE
   f = File[1]
