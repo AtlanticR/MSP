@@ -1,11 +1,11 @@
 
 #Critical habitat
-plot_crithab<-function(ClippedCritHab, PEZ_poly_st, ClippedCritLand) {
+plot_crithab<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
   
   ggplot()+
     geom_sf(data=ClippedCritHab,fill="red",col="red")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
-    geom_sf(data=ClippedCritLand,fill=c("grey90"), col="black")+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
@@ -17,7 +17,7 @@ plot_crithab<-function(ClippedCritHab, PEZ_poly_st, ClippedCritLand) {
 }
 
 #critical habitat zoom
-plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, ClippedCritLand) {
+plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
   
   bbox_list <- lapply(st_geometry(PEZ_poly_st), st_bbox)
   maxmin <- as.data.frame(matrix(unlist(bbox_list),nrow=nrow(PEZ_poly_st)))
@@ -29,7 +29,7 @@ plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, ClippedCritLand) {
   ggplot()+
     geom_sf(data=ClippedCritHab,fill="red",col="red")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
-    geom_sf(data=ClippedCritLand,fill=c("grey90"), col="black")+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
@@ -192,12 +192,12 @@ plot_cws<-function(studyArea,studyArea_st,site,land,intersect_cws,buf) {
 
 #Leatherback turtle
 
-plot_leatherback<-function(leatherback_shp, PEZ_poly_st, ClippedCritLand) {
+plot_leatherback<-function(leatherback_shp, PEZ_poly_st, land_layer) {
   
   ggplot()+
     geom_sf(data=leatherback_shp,fill="lightgreen",col="lightgreen")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
-    geom_sf(data=ClippedCritLand,fill=c("grey90"), col="black")+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
@@ -448,12 +448,12 @@ plot_bw_hab_zoom <- function(Blue_4326, PEZ_poly_st, Landshp) {
 
 #EBSA
 
-plot_EBSA<-function(EBSA_shp, PEZ_poly_st, ClippedCritLand) {
+plot_EBSA<-function(EBSA_shp, PEZ_poly_st, land_layer) {
   
   ggplot()+
     geom_sf(data=EBSA_shp,fill="plum1",col="plum1")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
-    geom_sf(data=ClippedCritLand,fill=c("grey90"), col="black")+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+

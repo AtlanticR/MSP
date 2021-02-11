@@ -418,6 +418,38 @@ cat("Time frame:", "insert results from min and max year search function for thi
 
 OBIS is a global open-access data and information clearing-house on marine biodiversity for science, conservation and sustainable development. Their vision is to build and maintain a global alliance that collaborates with scientific communities to facilitate free and open access to, and application of, biodiversity and biogeographic data and information on marine life. OBIS search was conducted to find additional relevant records for listed by SARA, or assessed by COSEWIC and Wild species listing. Subsequent versions of this report will aim at expanding our QC efforts for this source of information.
 
+#### **iNaturalist**
+Contact:   
+Site:   
+Last retrieved on:   
+Tier of confidence:  
+Search year:  
+```{r echo=FALSE, results='asis'}
+cat("Time frame:", "insert results from min and max year search function for this db.")
+```
+
+#### **Global Biodiversity Information Facility (GBIF)**
+Contact:   
+Site:   
+Last retrieved on:   
+Tier of confidence:  
+Search year:  
+```{r echo=FALSE, results='asis'}
+cat("Time frame:", "insert results from min and max year search function for this db.")
+```
+
+### **Passamaquoddy Biodiversity Trawl**
+Contact:   
+Site:   
+Last retrieved on:   
+Tier of confidence:  
+Search year:  
+```{r echo=FALSE, results='asis'}
+cat("Time frame:", "insert results from min and max year search function for this db.")
+```
+
+The Coastal Biodiversity Trawl Survey for the Passamaquoddy Bay was conducted annually between July to October from 2009 to 2019. This survey was intended to monitor long-term change in local species presence, habitat utilization, and health. The sampling activities support coastal research in fisheries, aquaculture, marine protected areas, and ecosystem change. Data collected prior to 2013 are generally not recommended for comparative analysis due to changes in vessel, sampling effort, and protocols.
+
 #### **RV Survey Search Results**
 ```{r, include=FALSE, cache=FALSE}
 SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
@@ -690,6 +722,7 @@ if(x > 1){OBIS_query_output_table}
 ```{r Fig OBIS records for fish and invertebrates in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Confidence Tier = Medium. Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with OBIS records of fish and/or invertebrates shown as black points. The absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area. Records shown on land are an indicator that the data have not yet been completely error-checked."}
 if(x > 1){plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)}
 ```
+
 #### **iNaturalist fish and invertebrate Search Results**
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
@@ -771,7 +804,7 @@ writeLines(c(Query_output_gbif2), sep = "\n")
 GBIF_query_output_table<-if(x < 1){
   ""
 } else {
-  kable(gbif_table4, row.names = F, caption="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with GBIF records shown as black points.") %>%
+  kable(gbif_table4, row.names = F, caption="Map showing the defined search area with GBIF records shown as black points.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
 
@@ -781,6 +814,81 @@ if(x > 1){GBIF_query_output_table}
 ```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other species of Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
 if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```
+
+#### **Passamaquoddy Biodiversity fish and invertebrate Search Results**
+```{r, include=FALSE, cache=FALSE}
+Passamaquoddy_catch<-read.csv("../../../Data/NaturalResources/Species/PassamaquoddyBayBiodiversityTrawl/passamaquoddy_bay_biodiversity_trawl_catch_data.csv")
+Passamaquoddy_set<-read.csv("../../../Data/NaturalResources/Species/PassamaquoddyBayBiodiversityTrawl/passamaquoddy_bay_biodiversity_trawl_set_data.csv")
+#creating unique combined set and station numbers for set file
+Passamaquoddy_setb<-Passamaquoddy_set
+Passamaquoddy_setb$setno<-sprintf('%.3f',Passamaquoddy_setb$setno)
+Passamaquoddy_setb$y<-str_sub(Passamaquoddy_setb$setno, start=5, end=-1)
+Passamaquoddy_setb$setno_comb<-paste(Passamaquoddy_setb$mission, Passamaquoddy_setb$y,".",Passamaquoddy_setb$station)
+Passamaquoddy_setb$setno_comb<-str_replace_all(Passamaquoddy_setb$setno_comb, pattern=" ", repl="")
+#creating unique combined set and station numbers for catch file
+Passamaquoddy_catchb<-Passamaquoddy_catch
+Passamaquoddy_catchb$setno<-sprintf('%.3f',Passamaquoddy_catchb$setno)
+Passamaquoddy_catchb$y<-str_sub(Passamaquoddy_catchb$setno, start=5, end=-1)
+Passamaquoddy_catchb$setno_comb<-paste(Passamaquoddy_catchb$mission, Passamaquoddy_catchb$y,".",Passamaquoddy_catchb$station)
+Passamaquoddy_catchb$setno_comb<-str_replace_all(Passamaquoddy_catchb$setno_comb, pattern=" ", repl="")
+Passamaquoddy_merged<-merge(Passamaquoddy_catchb, Passamaquoddy_setb, by='setno_comb')
+#merge data frames
+Passamaquoddy_merged<-select(Passamaquoddy_merged, setno_comb, longitude_start, latitude_start, longitude_finish, latitude_finish,
+                             time_start, time_finish, scientific_name, common_name, abundance)
+#modify date to year, month and day columns
+Passamaquoddy_merged$year=Passamaquoddy_merged$time_start
+Passamaquoddy_merged$year<-str_sub(Passamaquoddy_merged$year, start=1, end=4)
+Passamaquoddy_merged$month=Passamaquoddy_merged$time_start
+Passamaquoddy_merged$month<-str_sub(Passamaquoddy_merged$month, start=6, end=7)
+Passamaquoddy_merged$day=Passamaquoddy_merged$time_start
+Passamaquoddy_merged$day<-str_sub(Passamaquoddy_merged$day, start=9, end=10)
+```
+
+```{r, include=FALSE, cache=FALSE}
+#Select columns of interest from OBIS file
+quoddy<-subset(Passamaquoddy_merged,year>minYear,year<maxYear)
+quoddy_sf<-st_as_sf(quoddy, coords = c("longitude_start", "latitude_start"), crs = 4326)
+intersect_quoddy <- st_intersection(quoddy_sf,PEZ_poly_st)
+
+#summarize individual counts
+#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
+
+#append columns from listed species
+intersect_quoddy<- intersect_quoddy %>% rename(Scientific_Name=scientific_name)
+quoddy_table<-merge(intersect_quoddy, listed_fish_invert_species, by='Scientific_Name')
+x<-as.numeric(nrow(quoddy_table))
+quoddy_table2<-quoddy_table %>% 
+  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+quoddy_table3<- quoddy_table2 %>% rename(SARA_listing=Schedule.status,
+                                     COSEWIC_listing=COSEWIC.status,
+                                     Wild_Species_listing=Wild_Species)
+quoddy_table3$geometry<-NULL
+quoddy_table4<-unique(quoddy_table3)
+
+Query_output_quoddy<-if(x < 1){
+  "There are no records of species at risk in the Passamaquoddy Bay biodiversity trawl data for the provided search area."
+} else {
+  "The Passamaquoddy Bay biodiversity trawl data contains records of species at risk in the provided search area."
+}
+Query_output_quoddy2<-noquote(Query_output_quoddy)
+writeLines(c(Query_output_quoddy2), sep = "\n")
+```
+
+```{r echo=FALSE, results='asis'}
+quoddy_query_output_table<-if(x < 1){
+  ""
+} else {
+  kable(quoddy_table4, row.names = F, caption="Map showing the defined search area with Passamaquoddy Bay biodiversity trawl data shown as black points.") %>%
+    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+}
+
+if(x > 1){quoddy_query_output_table}
+```
+
+```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other species of Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
+if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
+```
+
 
 ## **Cetacean Section**
 
