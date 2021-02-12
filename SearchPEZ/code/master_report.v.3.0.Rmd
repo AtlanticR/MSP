@@ -6,12 +6,13 @@ output:
   html_document:
     theme: paper
     toc: yes
+    fig_caption: yes
   pdf_document:
     toc: yes
   word_document:
     toc: yes
 ---
-```{r setup, include=FALSE, cache=FALSE}
+```{r load packages, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
 library(Mar.datawrangling)
 #library(Mar.utils)
@@ -36,6 +37,7 @@ library(tidyverse)
 #remotes::install_github("terminological/standard-print-output")
 library(standardPrintOutput)
 ```
+
 ```{r source functions, include=FALSE, cache=FALSE}
 # the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
 source("site_map.r")
@@ -52,6 +54,7 @@ source("leatherback.R")
 source("cetacean_priority_areas.R")
 source("Blue_Whale_habitat.R")
 source("fn_SearchRVData.r")
+source("fn_Search_ISDB_Data.r")
 source("fn_maps.r")
 source("fn_Search_MARFIS_Data.r")
 ```
@@ -138,9 +141,10 @@ dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 site_sf <- st_as_sf(site)
-landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
-land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
-land_sf <- st_as_sf(land)
+#landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
+#land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
+#land_sf <- st_as_sf(land)
+land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
@@ -185,6 +189,7 @@ ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/
 #sardist_4326 <- st_transform(sardist, crs = 4326)
 #st_write(sardist_4326, "../../../Data/NaturalResources/Species/SpeciesAtRisk/sardist_4326.shp")
 sardist<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/sardist_4326.shp", quiet=TRUE)
+leatherback_shp<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
 ```
 Data products used in this section:  
 
@@ -215,10 +220,10 @@ Critical habitat is defined under section 2 of SARA as: "the habitat that is nec
 Critical habitats were assembled by SARA regional biologists and recovery teams. They are designed to support the protection and recovery of species listed as Endangered or Threatened under the Species at Risk Act. They are also described and displayed in species' Recovery Documents and Action Plans.
 
 ### **Draft Critical Habitat for Leatherback Sea Turtle - In Review**  
-Contact: info@dfo-mpo.gc.ca
-**URL:** <http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US#>
-Last retrieved on: xxx
-Tier of confidence: **Very High**
+Contact: info@dfo-mpo.gc.ca  
+**URL:** <http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US#>  
+Last retrieved on: xxx  
+Tier of confidence: **Very High**  
 
 Please read the section above about the definition of Critical Habitat under the Species at Risk Act (SARA). Draft Critical Habitat for Leatherback Sea Turtle - in review - is available in the internal Species At Risk GIS tool and will be available in Open Data in the future.
 
@@ -329,8 +334,8 @@ isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
 isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
 #marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
 #marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
-obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
-obis<-subset(obis,year>minYear,year<maxYear)
+#obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
+#obis<-subset(obis,year>minYear,year<maxYear)
 cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
 cws<-subset(cws,year>minYear,year<maxYear)
 inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
@@ -340,7 +345,9 @@ gbif<-subset(gbif,year>minYear,year<maxYear)
 ```
 
 Data products used in this section:  
+
 ### **Ecosystem Research Vessel (RV) Survey**  
+
 Contact: Don Clark  
 Tier of confidence: **High**  
 ```{r echo=FALSE, results='asis'}
@@ -410,8 +417,9 @@ The Maritime Fishery Information System (MARFIS) is a DFO database, managed by t
 Contact: helpdesk@obis.org  
 Site: <https://obis.org/>  
 Last retrieved on: January 27 2021 from OBIS  
-Tier of confidence: **Medium** 
-Search year: xxxx
+Tier of confidence: **Medium**  
+Search year: xxxx  
+
 ```{r echo=FALSE, results='asis'}
 cat("Time frame:", "insert results from min and max year search function for this db.")
 ```
@@ -438,7 +446,7 @@ Search year:
 cat("Time frame:", "insert results from min and max year search function for this db.")
 ```
 
-### **Passamaquoddy Biodiversity Trawl**
+#### **Passamaquoddy Biodiversity Trawl**
 Contact:   
 Site:   
 Last retrieved on:   
@@ -454,7 +462,7 @@ The Coastal Biodiversity Trawl Survey for the Passamaquoddy Bay was conducted an
 ```{r, include=FALSE, cache=FALSE}
 SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
 File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
-RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, MinYear)
+RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, minYear)
 RVCatch$database<-"rv"
 rv_freq <- aggregate(
         x = list(Records = RVCatch$COMM),
@@ -599,9 +607,9 @@ kable(isdb_record_table, align="l", caption="ISDB observation records of Species
 #### **MARFIS Search Results**
 ```{r, include=FALSE, cache=FALSE}
 #source("fn_Search_MARFIS_Data.r")
-#marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
-#marfis_intersect <- st_intersection(marfis_shp,PEZ_poly_st)
-MARFISCatch <-  SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
+marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
+marfis_intersect <- st_intersection(marfis_shp,PEZ_poly_st)
+#MARFISCatch <-  SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
 marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
 ```
 
@@ -746,13 +754,17 @@ inat_table3<- inat_table2 %>% rename(SARA_listing=Schedule.status,
                                      Wild_Species_listing=Wild_Species)
 inat_table3$geometry<-NULL
 inat_table4<-unique(inat_table3)
+```
 
+```{r, echo=FALSE, results='asis'}
 Query_output_inat<-if(x < 1){
   "There are no records of priority specues in the iNaturalist database for the provided search area."
 } else {
   "The iNaturalist database contains records of priority species in the provided search area."
 }
+
 Query_output_inat2<-noquote(Query_output_inat)
+
 writeLines(c(Query_output_inat2), sep = "\n")
 ```
 
@@ -766,7 +778,7 @@ INAT_query_output_table<-if(x < 1){
 if(x > 1){INAT_query_output_table}
 ```
 
-```{r Fig 5 INAT records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points."}
+```{r Fig 5 INAT fish and invert records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points."}
 if(x > 1){plot_inat(PEZ_poly,PEZ_poly_st,site_sf,land_sf,inat_table,2)}
 ```
 
@@ -790,13 +802,16 @@ gbif_table3<- gbif_table2 %>% rename(SARA_listing=Schedule.status,
                                      Wild_Species_listing=Wild_Species)
 gbif_table3$geometry<-NULL
 gbif_table4<-unique(gbif_table3)
+```
 
+```{r, echo=FALSE, results='asis'}
 Query_output_gbif<-if(x < 1){
   "There are no records of species at risk in the GBIF database for the provided search area."
 } else {
   "The GBIF database contains records of species at risk in the provided search area."
 }
 Query_output_gbif2<-noquote(Query_output_gbif)
+
 writeLines(c(Query_output_gbif2), sep = "\n")
 ```
 
@@ -811,7 +826,7 @@ GBIF_query_output_table<-if(x < 1){
 if(x > 1){GBIF_query_output_table}
 ```
 
-```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other species of Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
+```{r Fig 5 OBIS records for fish and invert species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other species of Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
 if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```
 
@@ -864,13 +879,17 @@ quoddy_table3<- quoddy_table2 %>% rename(SARA_listing=Schedule.status,
                                      Wild_Species_listing=Wild_Species)
 quoddy_table3$geometry<-NULL
 quoddy_table4<-unique(quoddy_table3)
+```
 
+```{r, echo=FALSE, results='asis'}
 Query_output_quoddy<-if(x < 1){
   "There are no records of species at risk in the Passamaquoddy Bay biodiversity trawl data for the provided search area."
 } else {
   "The Passamaquoddy Bay biodiversity trawl data contains records of species at risk in the provided search area."
 }
+
 Query_output_quoddy2<-noquote(Query_output_quoddy)
+
 writeLines(c(Query_output_quoddy2), sep = "\n")
 ```
 
@@ -885,7 +904,7 @@ quoddy_query_output_table<-if(x < 1){
 if(x > 1){quoddy_query_output_table}
 ```
 
-```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other species of Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
+```{r Fig 5 Passamaquoddy fish and invert species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other species of Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
 if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```
 
@@ -1341,7 +1360,7 @@ GBIF_query_output_table<-if(x < 1){
 if(x > 1){GBIF_query_output_table}
 ```
 
-```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents GBIF records within the search area where cetacean Species at Risk may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections)."}
+```{r Fig 5 OBIS records for cetacean species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents GBIF records within the search area where cetacean Species at Risk may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections)."}
 if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```
 
@@ -1536,7 +1555,7 @@ GBIF_query_output_table<-if(x < 1){
 if(x > 1){GBIF_query_output_table}
 ```
 
-```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents GBIF records within the search area where other Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area)."}
+```{r Fig 5 GBIF records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents GBIF records within the search area where other Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area)."}
 if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```
 

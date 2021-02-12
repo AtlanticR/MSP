@@ -60,7 +60,7 @@ SelectRV_fn <- function(SurveyPrefix, File, AquaSiteName, PEZversion, minYear) {
   RVsf <- GSINF_sf
 
   # import PEZ polygon
-  dsn <- "../Data/Zones/SearchPEZpolygons"
+  dsn <- "../../../Data/Zones/SearchPEZpolygons"
   PEZ_poly_sf <- st_read(dsn, layer=paste0("PEZ_",AquaSiteName, PEZversion))
   
   # Select all RV survey points within the Exposure Zone (PEZ) using st_intersect

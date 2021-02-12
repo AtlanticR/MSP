@@ -27,7 +27,7 @@ plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
   latmax<-(maxmin$V4)+0.5
   
   ggplot()+
-    geom_sf(data=ClippedCritHab,fill="red",col="red")+
+    geom_sf(data=ClippedCritHab,fill="red",col="black")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -195,7 +195,7 @@ plot_cws<-function(studyArea,studyArea_st,site,land,intersect_cws,buf) {
 plot_leatherback<-function(leatherback_shp, PEZ_poly_st, land_layer) {
   
   ggplot()+
-    geom_sf(data=leatherback_shp,fill="lightgreen",col="lightgreen")+
+    geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -409,7 +409,7 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
 plot_bw_hab <- function(Blue_4326, PEZ_poly_st, Landshp) {
 
 ggplot()+
-geom_sf(data=Blue_4326,fill="skyblue1",col="skyblue1")+
+geom_sf(data=Blue_4326,fill="skyblue1",col="black")+
 geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
 geom_sf(data=Landshp,fill=c("grey90"), col="black")+
 annotation_scale(location="br")+
@@ -433,7 +433,7 @@ plot_bw_hab_zoom <- function(Blue_4326, PEZ_poly_st, Landshp) {
   latmax<-(maxmin$V4)+0.5
   
   ggplot()+
-    geom_sf(data=Blue_4326,fill="skyblue1",col="skyblue1")+
+    geom_sf(data=Blue_4326,fill="skyblue1",col="black")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
     geom_sf(data=Landshp,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -451,7 +451,7 @@ plot_bw_hab_zoom <- function(Blue_4326, PEZ_poly_st, Landshp) {
 plot_EBSA<-function(EBSA_shp, PEZ_poly_st, land_layer) {
   
   ggplot()+
-    geom_sf(data=EBSA_shp,fill="plum1",col="plum1")+
+    geom_sf(data=EBSA_shp,fill="plum1",col="black")+
     geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+

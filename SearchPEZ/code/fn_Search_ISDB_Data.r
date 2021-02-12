@@ -1,10 +1,10 @@
 SelectISDB_fn <- function(AquaSiteName, PEZversion, minYear) {
   wd <- getwd() # store main project directory
-  data.dir = "../Data/mar.wrangling"  # location of ISDB datafiles
+  data.dir = "../../../Data/mar.wrangling"  # location of ISDB datafiles
 
   # Import PEZ polygon
   # Mar.datawrangling uses sp objects
-  dsn <- "../Data/Zones/SearchPEZpolygons"
+  dsn <- "../../../Data/Zones/SearchPEZpolygons"
   #PEZ_poly <- readOGR(dsn,layer=paste0("PEZ_",AquaSiteName, PEZversion))
   # convert SP PEZ poly to sf object for final intersection
   #PEZ_poly_sf <- st_as_sf(PEZ_poly)
