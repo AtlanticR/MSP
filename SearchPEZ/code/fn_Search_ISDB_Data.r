@@ -15,19 +15,41 @@ SelectISDB_fn <- function(AquaSiteName, PEZversion, minYear) {
   # Import the ISDB tables
   #This command did not work for me
   get_data('isdb', data.dir=data.dir)
+  
+  #ISSETPROFILE_WIDE corrections 
+  set2<-ISSETPROFILE_WIDE %>%
+    mutate(DATE_TIME1 = na_if(DATE_TIME1, "9999-01-01 AST"))
+  set2<-set2 %>%
+    mutate(DATE_TIME2 = na_if(DATE_TIME2, "9999-01-01 AST"))
+  set2<-set2 %>%
+    mutate(DATE_TIME3 = na_if(DATE_TIME3, "9999-01-01 AST"))
+  set2<-set2 %>%
+    mutate(DATE_TIME4 = na_if(DATE_TIME4, "9999-01-01 AST"))
+  set2$DATE_TIME1[is.na(set2$DATE_TIME1)] <- set2$DATE_TIME2[is.na(set2$DATE_TIME1)]         
+  set2$DATE_TIME4[is.na(set2$DATE_TIME4)] <- set2$DATE_TIME3[is.na(set2$DATE_TIME4)]         
+  
+  set2$LAT1[is.na(set2$LAT1)] <- set2$LAT2[is.na(set2$LAT1)]  
+  set2$LONG1[is.na(set2$LONG1)] <- set2$LONG2[is.na(set2$LONG1)]
+  
+  set2$LAT4[is.na(set2$LAT4)] <- set2$LAT3[is.na(set2$LAT4)]  
+  set2$LONG4[is.na(set2$LONG4)] <- set2$LONG3[is.na(set2$LONG4)]
+  
+  set2$YEAR<-str_sub(set2$DATE_TIME1, start=1, end=4)
+  
   #I developed these instead
   #filenames <- list.files(data.dir, pattern="ISDB*", full.names=TRUE)
   #lapply(filenames,load,.GlobalEnv)
     # limit data by MinYear and clip to PEZPoly
-  ISSETPROFILE_WIDE <- ISSETPROFILE_WIDE[ISSETPROFILE_WIDE$YEAR 
-                                         >= minYear,]
-  ISSETPROFILE_WIDE <-  clip_by_poly(df = ISSETPROFILE_WIDE
-                                   , lat.field = "LATITUDE"
-                                   , lon.field = "LONGITUDE"
-                                   , clip.poly = PEZ_poly)
+  set2<- set2 %>% rename(LATITUDE=LAT1)
+  set2<- set2 %>% rename(LONGITUDE=LONG1)
+  set3 <-  clip_by_poly(df = set2,
+                        lat.field = "LATITUDE",
+                        lon.field = "LONGITUDE",
+                        clip.poly = PEZ_poly)
+  ISSETPROFILE_WIDE <- set3[set3$YEAR >= minYear,]
+  
   # limit by year
   self_filter(keep_nullsets = FALSE,quiet = TRUE)
-  
   dsn <- "C:/Temp"
   setwd(dsn)
   save_data(db='isdb')  # this creates both a csv and a shp
@@ -47,7 +69,7 @@ SelectISDB_fn <- function(AquaSiteName, PEZversion, minYear) {
   for(i in 1:length(fl)) {
     file.remove(fl[i])
   }  
-  setwd(wd) #revert to origional working directory
+  setwd(wd) #revert to original working directory
   
   # # ############################################################### #  
   # # using archived data
@@ -61,9 +83,12 @@ SelectISDB_fn <- function(AquaSiteName, PEZversion, minYear) {
   # # limit data to MinYear and greater
   # isdb_sf <- isdb_sf[which(isdb_sf$YEAR)>=MinYear),]
   # # ############################################################### #  
+  #PEZ_poly_sf <- st_read(dsn, layer=paste0("PEZ_",AquaSiteName, PEZversion))
+  
+  #ISDB_Catch <- st_intersection(isdb_sf,PEZ_poly_sf)
   
   # Select all ISDB points within the Exposure Zone (PEZ) using st_intersect
-  # Catch <- st_intersection(isdb_sf,PEZ_poly_sf)
+  #ISDB_Catch <- st_intersection(isdb_sf,PEZ_poly_st)
   
   return(isdb_sf)
   

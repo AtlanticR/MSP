@@ -4,7 +4,7 @@ SelectMARFIS_fn <- function(AquaSiteName, PEZversion, minYear) {
 
   # Import PEZ polygon
   # Mar.datawrangling uses sp objects
-  dsn <- "../Data/Zones/SearchPEZpolygons"
+  dsn <- "../../../Data/Zones/SearchPEZpolygons"
   #PEZ_poly <- readOGR(dsn,layer=paste0("PEZ_",AquaSiteName, PEZversion))
   # convert SP PEZ poly to sf object for final intersection
   #PEZ_poly_sf <- st_as_sf(PEZ_poly)
@@ -14,20 +14,20 @@ SelectMARFIS_fn <- function(AquaSiteName, PEZversion, minYear) {
   
   # Import the MARFIS tables
   #This command did not work for me
-  get_data('marfis', data.dir=data.dir)
+  #get_data('marfis', data.dir=data.dir)
   #I developed these instead
-  #filenames <- list.files(data.dir, pattern="MARFIS*", full.names=TRUE)
-  #lapply(filenames,load,.GlobalEnv)
+  filenames <- list.files(data.dir, pattern="MARFIS*", full.names=TRUE)
+  lapply(filenames,load,.GlobalEnv)
     # limit data by MinYear and clip to PEZPoly
-  PRO_SPC_INFO <- PRO_SPC_INFO[PRO_SPC_INFO$YEAR 
-                                         >= minYear,]
-  PRO_SPC_INFO <-  clip_by_poly(df = PRO_SPC_INFO
-                                     , lat.field = "LATITUDE"
-                                     , lon.field = "LONGITUDE"
-                                     , clip.poly = PEZ_poly)
+  db='marfis'
+
+  PRO_SPC_INFO <-  clip_by_poly(df = PRO_SPC_INFO,
+                                lat.field = "LATITUDE",
+                                lon.field = "LONGITUDE",
+                                clip.poly = PEZ_poly)
   # limit by year
+  PRO_SPC_INFO <- PRO_SPC_INFO[PRO_SPC_INFO$YEAR >= minYear,]
   self_filter(keep_nullsets = FALSE,quiet = TRUE)
-  
   dsn <- "C:/Temp"
   setwd(dsn)
   save_data(db='marfis')  # this creates both a csv and a shp

@@ -330,8 +330,8 @@ plot_leatherback(leatherback_shp, PEZ_poly_st, land_sf)
 
 ```{r read fish and invertebrate files, include=FALSE, cache=FALSE}
 fl <- list.files(dataPath,".csv")
-isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
-isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
+#isdb <- read.csv(file.path(dataPath,fl[grep("isdb_",fl)]))
+#isdb <- isdb[which(year(isdb$DATE_TIME2)>=minYear),]
 #marfis <- read.csv(file.path(dataPath,fl[grep("marfis_",fl)]))
 #marfis <- marfis[which(year(marfis$DATE_FISHED)>=minYear),]
 #obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
@@ -550,16 +550,73 @@ site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
 ```{r, include=FALSE, cache=FALSE}
 ##skip all of these steps and create an isdb file for all of the MAR region.
 #df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
-isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
+#isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
 #ISDBCatch <-  SelectISDB_fn(AquaSiteName, PEZversion, minYear)
-isdb_intersect <- st_intersection(isdb_shp,PEZ_poly_st)
-isdb_sites<-data.frame(longitude=isdb_intersect$LONGITUDE, latitude=isdb_intersect$LATITUDE)
+wd <- getwd() # store main project directory
+  data.dir = "../../../Data/mar.wrangling"  # location of ISDB datafiles
+  dsn <- "../../../Data/Zones/SearchPEZpolygons"
+
+  # Import the ISDB tables
+  get_data('isdb', data.dir=data.dir)
+  
+  #ISSETPROFILE_WIDE corrections 
+  set2<-ISSETPROFILE_WIDE %>%
+    mutate(DATE_TIME1 = na_if(DATE_TIME1, "9999-01-01 AST"))
+  set2<-set2 %>%
+    mutate(DATE_TIME2 = na_if(DATE_TIME2, "9999-01-01 AST"))
+  set2<-set2 %>%
+    mutate(DATE_TIME3 = na_if(DATE_TIME3, "9999-01-01 AST"))
+  set2<-set2 %>%
+    mutate(DATE_TIME4 = na_if(DATE_TIME4, "9999-01-01 AST"))
+  set2$DATE_TIME1[is.na(set2$DATE_TIME1)] <- set2$DATE_TIME2[is.na(set2$DATE_TIME1)]         
+  set2$DATE_TIME4[is.na(set2$DATE_TIME4)] <- set2$DATE_TIME3[is.na(set2$DATE_TIME4)]         
+  
+  set2$LAT1[is.na(set2$LAT1)] <- set2$LAT2[is.na(set2$LAT1)]  
+  set2$LONG1[is.na(set2$LONG1)] <- set2$LONG2[is.na(set2$LONG1)]
+  
+  set2$LAT4[is.na(set2$LAT4)] <- set2$LAT3[is.na(set2$LAT4)]  
+  set2$LONG4[is.na(set2$LONG4)] <- set2$LONG3[is.na(set2$LONG4)]
+  
+  set2$YEAR<-str_sub(set2$DATE_TIME1, start=1, end=4)
+  set2<- set2 %>% rename(LATITUDE=LAT1)
+  set2<- set2 %>% rename(LONGITUDE=LONG1)
+  set3 <-  clip_by_poly(df = set2,
+                        lat.field = "LATITUDE",
+                        lon.field = "LONGITUDE",
+                        clip.poly = PEZ_poly)
+  ISSETPROFILE_WIDE <- set3[set3$YEAR >= minYear,]
+  
+  # limit by year
+  self_filter(keep_nullsets = FALSE,quiet = TRUE)
+  dsn <- "C:/Temp"
+  setwd(dsn)
+  save_data(db='isdb')  # this creates both a csv and a shp
+  # of the clipped data.  Import the shp as an sf object and 
+  # pass back to main script as ISDB_INTERSECT
+
+    # read in the newly created ISDB shapefile
+  # as an sf object.
+
+  files <- list.files(dsn,".shp")
+  isdb_shp <- files[grep("isdb_",files)] # get shapefile name
+  isdb_shp <- substr(isdb_shp,1,nchar(isdb_shp)-4) # remove '.shp' extension
+
+  isdb_sf <- st_read(dsn, layer = isdb_shp, quiet=TRUE)
+  # remove all files created by save_data() (shapefile and CSV)
+  fl <- list.files(dsn,isdb_shp)
+  for(i in 1:length(fl)) {
+    file.remove(fl[i])
+  }  
+  setwd(wd) #revert to original working directory
+
+isdb_intersect <- st_intersection(isdb_sf,PEZ_poly_st)
+isdb_sites<-data.frame(longitude=isdb_intersect$LONGI, latitude=isdb_intersect$LATIT)
 ```
 
 ```{r, include=FALSE, cache=FALSE}
 isdb_freq <- aggregate(
-      x = list(Records = isdb_intersect$SCIENTIFI1),
-      by = list(Species = isdb_intersect$SCIENTIFI1),
+      x = list(Records = isdb_intersect$SCIENTIFIC),
+      by = list(Species = isdb_intersect$SCIENTIFIC),
       length)
 isdb_freq <- isdb_freq[order(-isdb_freq$Records),]
 rownames(isdb_freq) <- c()
@@ -584,7 +641,7 @@ isdb_set_summary_table[1,2]<-Total_number_SAR_records_isdb
 
 ```{r}
 #table with scientific names of species and number of records
-isdb_poly_SAR_records<-isdb_intersect %>% select(SCIENTIFI1, COMMON) %>% filter (SCIENTIFI1 %in% listed_fish_invert_species$Scientific_Name_upper)
+isdb_poly_SAR_records<-isdb_intersect %>% select(SCIENTIFIC, COMMON) %>% filter (SCIENTIFIC %in% listed_fish_invert_species$Scientific_Name_upper)
 x<-as.numeric(nrow(isdb_poly_SAR_records))
 Report_isdb<-if(x < 1){
     "There are no records of Species at Risk in the Industry Survey Database (ISDB) for this polygon."
@@ -607,16 +664,53 @@ kable(isdb_record_table, align="l", caption="ISDB observation records of Species
 #### **MARFIS Search Results**
 ```{r, include=FALSE, cache=FALSE}
 #source("fn_Search_MARFIS_Data.r")
-marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
-marfis_intersect <- st_intersection(marfis_shp,PEZ_poly_st)
-#MARFISCatch <-  SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
+#marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
+
+#MARFISCatch <-SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
+wd <- getwd() # store main project directory
+  data.dir = "../../../Data/mar.wrangling"  # location of MARFIS datafiles
+  dsn <- "../../../Data/Zones/SearchPEZpolygons"
+
+  #Import the MARFIS tables
+  #This command did not work for me
+  #get_data('marfis', data.dir=data.dir)
+  #I developed these instead
+  filenames <- list.files(data.dir, pattern="MARFIS*", full.names=TRUE)
+  lapply(filenames,load,.GlobalEnv)
+    # limit data by MinYear and clip to PEZPoly
+  db='marfis'
+  PRO_SPC_INFO <-  clip_by_poly(df = PRO_SPC_INFO,
+                                lat.field = "LATITUDE",
+                                lon.field = "LONGITUDE",
+                                clip.poly = PEZ_poly)
+  # limit by year
+  PRO_SPC_INFO <- PRO_SPC_INFO[PRO_SPC_INFO$YEAR >= minYear,]
+  self_filter(keep_nullsets = FALSE,quiet = TRUE)
+  dsn <- "C:/Temp"
+  setwd(dsn)
+  save_data(db='marfis')  # this creates both a csv and a shp
+  # of the clipped data.  Import the shp as an sf object and 
+  # pass back to main script as MARFIS_INTERSECT
+    # read in the newly created MARFIS shapefile
+  # as an sf object.
+  files <- list.files(dsn,".shp")
+  marfis_shp <- files[grep("marfis_",files)] # get shapefile name
+  marfis_shp <- substr(marfis_shp,1,nchar(marfis_shp)-4) # remove '.shp' extension
+  marfis_sf <- st_read(dsn, layer = marfis_shp, quiet=TRUE)
+  # remove all files created by save_data() (shapefile and CSV)
+  fl <- list.files(dsn,marfis_shp)
+  for(i in 1:length(fl)) {
+    file.remove(fl[i])
+  }  
+  setwd(wd)
+marfis_intersect <- st_intersection(marfis_sf,PEZ_poly_st)
 marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
 ```
 
 ```{r, include=FALSE, cache=FALSE}
 marfis_freq <- aggregate(
-      x = list(Records = marfis_intersect$SPECIENAME),
-      by = list(Species = marfis_intersect$SPECIENAME),
+      x = list(Records = marfis_intersect$SPIES_N),
+      by = list(Species = marfis_intersect$SPIES_N),
       length)
 marfis_freq <- marfis_freq[order(-marfis_freq$Records),]
 rownames(marfis_freq) <- c()
@@ -641,7 +735,7 @@ marfis_record_summary_table[1,2]<-Total_number_SAR_records_marfis
 
 ```{r}
 #table with scientific names of species and number of records
-marfis_poly_SAR_records<-marfis_intersect %>% select(SPECIENAME) %>% filter (SPECIENAME %in% listed_fish_invert_species$Common_Name_upper)
+marfis_poly_SAR_records<-marfis_intersect %>% select(SPIES_N) %>% filter (SPIES_N %in% listed_fish_invert_species$Common_Name_upper)
 x<-as.numeric(nrow(marfis_poly_SAR_records))
 Report_isdb<-if(x < 1){
     "There are no records of Species at Risk in the Maritime Fishery Information System (MARFIS) for this polygon."
