@@ -13,26 +13,20 @@ output:
 ---
 
 ```{r Define Site, echo=FALSE, include=FALSE, cache=FALSE}
-#HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
-#output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
+
 rm(list=ls(all=TRUE))
 AquaSiteName <- "FarmersLedge"
 PEZversion <- "4748m"
-#make sure you delete all shp.xml files in the folder to be able to run this code
 minYear <- 2002
 cat(AquaSiteName)
 ```
 ```{r setup, echo=FALSE, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
-# library(Mar.datawrangling)
 library(knitr)
-library(kableExtra)
 library(rgdal)
 library(maps)
 library(lubridate)
-library(raster)
-library(RCurl)
-# library(basicPlotteR)
+
 ```
 ```{r source functions, echo=FALSE, include=FALSE, cache=FALSE}
 source("site_map.r")
@@ -41,8 +35,6 @@ source("filter_wsdb.r")
 ```
 
 ```{r Set up paths, echo=FALSE, include=FALSE, cache=FALSE}
-mspPath <- "../"
-data.dir = "../../../Data/mar.wrangling"
 dataPath <- file.path("../outputs",paste0(AquaSiteName,PEZversion))
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
@@ -69,12 +61,12 @@ site_map(PEZ_poly,site,land,40)
 ```{r read wsdb and filter SARA & COSEWIC cetacean spp, echo=FALSE, include=FALSE, cache=FALSE}
 wsdb <- read.csv(wsdbFile)
 wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
-#wsdb <- remove_landPoints(wsdb,land) # work in progress
+
 wsdb_filter <- filter_wsdb(wsdb)
 ```
 ```{r Fig 4 Whale Sightings Database, fig.height=8, fig.width=11}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-#par(mar = c(5.1, 4.1, 4.1, 2.1))
+
 site_map(PEZ_poly,site,land,5)
 plot_wsdb(PEZ_poly,wsdb_filter,5)
 ```
