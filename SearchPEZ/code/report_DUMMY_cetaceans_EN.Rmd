@@ -13,12 +13,15 @@ output:
 ---
 ```{r setup, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
+library(Mar.datawrangling)
+library(Mar.utils)
 library(knitr)
 library(kableExtra)
 library(rgdal)
 library(maps)
 library(lubridate)
 library(raster)
+library(RCurl)
 library(sf)
 library(stringr)
 library(ggplot2)
@@ -31,7 +34,6 @@ library(tidyverse)
 ```
 ```{r source functions, include=FALSE, cache=FALSE}
 # the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
-source("site_map.r")
 source("site_map_new_DUMMY.r")
 source("filter_wsdb.r")
 ```
@@ -77,12 +79,17 @@ MARSAR_sci_up <- listed_species$Scientific_Name_upper
 # **Search Results for Species at Risk**  
 
 ## **Cetacean Section**
-```{r Set up paths for Cetacean section, include=FALSE, cache=FALSE}
+```{r read wsdb, include=FALSE, cache=FALSE}
 wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
 wsdb <- read.csv(wsdbFile)
 wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
 ```
-#### **WSDB Search Results**
+#### **Whale Sightings Database (WSDB)**  
+Contact: XMARWhaleSightings@dfo-mpo.gc.ca  
+Last retrieved on: October 27 2020  
+Tier of confidence: **Low**  
+Search year:  
+
 ```{r read wsdb and filter SARA & COSEWIC cetacean spp, include=FALSE, cache=FALSE}
 wsdb_filter <- filter_wsdb(wsdb)
 wsdb_filter <- wsdb_filter %>% rename(Scientific_Name = SCIENTIFICNAME)
@@ -99,11 +106,11 @@ intersect_wsdb_df<-as.data.frame(cbind(Common_Name, Scientific_Name, row.names =
 
 #append columns from listed species 
 wsdb_table<-merge(intersect_wsdb_df, listed_species, by='Scientific_Name')
-wsdb_table2<-wsdb_table %>%
+wsdb_table2<-wsdb_table %>% 
   transmute(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
 wsdb_table3<- wsdb_table2 %>% rename(SARA_listing=Schedule.status,
                                      COSEWIC_listing=COSEWIC.status,
-                                     Wild_Species_listing=Wild_Species
+                                     Wild_Species_listing=Wild_Species 
                                      )
 Query_output_wsdb<-if(x < 1){
   "There are no records in the WSDB for this search area."
@@ -132,4 +139,3 @@ wsdb_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
 print(wsdb_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))
 
 ```
-
