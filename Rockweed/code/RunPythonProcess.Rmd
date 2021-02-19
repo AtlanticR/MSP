@@ -1,0 +1,19 @@
+---
+title: "Process NDVI images using ArcPy"
+#author: "Phil"
+#date: "February, 2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+This script runs a python script from within R using the reticulate package
+
+```{r setup, include=FALSE, echo=TRUE}
+## Call all the R packages needed 
+library(reticulate)
+py_run_file("Rockweed/code/TestPy_20210210.py")
+```
+
+
+## Success, check the folder for the .csv files!

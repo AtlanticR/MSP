@@ -102,8 +102,8 @@ arcpy.env.workspace = gdbWorkspace
 # Set processing extent environments
 arcpy.env.snapRaster = newRast
 
-outMask = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/Zones/ClippingMask.gdb/MARClippingMask"
-# outMask = "N:/MSP/Projects/Rockweed/Zones/ClippingMask.gdb/MARClippingMask"
+# outMask = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/Zones/ClippingMask.gdb/MARClippingMask"
+outMask = "N:/MSP/Projects/Rockweed/Zones/ClippingMask.gdb/MARClippingMask"
 
 # using the clipping Mask remove all values that fall under the mask
 start2 = time.time() #start timer
