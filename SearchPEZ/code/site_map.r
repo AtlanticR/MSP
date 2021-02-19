@@ -49,7 +49,7 @@ site_map <- function(studyArea,site,land,buf) {
   title(xlab="Longitude [deg]",ylab="Latitude [deg]")
   
   #watermark
-  watermark("For Internal Use Only", col="grey")
+  # watermark("For Internal Use Only", col="grey")
   #watermark(show = TRUE, lab = "DFO Internal Use Only")
   
 
