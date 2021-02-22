@@ -6,15 +6,16 @@ output:
   html_document:
     theme: paper
     toc: yes
+    fig_caption: yes
   pdf_document:
     toc: yes
   word_document:
     toc: yes
 ---
-```{r setup, include=FALSE, cache=FALSE}
+```{r load packages, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
 library(Mar.datawrangling)
-library(Mar.utils)
+#library(Mar.utils)
 library(knitr)
 library(kableExtra)
 library(rgdal)
@@ -36,6 +37,7 @@ library(tidyverse)
 #remotes::install_github("terminological/standard-print-output")
 library(standardPrintOutput)
 ```
+
 ```{r source functions, include=FALSE, cache=FALSE}
 # the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
 source("site_map.r")
@@ -52,7 +54,9 @@ source("leatherback.R")
 source("cetacean_priority_areas.R")
 source("Blue_Whale_habitat.R")
 source("fn_SearchRVData.r")
+source("fn_Search_ISDB_Data.r")
 source("fn_maps.r")
+source("fn_Search_MARFIS_Data.r")
 ```
 
 ```{r Define Site, include=FALSE, cache=FALSE}
@@ -64,7 +68,7 @@ AquaSiteName <- "FarmersLedge"
 PEZversion <- "4748m"
 UserComments <- "Example - First search effort for suitability of a site for a project planned for 2025. Project is expected to have positive/negative impacts on surrounding area. It is likely that some kind of monitoring will be required during operations. Make sure to follow up on all sections pertaining to a particular taxonomic group as this seems to be a concern of the stakeholders."
 #make sure you delete all shp.xml files in the folder to be able to run this code
-minYear <- 1970
+minYear <- 2002
 maxYear <- 2020
 ```
 
@@ -72,43 +76,49 @@ maxYear <- 2020
 
 ### **About this report**
 
-This reproducible report summarizes species that have been reported in specific areas drawing from databases available, both within and outside the Department. This report provides a general list of priority species (listed by SARA, COSEWIC and Wild Species) that have been reported in a given user defined area. This report is for internal DFO use only. No maps, layers, or data that violate the rule of 5 will be shared outside of the department. 
+This report streamlines the process of generating science information and advice required to ultimately support a variety of cross-sectoral departmental assessments, regulatory reviews, and reporting activities. It is intended to increase reporting efficiency and facilitate the availability of species information and occurrence data in a reproducible and transparent manner. This reporting tool was developed to summarize data and should not be viewed as a data developing tool.
+Once the search area has been defined, users are presented with several options, including which search results to include in the report. The current release of the reproducible report focuses on species at risk that have been listed by the Species at Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species listings. Recognizing the importance of considering an ecosystem approach, users can also include additional information for other species (e.g., commercial, recreational, ecologically significant) and ecosystem components (e.g., habitat) in the report. Indeed, many of the programs under DFO’s mandate to sustainably manage fisheries and aquaculture, ensure that Canada’s oceans and other aquatic ecosystems are protected from negative impacts, and protect the environment when emergencies arise, could benefit from this additional section. Comprehensive reports are divided into the following sections:  
 
-**Species listings reported in this section:**
+Search results for species listed by the Species At Risk Act, assessed by COSEWIC, and/or Wild Species:  
+1) Information from National Aquatic Species At Risk Program,  
+2) Fish and Invertebrates,  
+3) Cetaceans.   	
 
-*SARA* - The Species at Risk Act (SARA) was proclaimed in June 2003, and is one part of a three part Government of Canada strategy for the protection of wildlife species at risk. This three part strategy also includes commitments under the Accord for the Protection of Species at Risk and activities under the Habitat Stewardship Program for Species at Risk. The purposes of SARA are to prevent Canadian indigenous species, subspecies, and distinct populations from becoming extirpated or extinct, to provide for the recovery of endangered or threatened species, and encourage the management of other species to prevent them from becoming at risk. It applies to all federal lands in Canada; all wildlife species listed as being at risk; and their critical habitat.
-For more information on SARA visit <https://www.canada.ca/en/environment-climate-change/services/species-risk-public-registry.html> 
+Search results for additional species and information (optional):  
+1)Species not listed by the Species at Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species,  
+2) Habitat information,  
+3) Designated areas.  
+ 
+### **How to use this report?**  
+Each query of the reproducible report tool begins with the submission of a search polygon which consists of a central location (or path) representing the spatial dimensions of a proposed project/activity surrounded by an exposure zone or buffer area. Each of the maps produced in the report show wildlife information relative to the search polygon (highlighted in yellow and surrounded by a buffer area in blue).  
+The resulting search results are separated into the sections defined above. Within these sections, the data sources are defined along with dates of access, URLs and contact information. For each data source, the report also provides caveats and sources of uncertainty as well as a ranking in the Tiers of Data Quality (defined below). Where applicable summary tables and figures are provided. Reports should be circulated to appropriate staff listed in the contact information provided for each data source to verify and supplement the information generated to support science advice processes. Users can request additional information, and access to data and metadata directly to each contact.  
 
-*COSEWIC* - The Committee on the Status of Endangered Wildlife in Canada (COSEWIC) is an independent advisory panel to the Minister of Environment and Climate Change Canada that meets twice a year to assess the status of wildlife species at risk of extinction. Members are wildlife biology experts from academia, government, non-governmental organizations and the private sector responsible for designating wildlife species in danger of disappearing from Canada. COSEWIC determines the national status of wild Canadian species, subspecies, varieties or other designatable units that are suspected of being at risk of extinction or extirpation. COSEWIC uses a process based on science and Aboriginal or community knowledge to assess wildlife species at risk. All native mammals, birds, reptiles, amphibians, fish, arthropods, molluscs, vascular plants, mosses and lichens are included in COSEWIC's current mandate.
-For more information on COSEWIC visit <https://www.cosewic.ca/index.php/en-ca/>
+#### **Important Disclaimers**  
+ - This report is for internal DFO use only. No maps, layers, or data that violate the rule of 5 will be shared outside of the department.  
+ - This report is not a data developing or analytical tool.  
+ - The absence of a species in this report should be interpreted as an absence of reporting, not as an absence of the species in the area.  
+ - The focus of this report is on species presence and not on associated numbers, frequency, or catch information.  
+ - Coastal and offshore areas of the Scotian Shelf bioregion are generally not adequately sampled, and hence information on these space and time scales is generally not contained within the various data sources available to the DFO, including the surveys referred to in this document. Therefore, the exact distribution of some species featured in the report may remain uncertain.  
 
-*Wild species* - Every five years the National General Status Working Group (NGSWG), which includes representatives from all provincial and territorial governments in Canada, and from the federal government, publishes a general report on the status of wildlife species in Canada. These reports are meant to inform Canadians about the status of species in the country, and to help prevent species in Canada from becoming extinct as a consequence of human activity.
-For more information about Wild Species reports visit <https://www.wildspecies.ca/home>
+### **Tiers of Data Quality**
+Below is a framework by which users can assess the “quality” of the different data sources provided throughout the report.
 
-### **How to use this report**
-
-Absence of a species in this report should be interpreted as an absence of reporting, not as an absence of the species in the area. The focus of this report is on species presence and not on associated numbers, frequency, or catch information.The aquaculture Science group led by Fred Page works with the Aquaculture site information, including current meter data, to calculate the Potential Exposure Zones (PEZ) of the aquaculture inputs (depositional feed/feces, advective/dispersive fish health treatments, etc.). This PEZ polygon is then used in this document to search regional databases (2002 - 2018) and summarize species that have been recorded. This information is used to determine if other, more site-specific, information is available on species presence for PEZ as a complement to the information provided by the proponent. Species lists generated in this synthesis is subsequently circulated to units in Maritimes Science to verify and compliment the information provided (e.g. spatial and temporal presence/absence of species in the area). 
-
-### **Intent of this report**
-
-The intent of this report for all users is to prompt a circulation of the species list generated in this synthesis to appropriate DFO units and sectors to verify and supplement the information provided (e.g. reported spatial and temporal presence/absence of species in the area).
-
-### **Resources and Sources of Uncertainty**
-
-Coastal and offshore areas of the Scotian Shelf bioregion are generally not adequately sampled, and hence information on these space and time scales is generally not contained within the various data sources available to DFO, including the surveys referred to in this document. Therefore, there is uncertainty as to the exact distribution of species in the search.
-
-### **Tiers of confidence in data sources**
-
-There are various data sources featured in this report, including federal and provincial agencies, non-proft organizations and citizen groups. Below is a framework by which users can assess the confidence with which they can assess the different data sources provided throughout the report.
 ```{r echo=FALSE, results='asis'}
-Tier_table<-matrix(c("Records available from systematic surveys, with qualified observers/personnel.", "This record has high certainty, and it comes from a reliable source (not necessarily DFO).", "RV survey, NARWC", "Records available from a mix of opportunistic and systematic surveys, quality control has been applied, although additional work is required to verify information.", "This record has medium certainty, and it comes from a reliable source. Use with caution.", "ISDB, MARFIS", "Primarily opportunistic surveys, or results of invalidated models. Data quality protocols still required, quality control not standardized or explored just yet in this report.", "Use with caution. Use at your own discretion, preferably only if data in high/medium tiers validates information from this tier. Very high uncertainty. ", "WSDB, Priority area for cetaceans"), ncol=3,byrow=TRUE)
-colnames(Tier_table)<-c("Description", "Usage recommendations", "Examples")
-rownames(Tier_table)<-c("High Confidence", "Medium Confidence", "Low Confidence")
-Tiers<-as.table(Tier_table)
+Tier_table<-data.frame(Tier="", Description = "", Usage_Recommendations = "")
+Tier_table[1,1]<-"High quality"
+Tier_table[2,1]<-"Medium quality"
+Tier_table[3,1]<-"Low quality"
+Tier_table[1,2]<-"Records, products and/or outputs available from systematic surveys, and/or with qualified observers/personnel, including records from peer-review processes. These records include data products available in the Species At Risk GIS tool, which provides the authoritative source of information for Species at Risk."
+Tier_table[1,3]<-"This record has high quality, and it comes from reliable sources."
+Tier_table[2,2]<-"Records, products and/or outputs available from a mix of opportunistic and systematic surveys, quality control has been applied, although additional work is required to verify information."
+Tier_table[2,3]<-"Use with caution and where possible, validate inference with data assigned to the high quality tier."
+Tier_table[3,2]<-"Primarily opportunistic surveys that have not been through a quality control process, or results of invalidated models. Data quality protocols and validation are required."
+Tier_table[3,3]<-"Use only if data in high/medium tiers confirms or validates information from this tier. Very high uncertainty."
+Tier_table<- Tier_table %>% rename("Usage Recommendations"=Usage_Recommendations)
 ```
 ```{r}
-kable(Tiers, align="l") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+kable(Tier_table, align="l", caption = "Tiers of quality used throughout this report to qualify data confidence.") %>%
+  kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
 # **Search area**
@@ -118,12 +128,12 @@ kable(Tiers, align="l") %>%
 cat(AquaSiteName)
 ```
 
-**Potential Exposure Zone (PEZ) radius: **
+**Buffer area: **
 ```{r echo=FALSE, results='asis'}
 cat(PEZversion)
 ```
 
-**PEZ features/comments from user: **
+**Search area features/comments from user: **
 ```{r echo=FALSE, results='asis'}
 cat(UserComments)
 ```
@@ -137,31 +147,32 @@ dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 site_sf <- st_as_sf(site)
-#wsdbFile <- file.path("../inputs","WSDB_GLazin_AllSpecies_2018.csv")
-wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
-narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
-```
-```{r read baseline data for maps, include=FALSE, cache=FALSE}
-landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
-land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
-land_sf <- st_as_sf(land)
-```
-```{r Define PEZ!, include=FALSE, cache=FALSE}
+#landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
+#land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
+#land_sf <- st_as_sf(land)
+land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
 #PEZ_poly_st<-st_read(../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp", quiet=TRUE)
 PEZ_poly_st<-st_as_sf(PEZ_poly)
+#load data sets that are used in multiple sections
+obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
+obis<-subset(obis,year>minYear,year<maxYear)
+#FFHPP_shp <- st_read("../../../Data/Infrastructure/FFHPP_Referrals/FFHPP_Referrals_0620.shp", quiet=TRUE)
 ```
+
 ```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, include=FALSE, cache=FALSE}
 
 listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
-MARSAR_com <- listed_species$Common_Name
-MARSAR_com_up <- listed_species$Common_Name_upper
-MARSAR_sci <- listed_species$Scientific_Name
-MARSAR_sci_up <- listed_species$Scientific_Name_upper
+cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
+                            "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
+other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
+listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
+listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
+listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
 ```
 
-```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ) polygon (blue) used to search regional databases and summarize recorded species."}
+```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the user-defined search area consisting of the location of the proposed project/activity highlighted in yellow, surrounded by an exposure zone or buffer area in blue. The buffer area is used to query information and automatically generate this report."}
 site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,40)
 ```

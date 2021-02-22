@@ -107,6 +107,8 @@ listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(
 
 ## **Cetaceans**
 
+This section...
+
 ```{r Set up paths for Cetacean section, include=FALSE, cache=FALSE}
 #read narwc file
 narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
@@ -147,13 +149,20 @@ Blue_4326 <- st_transform(Blue_32198, crs = 4326)
 Blue_4326b<-setNames(Blue_4326, replace(names(Blue_4326), names(Blue_4326) == 'activité', 'activite'))
 ```
 
-This section summarizes information available from visual sightings and modeled predictions of suitable habitat to identify cetacean species in the search area. While numerous species have been identified in this region, only those listed by SARA, or assessed by COSEWIC and Wild species listings are summarized. Outputs include results from cetacean surveys conducted over previous years in both Canadian and American waters in the northwest Atlantic. However, the majority of cetacean sightings for the Scotian Shelf bioregion are opportunistic in nature, and comprehensive systematic surveys on the occurrence or distribution of cetaceans across the entire region are very limited. Results in this report can provide some information on distribution, but cannot be interpreted as comprehensive indices of abundance as they often do not cover the entirety of a species’ range. A future comprehensive analysis of any associated observational effort for these data is necessary to fully characterize cetacean distribution in the area over temporal and spatial scales. Consequently, outputs of this report indicate species presence only, and an absence of a species in an area should be interpreted as an absence of reporting not as an absence of the species in the area.
+#### **Whale Sightings Database (WSDB)**  
+Contact: <XMARWhaleSightings@dfo-mpo.gc.ca>  
+URL: <http://www.inter.dfo-mpo.gc.ca/Maritimes/SABS/popec/sara/Database>  
+Last retrieved on: October 27 2020  
+Quality Tier: **Low**  
+Search year: 2002-2020  
+Security level: none  
 
-This section does not endeavor to describe every source of information provided below. Please refer to the publications listed below for additional information and please contact Angelia Vanderlaan (North Atlantic right whales) and Hilary Moors-Murphy (beaked and other baleen whales) to consider additional sources of information (e.g. acoustic detections) to support species-specific conclusions about habitat preferences and possible or known occurrence near and within the search area. This report does not provide the best available information for North Atlantic right whales; please refer to WHALEMAP for the latest North Atlantic right whale observations: https://whalemap.ocean.dal.ca/ Note that WhaleMap (Johnson 2018) reports primarily presence-only datasets and only reflects results for areas that are being monitored.
-
-### **Sightings**
-
-Data products used in this section: 
+#### **The Whitehead Lab, Dalhousie University**
+URL: <https://whiteheadlab.weebly.com/contact.html>  
+Last retrieved on: January 12 2021  
+Quality Tier: **High**   
+Search year: 2002-2019  
+Security level: none 
 
 #### **North Atlantic Right Whale Consortium (NARWC) Database**  
 Contact: <hpettis@neaq.org>  
@@ -163,72 +172,13 @@ Quality Tier: **High**
 Search year: 2000-2019 
 Security level: none
 
-The following information is summarized in the NARWC sightings database site <https://www.narwc.org/sightings-database.html>. The Sightings database contains records of thousands of sightings of right whales in the North Atlantic Ocean, as well as sightings of many other species of whales, dolphins, sea turtles, seals, and large fishes. It also contains survey data associated with many of these sightings that allow quantification of associated survey effort (note that the database does not include interpreted effort data as such). The sightings contained in the database come from a wide variety of contributors both Consortium members and others. Each record in the Sightings database represents a group of whales (i.e., a group of 3 whales has a single record just as a group of 1 does) and there may or may not be photographic proof of a given right whale sighting. The Sightings and Identification databases are periodically cross-referenced, so that individual identification data from the latter can be linked to sighting data from the former. For that reason, all sightings in the Identification database are eventually included in the Sightings database (with an approximate 1-year lag). Although the animals' identifications are not included in the Sightings database, the two databases can be linked on common fields. This review article of the Sightings Database provides potential users with important information.  
-
-#### **The Whitehead Lab, Dalhousie University**
-URL: <https://whiteheadlab.weebly.com/contact.html>  
-Last retrieved on: January 12 2021  
-Quality Tier: **High**   
-Search year: 2002-2019  
-Security level: none  
-  
-The following information is summarized in this site (https://whiteheadlab.weebly.com/). The Whitehead Lab is based out of the Dalhousie University Department of Biology (Halifax, Nova Scotia). Since its inception in 1987, the Whitehead Lab has been home to over 75 postdoctoral, Ph.D., M.Sc., and undergraduate students. They primarily conduct conservation-based research on the behavior, ecology, and population biology of cetacean species (primarily, sperm whales, northern bottlenose whales, and long-finned pilot whales). The following is extracted from Whitehead (2013): data in this section is from incidental sightings of cetaceans during studies of northern bottlenose whales and, to a lesser extent, sperm whales in the northwest Atlantic, primarily in the Gully MPA, and adjacent canyons along the edge of the eastern Scotian Shelf (the Shortland Canyon and the Haldimand Canyon). Data collection is carried out in a comparable manner, and from two similar research vessels: a 10 m auxiliary sailing vessel, or a 13 m auxiliary sailing vessel. All groups of cetaceans sighted are recorded, together with time of sighting, species (where ascertainable), and position. As definitions of group size changed over the course of the study, sightings are very inaccurate and biased by factors such as the behaviour of the animals and the weather. Consequently, Whitehead (2013) only used group sighting data, rather than numbers of individuals. The Whitehead Lab provides cetacean sightings to the Whale Sightings Database (WSDB) at DFO. However, due to its high tier of confidence, this database is summarized independently in this report.
-
-#### **Whale Sightings Database (WSDB)**  
-Contact: <XMARWhaleSightings@dfo-mpo.gc.ca>  
-URL: <http://www.inter.dfo-mpo.gc.ca/Maritimes/SABS/popec/sara/Database>  
-Last retrieved on: October 27 2020  
-Quality Tier: **Low**  
-Search year: 2002-2020  
-Security level: none  
-
-The Marine Mammal and Pelagic Animals or Whale Sighting Database (WSDB) was implemented in 2002 by the Department of Fisheries and Oceans (DFO) to provide a central repository for opportunistic sightings of marine animals, especially cetaceans, and to improve accessibility to data from a variety of sources, including some data from marine mammal surveys and research activities conducted in the Bay of Fundy, on the Scotian Shelf (MacDonald et al. 2017), and more recently in the Gulf of St. Lawrence. Most sightings are collected on an opportunistic basis and observations come from individuals with a wide range of expertise and experience in marine mammal identification. Most data is gathered from platforms of opportunity that were vessel-based. For more information see <https://waves-vagues.dfo-mpo.gc.ca/Library/40642999.pdf>.
-
-Note the following details about the data provided: 
--sightings with Behaviour coded as “dead”, “killed” or “stranded”  are not included.
--sightings with Animal Condition coded as "dead" are not included.
--sightings with Gear Impact recorded coded as  "Entangled - dead on gear" or "dead - not entangled"  are not included.
-
-Please note the following important disclaimers for WSDB:
-- Sighting effort has not been quantified (i.e., the data cannot be used to estimate true species density or abundance for an area).
-- The sightings data are biased by when and where activities occur. Species absence in an area should be interpreted as an absence of reporting not as an absence of the species in the area.
-- The sighting data have not been completely error-checked and may contain duplicate records.
-- The quality of some of the sighting data is unknown. Most sightings are collected on an opportunistic basis and observations come from individuals with a wide range of expertise and experience in marine mammal identification. 
-- There is significant uncertainty in the number of animals sighted per detection due to the challenges associated with quantifying the number of individuals observed in a group.
-- The data represent an amalgamation of sightings across years and seasons. The sightings data are biased by when and where activities were conducted, thus, the sighting effort is not consistent across months, years or, areas. Therefore, apparent differences in seasonal or annual distribution  patterns in the sightings data should not be considered definitive. Unfavorable weather and reduced visual effort in winter, spring, and autumn likely account for the fewer sighting records in these seasons compared to summer.
-- Many sightings which could not be identified to species are listed to the lowest taxonomic group possible.
-
-
-#### **Ocean Biodiversity Information System (OBIS)**  
+#### **Ocean Biodiversity Information System (OBIS) [for cetaceans]**  
 Contact: <helpdesk@obis.org>  
 URL: <https://obis.org/>  
 Last retrieved on: January 27 2021 from OBIS  
 Quality Tier: **Medium**  
 Search year: xxxxx  
 Security level: none  
-
-```{r echo=FALSE, results='asis'}
-cat("Time frame:", "insert results from min and max year search function for this db.")
-```
-
-OBIS is a global open-access data and information clearing-house on marine biodiversity for science, conservation and sustainable development. Their vision is to build and maintain a global alliance that collaborates with scientific communities to facilitate free and open access to, and application of, biodiversity and biogeographic data and information on marine life. OBIS search was conducted to find additional relevant records for listed by SARA, or assessed by COSEWIC and Wild species listing. A first level QC process was performed by removing duplicate reports that are also present in WSDB. Subsequent versions of this report will aim at expanding our QC efforts for this source of information. 
-
-#### **CWS/Environment and Climate Change Canada**
-Contact:  
-Tier of confidence: **Low**  
-```{r echo=FALSE, results='asis'}
-cat("Time frame:", "insert results from min and max year search function for this db.")
-```
-
-#### **iNaturalist**
-Contact:  
-Quality Tier: **Low**  
-```{r echo=FALSE, results='asis'}
-cat("Time frame:", "insert results from min and max year search function for this db.")
-```
-All data has been filtered by quality grade equal to "research".
-For more information about iNaturalist, visit <https://www.inaturalist.org/>
-
 
 ### **Species Distribution Models (SDM): Priority Areas to Enhance Monitoring of Cetaceans**  
 
@@ -238,10 +188,6 @@ Last retrieved on: April 1 2020 from Open Data <https://open.canada.ca/data/en/d
 Quality Tier: **Medium**  
 Search year: 1975-2015 
 Security level: none.
-
-The following text is verbatim from the Open data record. Species Distribution Models (SDM) were used to predict and identify priority areas for enhanced monitoring of cetaceans in eastern Canadian waters off Nova Scotia, Newfoundland and Labrador. This data set represents information presented in Gomez et al. (2020) and includes sighting records and SDM outputs for ten cetacean species with sufficient records (n > 450) and sightings only for an additional six species. For more information about sighting records including which were included in each SDM, please see Gomez et al. 2020. 
-This study used a compilation of aerial- and vessel-based cetacean sightings data from 1975-2015 assembled in Gomez et al. (2017) from a variety of sources. Note that sightings data from many of these sources are not effort-corrected and apparent distribution patterns based on these opportunistic sightings data are biased by when and where survey activities were conducted. Unfavorable weather and reduced visual effort in winter, spring, and autumn likely account for the fewer sighting records in these seasons compared to summer. The dataset does not include dead animal, stranding, entanglement or entrapment data. While some of the databases include records obtained during the whaling period (catches or sightings recorded prior to 1975), for all analyses/modelling conducted in this study, only sightings of free-swimming whales obtained during the post-whaling period (1975-2015) were used. Quality control checks included discarding all records outside of our study area and removing redundant records (identical species, day, month, latitude and longitude).The data used do not reflect any updates or corrections to the databases that have occurred since the data were compiled in 2016. Sightings are not available for download here, please contact the original data sources listed below to obtain raw sightings data. 
-This study represents an important initiative in eastern Canada to highlight key areas for cetacean monitoring in waters off Nova Scotia, Newfoundland and Labrador. Habitats with high suitability are interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts. These model outputs used cetacean sightings from several decades and dynamic environmental predictors that used seasonal averages across multiple years. As proxies for prey availability, five predictor environmental variables were selected for the SDM: ocean depth, compound topographic index, sea surface temperature, areas of persistently high chlorophyll-a concentration, and regional chlorophyll-a magnitude. See Gomez et al. (2020) for further details on modelling methods. Persistent patterns over time (between 1975-2015) are the main patterns expected to be captured by these models. Further, SDM results presented here are not the same as species density maps; rather, they portray predicted suitable habitat based on environmental characteristics and sightings data that were not always derived from effort-based surveys. Consequently, the use of these models in marine spatial planning processes should be accompanied by complimentary approaches such as acoustic and visual validation of the SDM results as well as additional monitoring and modeling efforts. Please refer to Gomez et al. (2020) for examples on how to best use these data outputs. Future efforts will focus on using more recent data and improving these models to facilitate the inclusion of cetaceans in marine spatial planning processes that are currently underway. 
 
 ### **Important habitat: combined products used to inform critical habitat designation**  
 
@@ -253,8 +199,6 @@ URL: <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>
 Last retrieved on: October 30 2020 from Open Data <https://open.canada.ca/data/en/dataset/8fafd919-fcbe-43a3-a911-3d9461273441>  
 Quality Tier: **High**  
 Security level: none.  
-
-The following text is verbatim from the Open Data record. The distribution of blue whales (Balaenoptera musculus) is mainly dictated by key environmental drivers such as food requirements and availability, sea ice, and sometimes predation risks. It is common to find blue whales in upwelling regions, depending on topography (banks, slopes and shallow water) and thermal fronts, which are actually related to krill aggregations. Blue whales feed almost exclusively on euphausiids (krill) and have the highest absolute metabolic demands. A shapefile on the distribution of significant perennial areas of krill aggregation is available (DFO-ECCC). Important habitats for blue whales have therefore been identified by combining information on their distribution with krill aggregation areas (observed or predicted). In the waters of the St. Lawrence estuary, the presence of blue whales for foraging, feeding and migration has been observed throughout the year, with increased activity during the summer. It has been observed that feeding rates of blue whales are higher in shallow waters and during nocturnal periods (krill at surface), confirming that foraging near the surface is beneficial when possible. Their presence, their great fidelity to this important habitat for their activities and their behavior in the waters of the St. Lawrence in all seasons, show that blue whales are vulnerable to oil spills. They are vulnerable, not only indirectly through the reduction of prey and loss of suitable habitat, but also by their behavior requiring active activity on the surface and near the coast. The data used to create the polygons using the bounding box method comes from multiple sources of information: hunting records, photo-identification, coastal, airborne and boat surveys, passive acoustic monitoring, radio and satellite telemetry , ice trapping, anecdotal observations and modeling (please see a list of all sources of information used in Lesaqe et al. 2018 and the open data record <https://open.canada.ca/data/en/dataset/8fafd919-fcbe-43a3-a911-3d9461273441>).
 
 #### **Northern Bottlenose Whale Important Habitat**  
 Northern bottlenose whales important habitat in inter-canyon areas on the eastern Scotian Shelf  
@@ -440,153 +384,6 @@ if(x > 1){OBIS_query_output_table}
 if(x > 1){
   plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
 }
-```
-
-#### **CWS/ECCC cetacean search results**
-```{r, include=FALSE, cache=FALSE}
-#Select columns of interest from OBIS file
-cws_edit<-cws %>% 
-  transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
-cws_plot_locations<-st_as_sf(cws_edit, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
-intersect_cws <- st_intersection(cws_plot_locations,PEZ_poly_st)
-x<-as.numeric(nrow(intersect_cws))
-
-#summarize individual counts
-#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
-
-#append columns from listed species
-intersect_cws<- intersect_cws %>% rename(Scientific_Name=scientificName)
-
-cws_table<-merge(intersect_cws, listed_cetacean_species, by='Scientific_Name')
-cws_table2<-cws_table %>% 
-  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
-cws_table3<- cws_table2 %>% rename("SARA status"=Schedule.status,
-                                     "COSEWIC listing"=COSEWIC.status,
-                                     "Wild Species listing"=Wild_Species,
-                                                    "Scientific Name"=Scientific_Name,
-                                                    "Common Name"=Common_Name 
-                                     )
-cws_table3$geometry<-NULL
-cws_table4<-unique(cws_table3)
-
-Query_output_cws<-if(x < 1){
-  "There are no records of priority specues in the CWS/ECCC database for the provided search area."
-} else {
-  "The CWS/ECCC database contains records of priority species in the provided search area."
-}
-Query_output_cws2<-noquote(Query_output_cws)
-writeLines(c(Query_output_cws2), sep = "\n")
-```
-
-```{r echo=FALSE, results='asis'}
-CWS_query_output_table<-if(x < 1){
-  ""
-} else {
-  kable(cws_table4, row.names = F, caption="Priority species with observations contained in the CWS_ECCC database within the search polygon area.") %>%
-    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-}
-CWS_query_output_table
-```
-
-```{r Fig 5 CWS_ECCC records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with CWS_ECCC records shown as black points."}
-plot_cws(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_cws,2)
-```
-
-#### **iNaturalist Cetacean search results**
-```{r, include=FALSE, cache=FALSE}
-#Select columns of interest from OBIS file
-inat_edit<-inat %>% 
-  transmute(scientific_name, datetime, latitude, longitude, common_name, url)
-inat_plot_locations<-st_as_sf(inat_edit, coords = c("longitude", "latitude"), crs = 4326)
-intersect_inat <- st_intersection(inat_plot_locations,PEZ_poly_st)
-x<-as.numeric(nrow(intersect_inat))
-
-#summarize individual counts
-#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
-
-#append columns from listed species
-intersect_inat<- intersect_inat %>% rename(Scientific_Name=scientific_name)
-inat_table<-merge(intersect_inat, listed_cetacean_species, by='Scientific_Name')
-inat_table2<-inat_table %>% 
-  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
-inat_table3<- inat_table2 %>% rename("SARA status"=Schedule.status,
-                                     "COSEWIC listing"=COSEWIC.status,
-                                     "Wild Species listing"=Wild_Species,
-                                                    "Scientific Name"=Scientific_Name,
-                                                    "Common Name"=Common_Name)
-inat_table3$geometry<-NULL
-inat_table4<-unique(inat_table3)
-
-Query_output_inat<-if(x < 1){
-  "There are no records of priority specues in the iNaturalist database for the provided search area."
-} else {
-  "The iNaturalist database contains records of priority species in the provided search area."
-}
-Query_output_inat2<-noquote(Query_output_inat)
-writeLines(c(Query_output_inat2), sep = "\n")
-```
-
-```{r echo=FALSE, results='asis'}
-INAT_query_output_table<-if(x < 1){
-  ""
-} else {
-  kable(inat_table4, row.names = F, caption="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points.") %>%
-    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-}
-INAT_query_output_table
-```
-
-```{r Fig 5 INAT records in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with iNaturalist records shown as black points."}
-plot_inat(PEZ_poly,PEZ_poly_st,site_sf,land_sf,inat_table,2)
-```
-
-#### **GBIF Cetacean search results**
-```{r, include=FALSE, cache=FALSE}
-#Select columns of interest from OBIS file
-gbif_sf<-st_as_sf(gbif, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
-intersect_gbif <- st_intersection(gbif_sf,PEZ_poly_st)
-x<-as.numeric(nrow(intersect_gbif))
-
-#summarize individual counts
-#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
-
-#append columns from listed species
-intersect_gbif<- intersect_gbif %>% rename(Scientific_Name=species)
-gbif_table<-merge(intersect_gbif, listed_cetacean_species, by='Scientific_Name')
-x<-as.numeric(nrow(gbif_table))
-gbif_table2<-gbif_table %>% 
-  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
-gbif_table3<- gbif_table2 %>% rename("SARA status"=Schedule.status,
-                                     "COSEWIC listing"=COSEWIC.status,
-                                     "Wild Species listing"=Wild_Species,
-                                     "Scientific Name"=Scientific_Name,
-                                     "Common Name"=Common_Name
-                                     )
-gbif_table3$geometry<-NULL
-gbif_table4<-unique(gbif_table3)
-
-Query_output_gbif<-if(x < 1){
-  "There are no records of species at risk in the GBIF database for the provided search area."
-} else {
-  "The GBIF database contains records of species at risk in the provided search area."
-}
-Query_output_gbif2<-noquote(Query_output_gbif)
-writeLines(c(Query_output_gbif2), sep = "\n")
-```
-
-```{r echo=FALSE, results='asis'}
-GBIF_query_output_table<-if(x < 1){
-  ""
-} else {
-  kable(gbif_table4, row.names = F, caption="Map showing the defined Potential Exposure Zone (PEZ; blue) and proposed project polygon (yellow) with GBIF records shown as black points.") %>%
-    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-}
-
-if(x > 1){GBIF_query_output_table}
-```
-
-```{r Fig 5 OBIS records for cetacean species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents GBIF records within the search area where cetacean Species at Risk may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections)."}
-if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```
 
 #### **Area-specific SDM cetacean search results**
