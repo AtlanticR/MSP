@@ -4,7 +4,7 @@ plot_crithab<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
   
   ggplot()+
     geom_sf(data=ClippedCritHab,fill="red",col="red")+
-    geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -28,7 +28,7 @@ plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
   
   ggplot()+
     geom_sf(data=ClippedCritHab,fill="red",col="black")+
-    geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -196,7 +196,7 @@ plot_leatherback<-function(leatherback_shp, PEZ_poly_st, land_layer) {
   
   ggplot()+
     geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
-    geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -339,7 +339,7 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   fin_whale_plot <- ggplot()+
     geom_sf(data=fin_whale_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_sf,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -354,7 +354,7 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   harbour_porpoise_plot <- ggplot()+
     geom_sf(data=harbour_porpoise_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_sf,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -369,7 +369,7 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   humpback_whale_plot <- ggplot()+
     geom_sf(data=humpback_whale_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_sf,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -384,7 +384,7 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   sei_whale_plot <- ggplot()+
     geom_sf(data=sei_whale_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_sf,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -410,7 +410,7 @@ plot_bw_hab <- function(Blue_4326, PEZ_poly_st, Landshp) {
 
 ggplot()+
 geom_sf(data=Blue_4326,fill="skyblue1",col="black")+
-geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
 geom_sf(data=Landshp,fill=c("grey90"), col="black")+
 annotation_scale(location="br")+
 theme_bw()+
@@ -421,6 +421,7 @@ labs(x=expression(paste("Longitude ",degree,"W",sep="")),
 watermark(show = TRUE, lab = "DFO Internal Use Only")
 
 }
+
 
 #Blue whale habitat zoom
 plot_bw_hab_zoom <- function(Blue_4326, PEZ_poly_st, Landshp) {
@@ -434,7 +435,7 @@ plot_bw_hab_zoom <- function(Blue_4326, PEZ_poly_st, Landshp) {
   
   ggplot()+
     geom_sf(data=Blue_4326,fill="skyblue1",col="black")+
-    geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=Landshp,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -452,7 +453,7 @@ plot_EBSA<-function(EBSA_shp, PEZ_poly_st, land_layer) {
   
   ggplot()+
     geom_sf(data=EBSA_shp,fill="plum1",col="black")+
-    geom_sf(data=PEZ_poly_st,fill=NA, col="blue", size=1)+
+    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+

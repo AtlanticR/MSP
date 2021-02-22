@@ -8,9 +8,9 @@ blue_whale_habitat_overlap <- function(Blue_Whale_shp, PEZ_poly_st) {
   intersect <- st_intersection(Blue_Whale_shp,PEZ_poly_st)
   x<-as.numeric(nrow(intersect))
   Query_output_crit<-if(x < 1){
-    "The provided polygon does not overlap with areas defined as important for Blue Whale feeding, foraging and migration"
+    "Search area overlaps with Blue Whale Important Habitat in the Western North Atlantic."
   } else {
-    "The provided polygon overlaps with areas defined as important for Blue Whale feeding, foraging and migration"
+    "Search area does not overlaps with Blue Whale Important Habitat in the Western North Atlantic."
   }
   
   Query_output_crit2<-noquote(Query_output_crit)
