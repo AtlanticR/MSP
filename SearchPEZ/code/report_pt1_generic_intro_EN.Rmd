@@ -14,41 +14,15 @@ output:
 ---
 ```{r load packages, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
-library(Mar.datawrangling)
-#library(Mar.utils)
-library(knitr)
-library(kableExtra)
-library(rgdal)
-library(maps)
-library(lubridate)
-library(raster)
-library(RCurl)
-library(sf)
-library(stringr)
-library(ggplot2)
-library(data.table)
-library(gridExtra)
-library(dplyr)
-library(stars)
-library(ggspatial)
-library(tidyverse)
-#These next two lines are necessary for the generation of the water mark on all plots.
-#install.packages("remotes")
-#remotes::install_github("terminological/standard-print-output")
-library(standardPrintOutput)
+library(easypackages)
+libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","raster","RCurl","sf","stringr","ggplot2","data.table","gridExtra","dplyr",
+          "stars","ggspatial","tidyverse","standardPrintOutput")
 ```
-
-```{r source functions, include=FALSE, cache=FALSE}
-# the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
+```{r load source functions, include=FALSE, cache=FALSE}
 source("site_map.r")
 source("site_map_new.r")
 source("filter_wsdb.r")
 source("filter_narwc_new.r")
-# ## Another option is to load directly from the web and read in using Rcurl
-#function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
-#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/plot_wsdb.r",
-#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
-#for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
 source("EBSA.R")
 source("leatherback.R")
 source("cetacean_priority_areas.R")
@@ -58,18 +32,31 @@ source("fn_Search_ISDB_Data.r")
 source("fn_maps.r")
 source("fn_Search_MARFIS_Data.r")
 ```
-
 ```{r Define Site, include=FALSE, cache=FALSE}
-#HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
-#output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
-#AquaSiteName <- "TestGully"
-#PEZversion <- "Polygon"
 AquaSiteName <- "FarmersLedge"
 PEZversion <- "4748m"
-UserComments <- "Example - First search effort for suitability of a site for a project planned for 2025. Project is expected to have positive/negative impacts on surrounding area. It is likely that some kind of monitoring will be required during operations. Make sure to follow up on all sections pertaining to a particular taxonomic group as this seems to be a concern of the stakeholders."
-#make sure you delete all shp.xml files in the folder to be able to run this code
 minYear <- 2002
-maxYear <- 2020
+```
+```{r set up paths, include=FALSE, cache=FALSE}
+mspPath <- "../"
+data.dir = "../../../Data/mar.wrangling"
+dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
+polyPath <- "../../../Data/Zones/SearchPEZpolygons"
+site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
+site_sf <- st_as_sf(site)
+land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
+pl <- list.files(polyPath,"*.shp")
+pl <- pl[-grep("xml",pl)]
+PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
+PEZ_poly_st<-st_as_sf(PEZ_poly)
+```
+```{r load SAR species lists, include=FALSE, cache=FALSE}
+listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
+cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
+other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
+listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
+listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
+listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
 ```
 
 # **Introduction**
@@ -133,46 +120,27 @@ cat(AquaSiteName)
 cat(PEZversion)
 ```
 
-**Search area features/comments from user: **
-```{r echo=FALSE, results='asis'}
-cat(UserComments)
-```
-
-```{r Set up paths, include=FALSE, cache=FALSE}
-mspPath <- "../"
-data.dir = "../../../Data/mar.wrangling"
-#create a folder in outputs with the name of the site and buffer area search
-dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
-# setwd(dataPath) #not needed?
-polyPath <- "../../../Data/Zones/SearchPEZpolygons"
-site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
-site_sf <- st_as_sf(site)
-#landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
-#land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
-#land_sf <- st_as_sf(land)
-land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
-pl <- list.files(polyPath,"*.shp")
-pl <- pl[-grep("xml",pl)]
-PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
-#PEZ_poly_st<-st_read(../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp", quiet=TRUE)
-PEZ_poly_st<-st_as_sf(PEZ_poly)
-#load data sets that are used in multiple sections
-obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
-obis<-subset(obis,year>minYear,year<maxYear)
-#FFHPP_shp <- st_read("../../../Data/Infrastructure/FFHPP_Referrals/FFHPP_Referrals_0620.shp", quiet=TRUE)
-```
-
-```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, include=FALSE, cache=FALSE}
-
-listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
-cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
-                            "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
-other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
-listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
-listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
-listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
-```
-
 ```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the user-defined search area consisting of the location of the proposed project/activity highlighted in yellow, surrounded by an exposure zone or buffer area in blue. The buffer area is used to query information and automatically generate this report."}
 site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,40)
+```
+
+## **SEARCH RESULTS:**
+## **EMPHASIS ON SPECIES LISTED BY THE SPECIES AT RISK ACT, ASSESSED BY COSEWIC AND/OR WILD SPECIES  (Table x)**  
+
+```{r echo=FALSE, results='asis'}
+List_table<-data.frame("Document/Organization"="", Description = "")
+List_table[1,1]<-"SARA"
+List_table[2,1]<-"COSEWIC"
+List_table[3,1]<-"Wild Species"
+List_table[1,2]<-"The Species at Risk Act (SARA) was proclaimed in June 2003, and is one part of a three part Government of Canada strategy for the protection of wildlife species at risk. This three part strategy also includes commitments under the Accord for the Protection of Species at Risk and activities under the Habitat Stewardship Program for Species at Risk. The purposes of SARA are to prevent Canadian indigenous species, subspecies, and distinct populations from becoming extirpated or extinct, to provide for the recovery of endangered or threatened species, and encourage the management of other species to prevent them from becoming at risk. It applies to all federal lands in Canada; all wildlife species listed as being at risk; and their critical habitat. For more information on SARA visit <https://www.canada.ca/en/environment-climate-change/services/species-risk-public-registry.html>"
+List_table[2,2]<-"The Committee on the Status of Endangered Wildlife in Canada (COSEWIC) is an independent advisory panel to the Minister of Environment and Climate Change Canada that meets twice a year to assess the status of wildlife species at risk of extinction. Members are wildlife biology experts from academia, government, non-governmental organizations and the private sector responsible for designating wildlife species in danger of disappearing from Canada. COSEWIC determines the national status of wild Canadian species, subspecies, varieties or other designatable units that are suspected of being at risk of extinction or extirpation. COSEWIC uses a process based on science and Aboriginal or community knowledge to assess wildlife species at risk. All native mammals, birds, reptiles, amphibians, fish, arthropods, molluscs, vascular plants, mosses and lichens are included in COSEWIC's current mandate.
+For more information on COSEWIC visit <https://www.cosewic.ca/index.php/en-ca/>"
+List_table[3,2]<-"Every five years the National General Status Working Group (NGSWG), which includes representatives from all provincial and territorial governments in Canada, and from the federal government, publishes a general report on the status of wildlife species in Canada. 
+The following text is verbatim from the Wildlife website (URL below).These reports are meant to inform Canadians about the status of species in the country, and to help prevent species in Canada from becoming extinct as a consequence of human activity.
+For more information about Wild Species reports visit <https://www.wildspecies.ca/home>"
+List_table<- List_table %>% rename("Document / Organization"=Document.Organization)
+```
+```{r}
+kable(List_table, align="l", caption = "Definitions relevant for species listed by <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listings.") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```

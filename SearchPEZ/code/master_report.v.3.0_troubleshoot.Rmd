@@ -89,8 +89,8 @@ data.dir = "../../../Data/mar.wrangling"
 dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
 # setwd(dataPath) #not needed?
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
-site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
-site_sf <- st_as_sf(site)
+#site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
+#site_sf <- st_as_sf(site)
 #landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
 #land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
 #land_sf <- st_as_sf(land)

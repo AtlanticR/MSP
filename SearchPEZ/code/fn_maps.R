@@ -4,6 +4,7 @@ plot_crithab<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
   
   ggplot()+
     geom_sf(data=ClippedCritHab,fill="red",col="red")+
+    geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
     geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -28,6 +29,7 @@ plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
   
   ggplot()+
     geom_sf(data=ClippedCritHab,fill="red",col="black")+
+    geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
     geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -189,24 +191,6 @@ plot_cws<-function(studyArea,studyArea_st,site,land,intersect_cws,buf) {
   
 }
 
-
-#Leatherback turtle
-
-plot_leatherback<-function(leatherback_shp, PEZ_poly_st, land_layer) {
-  
-  ggplot()+
-    geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
-    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
-    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
-    annotation_scale(location="br")+
-    theme_bw()+
-    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
-    labs(x=expression(paste("Longitude ",degree,"W",sep="")),
-         y=expression(paste("Latitude ",degree,"N",sep="")),
-         col="")+
-    watermark(show = TRUE, lab = "DFO Internal Use Only")
-  
-}
 
 #NARWC
 

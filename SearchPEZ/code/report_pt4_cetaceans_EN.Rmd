@@ -1,53 +1,14 @@
----
-title: "Reproducible Report for Species in Maritimes Region - for Internal DFO use only"
-author: Synthesis prepared by the Reproducible Reporting Team, steering committee and advisors.
-date: '`r format(Sys.time(), "%d %B, %Y")`'
-output:
-  html_document:
-    theme: paper
-    toc: yes
-  pdf_document:
-    toc: yes
-  word_document:
-    toc: yes
----
 ```{r load packages, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
-library(Mar.datawrangling)
-#library(Mar.utils)
-library(knitr)
-library(kableExtra)
-library(rgdal)
-library(maps)
-library(lubridate)
-library(raster)
-library(RCurl)
-library(sf)
-library(stringr)
-library(ggplot2)
-library(data.table)
-library(gridExtra)
-library(dplyr)
-library(stars)
-library(ggspatial)
-library(tidyverse)
-#These next two lines are necessary for the generation of the water mark on all plots.
-#install.packages("remotes")
-#remotes::install_github("terminological/standard-print-output")
-library(standardPrintOutput)
+library(easypackages)
+libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","raster","RCurl","sf","stringr","ggplot2","data.table","gridExtra","dplyr",
+          "stars","ggspatial","tidyverse","standardPrintOutput")
 ```
-
-```{r source functions, include=FALSE, cache=FALSE}
-# the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
+```{r load source functions, include=FALSE, cache=FALSE}
 source("site_map.r")
 source("site_map_new.r")
 source("filter_wsdb.r")
 source("filter_narwc_new.r")
-# ## Another option is to load directly from the web and read in using Rcurl
-#function_urls <- c("https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/site_map.r",
-#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/plot_wsdb.r",
-#                    "https://raw.githubusercontent.com/AtlanticR/MSP/master/SearchPEZ/code/filter_wsdb.r")
-#for (i in function_urls){eval(parse(text = RCurl::getURL(i, ssl.verifypeer = FALSE)),envir=.GlobalEnv)}
 source("EBSA.R")
 source("leatherback.R")
 source("cetacean_priority_areas.R")
@@ -57,52 +18,35 @@ source("fn_Search_ISDB_Data.r")
 source("fn_maps.r")
 source("fn_Search_MARFIS_Data.r")
 ```
-
 ```{r Define Site, include=FALSE, cache=FALSE}
-#HTML output of code is automatically generated in Catalina's computer: RProjects/MSP/SearchPEZ/code
-#output of get.data.R should be manually moved to RProjects/MSP/SearchPEZ/outputs/sitenamexkm  
-#AquaSiteName <- "TestGully"
-#PEZversion <- "Polygon"
 AquaSiteName <- "FarmersLedge"
 PEZversion <- "4748m"
-UserComments <- "Example - First search effort for suitability of a site for a project planned for 2025. Project is expected to have positive/negative impacts on surrounding area. It is likely that some kind of monitoring will be required during operations. Make sure to follow up on all sections pertaining to a particular taxonomic group as this seems to be a concern of the stakeholders."
-#make sure you delete all shp.xml files in the folder to be able to run this code
-minYear <- 1970
-maxYear <- 2020
+minYear <- 2002
 ```
-
-```{r Set up paths, include=FALSE, cache=FALSE}
+```{r set up paths, include=FALSE, cache=FALSE}
 mspPath <- "../"
 data.dir = "../../../Data/mar.wrangling"
-#create a folder in outputs with the name of the site and buffer area search
 dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
-# setwd(dataPath) #not needed?
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 site_sf <- st_as_sf(site)
-#landGDB <- "../../../Data/Boundaries/Coast50K/Coastline50k.gdb"
-#land <- readOGR(dsn=landGDB,layer="Land50k_Maritimes",stringsAsFactors=F)
-#land_sf <- st_as_sf(land)
 land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
-#PEZ_poly_st<-st_read(../../../Data/Zones/SearchPEZpolygons/PEZ_TestGullyPolygon.shp", quiet=TRUE)
 PEZ_poly_st<-st_as_sf(PEZ_poly)
-#load data sets that are used in multiple sections
-obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
-obis<-subset(obis,year>minYear,year<maxYear)
-#FFHPP_shp <- st_read("../../../Data/Infrastructure/FFHPP_Referrals/FFHPP_Referrals_0620.shp", quiet=TRUE)
 ```
-
-```{r Species listed by Wildspecies, COSEWIC and SARA in the Maritime Region, include=FALSE, cache=FALSE}
+```{r load SAR species lists, include=FALSE, cache=FALSE}
 listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
-cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
-                            "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
+cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
 other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
 listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
 listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
 listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
+```
+```{r load data sets used by multiple sections, include=FALSE, cache=FALSE}
+obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
+obis<-subset(obis,year>minYear)
 ```
 
 ## **Cetaceans**
@@ -116,15 +60,12 @@ narwc <- narwc[which(narwc$YEAR>=minYear),]
 wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
 wsdb <- read.csv(wsdbFile)
 wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
-#read obis file
-obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
-obis<-subset(obis,year>minYear,year<maxYear)
 #read cws file
 cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
 cws<-subset(cws,year>minYear,year<maxYear)
 #read iNaturalist file
 inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
-inat<-subset(inat,datetime>minYear,datetime<maxYear)
+inat<-subset(inat,datetime>minYear)
 #convert fin whale raster to sf object
 fin_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Fin_Whale.tif")
 fin_whale[fin_whale==0] <- NA

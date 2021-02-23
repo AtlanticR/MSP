@@ -426,7 +426,12 @@ Without written consent, DFO is not permitted to release information or data pro
 
 ### **The Maritime Fishery Information System (MARFIS)**  
 Contact: <XMARComData@dfo-mpo.gc.ca>  
-Last retrieved on: 2019  
+```{r echo=FALSE, results='asis'}
+info<-file.info("../../../Data/mar.wrangling/MARFIS.PRO_SPC_INFO.RData")
+LatestUpdate<-format(info[,"mtime"], format = "%B %d %Y")
+last_retrieved<-c("Last retrieved on: ",LatestUpdate)
+writeLines(c("Last retrieved on:",LatestUpdate), sep = " ")
+```
 Quality Tier: **Medium**  
 Search year: 2002-2019  
 Security level: Protected B  
