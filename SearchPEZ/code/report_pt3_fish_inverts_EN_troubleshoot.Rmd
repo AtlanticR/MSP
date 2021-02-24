@@ -49,7 +49,7 @@ obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBI
 obis<-subset(obis,year>minYear)
 ```
 
-## **Fish and Invertebrates**
+## **FISH AND INVERTEBRATES**
 
 This section...
 
@@ -67,49 +67,21 @@ gbif<-subset(gbif,year>minYear)
 
 Contact: <DFO.MAR-PED-Data-Request-Demande-de-donnes-DEP-MAR.MPO@dfo-mpo.gc.ca>  
 Last retrieved on: January 21, 2021 from Open Data <https://open.canada.ca/data/en/dataset/8ddcaeea-b806-4958-a79f-ba9ab645f53b>  
-Quality Tier: **High**  
+Quality Tier: High  
 Search year: 1970-2020  
 Security level: none  
 
-### **Industry Survey Database (ISDB)**  
-Contact: <Claire.Mussells@dfo-mpo.gc.ca>  
-Last retrieved on: 2019  
-Quality Tier: **Medium**  
-Search year: 2002-2019  
-Security level: Protected B  
+#### ***Area-specific Maritimes Research Vessel (RV) Survey search results***
 
-### **The Maritime Fishery Information System (MARFIS)**  
-Contact: <XMARComData@dfo-mpo.gc.ca>  
-```{r echo=FALSE, results='asis'}
-info<-file.info("../../../Data/mar.wrangling/MARFIS.PRO_SPC_INFO.RData")
-LatestUpdate<-format(info[,"mtime"], format = "%B %d %Y")
-last_retrieved<-c("Last retrieved on: ",LatestUpdate)
-writeLines(c("Last retrieved on:",LatestUpdate), sep = " ")
-```
-Quality Tier: **Medium**  
-Search year: 2002-2019  
-Security level: Protected B  
-
-### **Ocean Biodiversity Information System (OBIS)**  
-Contact: <helpdesk@obis.org>  
-URL: <https://obis.org/>  
-Last retrieved on: January 27 2021 from OBIS  
-Quality Tier: **Medium**  
-Search year: xxxx  
-Security level: none  
-
-#### **Area-specific Maritimes Research Vessel (RV) Survey search results**
 ```{r, include=FALSE, cache=FALSE}
 SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
 File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
 RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, minYear)
 RVCatch$database<-"rv"
 rv_freq <- aggregate(
-        x = list(Records = RVCatch$COMM),
-      by = list(Scientific_Name = RVCatch$SPEC, Common_Name=RVCatch$COMM, Individuals=RVCatch$TOTNO, Set_No=RVCatch$SETNO
-      ),
-      length
-      )
+      x = list(Records = RVCatch$COMM),
+      by = list(Scientific_Name = RVCatch$SPEC, Common_Name=RVCatch$COMM, Individuals=RVCatch$TOTNO, Set_No=RVCatch$SETNO),
+      length)
 rv_freq_SAR<-rv_freq %>% select(Scientific_Name, Common_Name, Individuals, Records, Set_No) %>% filter (Scientific_Name %in% listed_fish_invert_species$Scientific_Name_upper)
 
 rv_freq2<-aggregate(x=rv_freq[,sapply(rv_freq,is.numeric)],
@@ -117,10 +89,11 @@ rv_freq2<-aggregate(x=rv_freq[,sapply(rv_freq,is.numeric)],
                     sum)
 rv_freq_table<-select(rv_freq2, Scientific_Name, Common_Name, Individuals, Records)
 rv_freq_table<-arrange(rv_freq_table, Scientific_Name)
+rv_freq_table<-rv_freq_table %>% rename("Scientific Name"=Scientific_Name,
+                                        "Common Name"=Common_Name)
 rv_freq_SAR2<-aggregate(x=rv_freq_SAR[,sapply(rv_freq_SAR,is.numeric)],
                    by=c(rv_freq_SAR["Scientific_Name"], rv_freq_SAR["Common_Name"]),
                     sum)
-
 rv_freq_SAR2<-arrange(rv_freq_SAR2, Scientific_Name)
 
 #Table with scientific name, common name, individual counts and number of records
@@ -143,17 +116,15 @@ RV_summarytable[1,1]<-Total_number_SAR_individuals_RV
 RV_summarytable[1,3]<-Total_number_SAR_sets_RV
 ```
 
-```{r}
-Report_RV<-if(x < 1){
+*
+```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
+Report_RV<-if(Total_number_SAR_records_RV < 1){
     "There are no relevant records in the Maritimes Research Vessel (RV) Survey for this search area."
   } else {
     "There are relevant records in the Maritimes Research Vessel (RV) Survey for this search area."
-}
-```
-
-```{r}
-kable(as.data.frame(RV_summarytable, position = "left"))  %>%
-kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+  }
+Report_RV<-noquote(Report_RV)
+writeLines(Report_RV)
 ```
 
 ```{r}
@@ -167,11 +138,6 @@ rv_SAR_table<-select(rv_SAR_table, Scientific_Name, Common_Name.y, Individuals, 
 colnames(rv_SAR_table)<-c("Scientific Name", "Common Name", "No. of Individuals", "Catch Events", 
                           "Catch Frequency", "COSEWIC listing", "SARA status", "Wild Species")
 
-```
-
-```{r}
-kable(rv_SAR_table, align="l", caption="Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of species contained within the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.") %>%
-  kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
 ```{r}
@@ -194,7 +160,38 @@ site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
   geom_segment(aes(x = startx, y = starty, xend = endx, yend = endy),arrow=arrow(), size = 1.25)
 ```
 
-#### **Area-specific MARFIS & ISDB search results**
+```{r}
+kable(rv_SAR_table, align="l", caption="Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+  kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
+```
+
+```{r}
+kable(rv_freq_table, caption="Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+### **Industry Survey and Maritimes Fishery Databases**  
+
+#### ***Industry Survey Database (ISDB)***  
+Contact: <Claire.Mussells@dfo-mpo.gc.ca>  
+Last retrieved on: 2019  
+Quality Tier: Medium  
+Search year: 2002-2019  
+Security level: Protected B  
+
+#### ***The Maritime Fishery Information System (MARFIS)***  
+Contact: <XMARComData@dfo-mpo.gc.ca>  
+```{r echo=FALSE, results='asis'}
+info<-file.info("../../../Data/mar.wrangling/MARFIS.PRO_SPC_INFO.RData")
+LatestUpdate<-format(info[,"mtime"], format = "%B %d %Y")
+last_retrieved<-c("Last retrieved on: ",LatestUpdate)
+writeLines(c("Last retrieved on:",LatestUpdate), sep = " ")
+```
+Quality Tier: Medium  
+Search year: 2002-2019  
+Security level: Protected B  
+
+#### ***Area-specific MARFIS & ISDB search results***
 ```{r, include=FALSE, cache=FALSE}
 ##skip all of these steps and create an isdb file for all of the MAR region.
 #df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
@@ -264,22 +261,23 @@ isdb_sites<-data.frame(longitude=isdb_intersect$LONGI, latitude=isdb_intersect$L
 ```{r, include=FALSE, cache=FALSE}
 isdb_freq <- aggregate(
       x = list(Records = isdb_intersect$SCIENTIFIC),
-      by = list(Species = isdb_intersect$SCIENTIFIC),
+      by = list(Scientific_Name = isdb_intersect$SCIENTIFIC, Common_Name = isdb_intersect$COMMON),
       length)
 isdb_freq <- isdb_freq[order(-isdb_freq$Records),]
 rownames(isdb_freq) <- c()
-isdb_freq_table<- isdb_freq %>% rename(Scientific_Name_upper=Species)
-isdb_freq_table<-merge(isdb_freq_table, listed_fish_invert_species, by='Scientific_Name_upper')
-isdb_freq_table2<-isdb_freq_table %>% 
-  transmute(Scientific_Name, Common_Name, Schedule.status, COSEWIC.status, Wild_Species, Records)
-isdb_record_table<- isdb_freq_table2 %>% rename("SARA status"=Schedule.status,
+isdb_freq2<- isdb_freq %>% rename("Scientific_Name_upper"=Scientific_Name)
+isdb_freq<- isdb_freq %>% rename("Scientific Name"=Scientific_Name,
+                                 "Common Name"=Common_Name)
+isdb_freq_SAR<-merge(isdb_freq2, listed_fish_invert_species, by='Scientific_Name_upper')
+isdb_freq_SAR<-isdb_freq_SAR %>% 
+  transmute(Scientific_Name, Common_Name.y, Schedule.status, COSEWIC.status, Wild_Species, Records)
+isdb_SAR_record_table<- isdb_freq_SAR %>% rename("SARA status"=Schedule.status,
                                      "COSEWIC listing"=COSEWIC.status,
                                      "Wild Species listing"=Wild_Species,
                                      "Scientific Name"=Scientific_Name,
-                                     "Common Name"=Common_Name)
+                                     "Common Name"=Common_Name.y)
 Total_number_records_isdb <- sum(isdb_freq$Records)
-isdb_poly_SAR_total<-isdb_freq %>% select(Species, Records) %>% filter (Species %in% listed_fish_invert_species$Scientific_Name_upper)
-Total_number_SAR_records_isdb<-sum(isdb_poly_SAR_total$Records)
+Total_number_SAR_records_isdb<-sum(isdb_SAR_record_table$Records)
 ```
 
 ```{r}
@@ -291,32 +289,8 @@ isdb_set_summary_table<- isdb_set_summary_table %>% rename("Total organisms reco
 
 ```
 
-```{r}
-#table with scientific names of species and number of records
-isdb_poly_SAR_records<-isdb_intersect %>% select(SCIENTIFIC, COMMON) %>% filter (SCIENTIFIC %in% listed_fish_invert_species$Scientific_Name_upper)
-x<-as.numeric(nrow(isdb_poly_SAR_records))
-Report_isdb<-if(x < 1){
-    "There are no relevant records in the Industry Survey Database (ISDB) for this search area."
-  } else {
-    "There are relevant records in the Industry Survey Database (ISDB) for this search area."
-}
-```
-
-```{r}
-(kable(isdb_set_summary_table, align="c", caption="Summary of area-specific ISDB search results.") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
-```
-
-```{r}
-kable(isdb_record_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of species contained within the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```
-**Note:** A complete list of ISDB observation records of all species within the provided polygon can be found in the Appendix.
-
 ```{r, include=FALSE, cache=FALSE}
 #source("fn_Search_MARFIS_Data.r")
-#marfis_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/marfis_20190927_1202.shp", quiet=TRUE)
-
 #MARFISCatch <-SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
 wd <- getwd() # store main project directory
   data.dir = "../../../Data/mar.wrangling"  # location of MARFIS datafiles
@@ -365,18 +339,18 @@ marfis_freq <- aggregate(
       length)
 marfis_freq <- marfis_freq[order(-marfis_freq$Records),]
 rownames(marfis_freq) <- c()
-marfis_freq_table<- marfis_freq %>% rename(Common_Name_upper=Species)
-marfis_freq_table<-merge(marfis_freq_table, listed_fish_invert_species, by='Common_Name_upper')
-marfis_freq_table2<-marfis_freq_table %>% 
+marfis_freq_table<- marfis_freq %>% rename("Common Name"=Species)
+marfis_freq_table2<- marfis_freq %>% rename(Common_Name_upper=Species)
+marfis_freq_SAR<-merge(marfis_freq_table2, listed_fish_invert_species, by='Common_Name_upper')
+marfis_freq_SAR<-marfis_freq_SAR %>% 
   transmute(Scientific_Name, Common_Name, Schedule.status, COSEWIC.status, Wild_Species, Records)
-marfis_record_table<- marfis_freq_table2 %>% rename("SARA status"=Schedule.status,
+marfis_SAR_record_table<- marfis_freq_SAR %>% rename("SARA status"=Schedule.status,
                                                     "COSEWIC listing"=COSEWIC.status,
                                                     "Wild Species listing"=Wild_Species,
                                                     "Scientific Name"=Scientific_Name,
                                                     "Common Name"=Common_Name)
-Total_number_records_marfis <- sum(marfis_freq$Records)
-marfis_poly_SAR_total<-marfis_freq %>% select(Species, Records) %>% filter (Species %in% listed_fish_invert_species$Common_Name_upper)
-Total_number_SAR_records_marfis<-sum(marfis_poly_SAR_total$Records)
+Total_number_records_marfis <- sum(marfis_freq_table$Records)
+Total_number_SAR_records_marfis<-sum(marfis_SAR_record_table$Records)
 ```
 
 ```{r}
@@ -386,28 +360,26 @@ marfis_record_summary_table[1,2]<-Total_number_SAR_records_marfis
 
 ```
 
-```{r}
-#table with scientific names of species and number of records
-marfis_poly_SAR_records<-marfis_intersect %>% select(SPIES_N) %>% filter (SPIES_N %in% listed_fish_invert_species$Common_Name_upper)
-x<-as.numeric(nrow(marfis_poly_SAR_records))
-Report_isdb<-if(x < 1){
+```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
+Report_isdb<-if(Total_number_SAR_records_isdb < 1){
+    "There are no relevant records in the Industry Survey Database (ISDB) for this search area."
+  } else {
+    "There are relevant records in the Industry Survey Database (ISDB) for this search area."
+  }
+Report_isdb<-noquote(Report_isdb)
+writeLines(Report_isdb)
+```
+
+*
+```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
+Report_marfis<-if(Total_number_SAR_records_marfis < 1){
     "There are no relevant records in the Maritimes Fishery Information System (MARFIS) for this search area."
   } else {
     "There are relevant records in the Maritimes Fishery Information System (MARFIS) for this search area."
-}
+  }
+Report_marfis<-noquote(Report_marfis)
+writeLines(Report_marfis)
 ```
-
-```{r}
-(kable(marfis_record_summary_table, align="c", caption="Summary of area-specific MARFIS search results.") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left"))
-```
-
-```{r}
-kable(marfis_record_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of species contained within the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-```
-
-**Note:** A complete list of MARFIS observation records of all species within the provided polygon can be found in the Appendix.
 
 ```{r Fig MARFIS and ISDB records, fig.height=8, fig.width=11, fig.cap="Quality Tier: Medium. Security level: Protected B. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query aggregated information from Maritimes Fishery Information System (MARFIS) and/or Industry Survey Database (ISDB) observation records shown as black points, for all species. Rule of five was not applied."}
 site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
@@ -417,66 +389,84 @@ site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
         shape = 16, fill = "black")
 ```
 
-#### **OBIS Search Results**
+```{r}
+kable(isdb_SAR_record_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+```{r}
+kable(isdb_freq, caption="Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+```{r}
+kable(marfis_SAR_record_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+```{r}
+kable(marfis_freq_table, caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+### **Ocean Biodiversity Information System (OBIS)**  
+Contact: helpdesk@obis.org  
+URL: <https://obis.org/>  
+Last retrieved on: January 27 2021 from OBIS  
+Quality Tier: Medium  
+Search year: xxxxx  
+Security level: none  
+
+#### ***Area-specific OBIS fish and invertebrate search results***
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 obis_edit<-obis %>% 
   transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
  
-#Separate CWS/ECCC records
-#CWS.ECCC.OBIS_records<-filter(obis_edit, institutionCode=="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
-#write.csv(CWS.ECCC.OBIS_records, "CWS_ECCC_OBIS_records.csv")
-
 #Delete WSDB and CWS/ECCC records
 obis_edit2<-obis_edit %>%
   filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
 obis_edit3<-obis_edit2 %>%
   filter(! collectionCode =="WHALESITINGS")
-
 obis_plot_locations<-st_as_sf(obis_edit3, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
 intersect_obis <- st_intersection(obis_plot_locations,PEZ_poly_st)
-x<-as.numeric(nrow(intersect_obis))
-
-#summarize individual counts
-#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
 
 #append columns from listed species
 intersect_obis<- intersect_obis %>% rename(Scientific_Name=scientificName)
-
 obis_fish_table<-merge(intersect_obis, listed_fish_invert_species, by='Scientific_Name')
-x<-as.numeric(nrow(obis_fish_table))
-obis_fish_table2<-obis_fish_table %>% 
-  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
-obis_fish_table3<- obis_fish_table2 %>% rename("SARA status"=Schedule.status,
-                                     "COSEWIC listing"=COSEWIC.status,
-                                     "Wild Species listing"=Wild_Species,
-                                                    "Scientific Name"=Scientific_Name,
-                                                    "Common Name"=Common_Name 
-                                     )
-obis_fish_table3$geometry<-NULL
-obis_fish_table4<-unique(obis_fish_table3)
+Total_number_SAR_records_obis<-as.numeric(nrow(obis_fish_table))
+obis_fish_table<-obis_fish_table %>% select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+obis_fish_table<- obis_fish_table %>% rename("SARA status"=Schedule.status,
+                                             "COSEWIC listing"=COSEWIC.status,
+                                             "Wild Species listing"=Wild_Species,
+                                             "Scientific Name"=Scientific_Name,
+                                             "Common Name"=Common_Name)
+obis_fish_table$geometry<-NULL
+obis_fish_table<-unique(obis_fish_table)
 ```
 
+*
 ```{r, echo=FALSE, results='asis',}
-Query_output_obis<-if(x < 1){
+Report_obis<-if(Total_number_SAR_records_obis < 1){
   "There are no relevant records in the Ocean Biodiversity Information System (OBIS) for this search area."
 } else {
   "There are relevant records in the Ocean Biodiversity Information System (OBIS) for this search area."
 }
-writeLines(c(Query_output_obis), sep = "\n")
+Report_obis2<-noquote(Report_obis)
+writeLines(c(Report_obis2), sep = "\n")
+```
+
+```{r Fig OBIS records for fish and invertebrates in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from Ocean Biodiversity Information System (OBIS) observation records, for species contained within the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore. The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area."}
+if(Total_number_SAR_records_obis > 1){plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)}
 ```
 
 ```{r echo=FALSE, results='asis', caption="Priority species with observations contained in the OBIS database within the search polygon area."}
-OBIS_query_output_table<-if(x < 1){
+OBIS_query_output_table<-if(Total_number_SAR_records_obis < 1){
   ""
 } else {
-  kable(obis_fish_table4, row.names = F, caption="Quality Tier: Medium. Security level: none. Ocean Biodiversity Information System (OBIS)
-observation records of species contained within the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild Species. The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.") %>%
+  kable(obis_fish_table, row.names = F, caption="Quality Tier: Medium. Security level: none. Ocean Biodiversity Information System (OBIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listing. <b>The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
 
-if(x > 1){OBIS_query_output_table}
-```
-```{r Fig OBIS records for fish and invertebrates in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from Ocean Biodiversity Information System (OBIS) observation records, for species contained within the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore. The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area."}
-if(x > 1){plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)}
+if(Total_number_SAR_records_obis > 1){OBIS_query_output_table}
 ```

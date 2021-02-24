@@ -59,20 +59,21 @@ This section...
 
 #### ***DFO Species At Risk distribution (range)***  
 Contact: <info@dfo-mpo.gc.ca>  
-Link: <https://open.canada.ca/data/en/dataset/e0fabad5-9379-4077-87b9-5705f28c490b> Last retrieved on: October 1 2020 from Open Data  
-October 1 2020 from Open Data
-Quality Tier: **High**  
+Link: <https://open.canada.ca/data/en/dataset/e0fabad5-9379-4077-87b9-5705f28c490b>  
+Last retrieved on: October 1 2020 from Open Data  
+Quality Tier: High  
 Security level: none  
 
 #### ***Critical Habitat of Species At Risk***  
 Contact: <info@dfo-mpo.gc.ca>  
 Link: <https://open.canada.ca/data/en/dataset/db177a8c-5d7d-49eb-8290-31e6a45d786c>  
 Last retrieved on: October 1 2020 from Open Data  
-Quality Tier: **High**  
+Quality Tier: High  
 Security level: none  
 
 #### ***Area-specific SAR distribution and critical habitat search results***
 
+*
 ```{r echo=FALSE, results='asis'}
 intersect_dist <- st_intersection(sardist,PEZ_poly_st)
 intersect_dist$Common_Nam[intersect_dist$Common_Nam == "Sowerby`s Beaked Whale"] <- "Sowerby's Beaked Whale"
@@ -111,6 +112,7 @@ Query_output_table<-if(x < 1){
 if(x > 1){Query_output_table}
 ```
 
+*
 ```{r echo=FALSE, results='asis'}
 intersect <- st_intersection(ClippedCritHab,PEZ_poly_st)
 x<-as.numeric(nrow(intersect))
@@ -128,11 +130,12 @@ Query_output_crit<-if(x < 1){
 Query_output_crit2<-noquote(Query_output_crit)
 writeLines(c(Query_output_crit2), sep = "\n")
 ```
+
 ```{r echo=FALSE, results='asis'}
 Query_output_table<-if(x < 1){
   ""
 } else {
-  kable(intersect_df[!duplicated(intersect_df),], caption="Quality Tier: High. Security level: none. Species At Risk listed as Endangered or Threatened under the <i>Species At Risk Act</i> (SARA) for which the search polygon overlaps with their critical habitat. Critical habitat is defined under section 2 of SARA as: “the habitat that is necessary for the survival or recovery of a listed wildlife species and that is identified as the species’ critical habitat in the recovery strategy or in an action plan for the species”. Critical Habitat is identified in a species’ recovery strategy or action plan, posted on the SAR Public Registry (www.sararegistry.gc.ca). This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk GIS tool to create an authoritative SARA report.") %>%
+  kable(intersect_df[!duplicated(intersect_df),], caption="Quality Tier: High. Security level: none. Species At Risk listed as Endangered or Threatened under the <i>Species At Risk Act</i> (SARA) for which the search polygon overlaps with their critical habitat. Critical habitat is defined under section 2 of SARA as: “the habitat that is necessary for the survival or recovery of a listed wildlife species and that is identified as the species’ critical habitat in the recovery strategy or in an action plan for the species”. Critical Habitat is identified in a species’ recovery strategy or action plan, posted on the SAR Public Registry (www.sararegistry.gc.ca). This is <b>not</b> the authoritative source or advice for Species At Risk data. Please access the Species At Risk GIS tool to create an authoritative SARA report.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
 Query_output_table2<-noquote(Query_output_table)

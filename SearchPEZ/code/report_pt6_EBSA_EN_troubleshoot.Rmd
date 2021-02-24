@@ -60,6 +60,7 @@ EBSA <- st_read("../../../Data/Zones/DFO_EBSA/DFO_EBSA.shp", quiet=TRUE)
 EBSA_shp <- st_transform(EBSA, crs = 4326)
 ```
 
+*
 ```{r echo=FALSE, results='asis'}
 #function for overlap
 EBSA_overlap(EBSA_shp=EBSA_shp, PEZ_poly_st= PEZ_poly_st)

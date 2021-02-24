@@ -15,7 +15,7 @@ blue_whale_habitat_overlap <- function(Blue_Whale_shp, PEZ_poly_st) {
   
   Query_output_crit2<-noquote(Query_output_crit)
   
-  writeLines(Query_output_crit2)
+  #writeLines(Query_output_crit2)
   
 }
 

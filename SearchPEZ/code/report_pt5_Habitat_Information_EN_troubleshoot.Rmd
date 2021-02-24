@@ -56,6 +56,6 @@ Security level: none.
 
 ### **Area-specific Intertidal Vegetation and Rockweed search results**  
 
-"There are no relevant records of predicted intertidal vegetation for this search area" OR "There are There are relevant records of predicted intertidal vegetation for this search area."  
+* "There are no relevant records of predicted intertidal vegetation for this search area" OR "There are There are relevant records of predicted intertidal vegetation for this search area."  
 
 Figure x. Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Figure shows overlap between the search are and satellite-based maps of intertidal vegetation and rockweed presence polygons. 
