@@ -6,11 +6,13 @@ output:
   html_document:
     theme: paper
     toc: yes
+    toc_depth: 4
     fig_caption: yes
   pdf_document:
     toc: yes
   word_document:
     toc: yes
+  fig_caption: TRUE  
 ---
 ```{r load packages, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
@@ -58,20 +60,22 @@ listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
 listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
 listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
 ```
+```{r load databases used in multiple sections, include=FALSE, cache=FALSE}
+obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
+obis<-subset(obis,year>minYear)
+```
 
 # **REPRODUCIBLE REPORTING**
 
-### **About this report**
+#### **About this report**
 
 This document summarizes regional data, including information on species and habitats, available at the time of report creation. …
  
-### **How to use this report?**  
+#### **How to use this report?**  
 
   -  This document
 
-\newpage
-
-## **SEARCH RESULTS: EMPHASIS ON SPECIES LISTED BY THE <i>SPECIES AT RISK ACT</i>, ASSESSED BY THE COMMITTEE ON THE STATUS OF THE ENDANGERED WILDLIFE IN CANADA (COSEWIC) AND/OR WILD SPECIES**  
+# **SEARCH RESULTS: EMPHASIS ON SPECIES LISTED BY THE <i>SPECIES AT RISK ACT</i>, ASSESSED BY THE COMMITTEE ON THE STATUS OF THE ENDANGERED WILDLIFE IN CANADA (COSEWIC) AND/OR WILD SPECIES**  
 
 ```{r echo=FALSE, results='asis'}
 List_table<-data.frame("Document/Organization"="", Description = "")
@@ -83,3 +87,22 @@ List_table[3,1]<-"Wild Species"
 kable(List_table, align="l", caption = "Definitions relevant for species listed by <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listings.") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
+
+```{r child = 'report_pt2_SAR_dist_crithab_EN_troubleshoot.Rmd'}
+```
+
+```{r child = 'report_pt3_fish_inverts_EN_troubleshoot.Rmd'}
+```
+
+```{r child = 'report_pt4_cetaceans_EN_troubleshoot.Rmd'}
+```
+
+```{r child = 'report_pt5_Habitat_Information_EN_troubleshoot.Rmd'}
+```
+
+```{r child = 'report_pt6_EBSA_EN_troubleshoot.Rmd'}
+```
+
+#```{r child = 'report_pt7_generic_END_EN.Rmd'}
+#```
+

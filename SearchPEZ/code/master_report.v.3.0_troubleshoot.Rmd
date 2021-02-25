@@ -649,11 +649,10 @@ x<-as.numeric(nrow(obis_fish_table))
 obis_fish_table2<-obis_fish_table %>% 
   select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
 obis_fish_table3<- obis_fish_table2 %>% rename("SARA status"=Schedule.status,
-                                     "COSEWIC listing"=COSEWIC.status,
-                                     "Wild Species listing"=Wild_Species,
-                                                    "Scientific Name"=Scientific_Name,
-                                                    "Common Name"=Common_Name 
-                                     )
+                                               "COSEWIC listing"=COSEWIC.status,
+                                               "Wild Species listing"=Wild_Species,
+                                               "Scientific Name"=Scientific_Name,
+                                               "Common Name"=Common_Name)
 obis_fish_table3$geometry<-NULL
 obis_fish_table4<-unique(obis_fish_table3)
 ```

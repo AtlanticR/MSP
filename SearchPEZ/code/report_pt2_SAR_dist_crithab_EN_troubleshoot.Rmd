@@ -1,59 +1,13 @@
-```{r load packages, include=FALSE, cache=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
-library(easypackages)
-libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","raster","RCurl","sf","stringr","ggplot2","data.table","gridExtra","dplyr",
-          "stars","ggspatial","tidyverse","standardPrintOutput")
-```
-```{r load source functions, include=FALSE, cache=FALSE}
-source("site_map.r")
-source("site_map_new.r")
-source("filter_wsdb.r")
-source("filter_narwc_new.r")
-source("EBSA.R")
-source("leatherback.R")
-source("cetacean_priority_areas.R")
-source("Blue_Whale_habitat.R")
-source("fn_SearchRVData.r")
-source("fn_Search_ISDB_Data.r")
-source("fn_maps.r")
-source("fn_Search_MARFIS_Data.r")
-```
-```{r Define Site, include=FALSE, cache=FALSE}
-AquaSiteName <- "FarmersLedge"
-PEZversion <- "4748m"
-minYear <- 2002
-```
-```{r set up paths, include=FALSE, cache=FALSE}
-mspPath <- "../"
-data.dir = "../../../Data/mar.wrangling"
-dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
-polyPath <- "../../../Data/Zones/SearchPEZpolygons"
-site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
-site_sf <- st_as_sf(site)
-land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
-pl <- list.files(polyPath,"*.shp")
-pl <- pl[-grep("xml",pl)]
-PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
-PEZ_poly_st<-st_as_sf(PEZ_poly)
-```
-```{r load SAR species lists, include=FALSE, cache=FALSE}
-listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
-cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
-other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
-listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
-listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
-listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
-```
+## **INFORMATION FROM NATIONAL AQUATIC SPECIES AT RISK PROGRAM**  
+
+This section...
+
 ```{r Set up paths for National Aquatic Species at Risk Section, include=FALSE, cache=FALSE}
 fl <- list.files(dataPath,".csv")
 ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/ClipCritHab.shp", quiet=TRUE)
 sardist<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/sardist_4326.shp", quiet=TRUE)
 leatherback_shp<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
 ```
-
-## **Information from National Aquatic Species at Risk Program**  
-
-This section...
 
 ### **Species At Risk distribution and Critical Habitat data**  
 
@@ -85,69 +39,68 @@ intersect_dist_df<-as.data.frame(cbind(Common_Name, Scientific_Name, Population,
 
 #append columns from listed species 
 dist_table<-merge(intersect_dist_df, listed_species, by='Scientific_Name')
-x<-as.numeric(nrow(dist_table))
-dist_table2<-dist_table %>% 
+dist_table<-dist_table %>% 
   transmute(Common_Name, Scientific_Name, Population, Area, Schedule.status, COSEWIC.status, Wild_Species)
-dist_table3<- dist_table2 %>% rename("SARA status"=Schedule.status,
-                                     "COSEWIC listing"=COSEWIC.status,
-                                     "Wild Species listing"=Wild_Species,
-                                     "Common Name"=Common_Name,
-                                     "Scientific Name"=Scientific_Name)
-Query_output_dist<-if(x < 1){
-  "The provided polygon does not overlap with species at risk distribution range."
+dist_table<- dist_table %>% rename("SARA status"=Schedule.status,
+                                   "COSEWIC listing"=COSEWIC.status,
+                                   "Wild Species listing"=Wild_Species,
+                                   "Common Name"=Common_Name,
+                                   "Scientific Name"=Scientific_Name)
+Dist_overlap_result<-length(dist_table)
+Query_output_dist<-if(Dist_overlap_result < 1){
+  "The search area does not overlap with Species at Risk distribution range."
 } else {
-  "The provided polygon overlaps with species at risk distribution range."
+  "The search area overlaps with Species at Risk distribution range."
 }
-Query_output_dist2<-noquote(Query_output_dist)
-writeLines(c(Query_output_dist2), sep = "\n")
+Query_output_dist<-noquote(Query_output_dist)
+writeLines(Query_output_dist)
+```
+```{r search area relative to all of maritime region with all Species at Risk Distribution range polygons, fig.height=8, fig.width=11, fig.cap="Quality Tier: High. Security level: none. This map summarizes areas where the search polygon overlaps with distribution (range) of Species At Risk listed as Endangered, Threatened or Special Concern under the Species At Risk Act. This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk GIS tool to create an authoritative SARA report."}
+plot_sardist(sardist, PEZ_poly_st, land_sf)
+```
+
+```{r Zoom of search area with Species at Risk Distribution range polygons, fig.height=8, fig.width=11, fig.cap="Quality Tier: High. Security level: none. This map summarizes areas where the search polygon overlaps with distribution (range) of Species At Risk listed as Endangered, Threatened or Special Concern under the Species At Risk Act. This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk GIS tool to create an authoritative SARA report."}
+plot_sardist_zoom(sardist, PEZ_poly_st, land_sf)
 ```
 
 ```{r echo=FALSE, results='asis'}
-Query_output_table<-if(x < 1){
+Dist_query_output_table<-if(Dist_overlap_result < 1){
   ""
 } else {
-  kable(dist_table3[!duplicated(dist_table3),], caption= "Quality Tier: High. Security level: none. Species At Risk listed as Endangered, Threatened or Special Concern under the <i>Species At Risk Act</i> for which the search polygon overlaps with their distribution (range). This is <b>not</b> the authoritative source or advice for Species At Risk data. Please access the Species At Risk GIS tool to create an authoritative SARA report.") %>%
+  kable(dist_table[!duplicated(dist_table),], caption= "Quality Tier: High. Security level: none. Species At Risk listed as Endangered, Threatened or Special Concern under the Species At Risk Act for which the search polygon overlaps with their distribution (range). This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk GIS tool to create anthe authoritative SARA report.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
-if(x > 1){Query_output_table}
+if(Dist_overlap_result > 1){Dist_query_output_table}
 ```
 
 *
 ```{r echo=FALSE, results='asis'}
-intersect <- st_intersection(ClippedCritHab,PEZ_poly_st)
-x<-as.numeric(nrow(intersect))
-CommonName<-intersect$Common_Nam
-Population<-intersect$Population
-Area<-intersect$Waterbody
-SARA_status<-intersect$SARA_Statu
-intersect_df<-data.table(expand.grid(CommonName = CommonName, Population = Population, Area=Area, SARA_status=SARA_status))
-Query_output_crit<-if(x < 1){
-  "The provided polygon does not overlap with defined critical habitat."
+crit_intersect <- st_intersection(ClippedCritHab,PEZ_poly_st)
+CommonName<-crit_intersect$Common_Nam
+Population<-crit_intersect$Population
+Area<-crit_intersect$Waterbody
+SARA_status<-crit_intersect$SARA_Statu
+crit_table<-data.table(expand.grid(CommonName = CommonName, Population = Population, Area=Area, SARA_status=SARA_status))
+crithab_result<-as.numeric(nrow(crit_table))
+Query_output_crit<-if(crithab_result < 1){
+  "The search area does not overlap with defined Species at Risk Critical Habitat."
 } else {
-  "The provided polygon overlaps with Critical Habitat."
+  "The search area overlaps with defined Species at Risk Critical Habitat."
 }
-
-Query_output_crit2<-noquote(Query_output_crit)
-writeLines(c(Query_output_crit2), sep = "\n")
+Query_output_crit<-noquote(Query_output_crit)
+writeLines(Query_output_crit)
 ```
 
 ```{r echo=FALSE, results='asis'}
-Query_output_table<-if(x < 1){
+Crithab_query_output_table<-if(crithab_result < 1){
   ""
 } else {
-  kable(intersect_df[!duplicated(intersect_df),], caption="Quality Tier: High. Security level: none. Species At Risk listed as Endangered or Threatened under the <i>Species At Risk Act</i> (SARA) for which the search polygon overlaps with their critical habitat. Critical habitat is defined under section 2 of SARA as: “the habitat that is necessary for the survival or recovery of a listed wildlife species and that is identified as the species’ critical habitat in the recovery strategy or in an action plan for the species”. Critical Habitat is identified in a species’ recovery strategy or action plan, posted on the SAR Public Registry (www.sararegistry.gc.ca). This is <b>not</b> the authoritative source or advice for Species At Risk data. Please access the Species At Risk GIS tool to create an authoritative SARA report.") %>%
+  kable(crit_table[!duplicated(crit_table),], caption="Quality Tier: High. Security level: none. Species At Risk listed as Endangered or Threatened under the <i>Species At Risk Act</i> (SARA) for which the search polygon overlaps with their critical habitat. Critical habitat is defined under section 2 of SARA as: “the habitat that is necessary for the survival or recovery of a listed wildlife species and that is identified as the species’ critical habitat in the recovery strategy or in an action plan for the species”. Critical Habitat is identified in a species’ recovery strategy or action plan, posted on the SAR Public Registry (www.sararegistry.gc.ca). This is <b>not</b> the authoritative source or advice for Species At Risk data. Please access the Species At Risk GIS tool to create an authoritative SARA report.") %>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
-Query_output_table2<-noquote(Query_output_table)
-
-if(x > 1){print(Query_output_table2)}
+if(crithab_result > 1){print(Crithab_query_output_table)}
 ```
 
 ```{r Fig X PEZ polygon with all maritime Critical Habitat polygons, fig.height=8, fig.width=11, fig.cap="Quality Tier: High. Security level: none. This map summarizes areas where the search polygon overlaps with critical habitat of Species At Risk listed as Endangered or Threatened under the <i>Species At Risk Act</i> (SARA). Critical habitat is defined under section 2 of SARA as: “the habitat that is necessary for the survival or recovery of a listed wildlife species and that is identified as the species’ critical habitat in the recovery strategy or in an action plan for the species”. Critical Habitat is identified in a species’ recovery strategy or action plan, posted on the SAR Public Registry (www.sararegistry.gc.ca). This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk GIS tool to create an authoritative report."}
-plot_crithab(ClippedCritHab, PEZ_poly_st, land_sf)
-
-```
-
-```{r Fig X close up of PEZ polygon, fig.height=8, fig.width=11, fig.cap="Zoomed view of figure above."}
 plot_crithab_zoom(ClippedCritHab, PEZ_poly_st, land_sf)
 ```

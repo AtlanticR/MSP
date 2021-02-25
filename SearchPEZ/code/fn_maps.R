@@ -5,7 +5,7 @@ plot_crithab<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
   ggplot()+
     geom_sf(data=ClippedCritHab,fill="red",col="red")+
     geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
-    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -30,7 +30,48 @@ plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
   ggplot()+
     geom_sf(data=ClippedCritHab,fill="red",col="black")+
     geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
-    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    annotation_scale(location="br")+
+    theme_bw()+
+    coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
+    labs(x=expression(paste("Longitude ",degree,"W",sep="")),
+         y=expression(paste("Latitude ",degree,"N",sep="")),
+         col="")+
+    watermark(show = TRUE, lab = "DFO Internal Use Only")
+  
+}
+
+#SAR distribution
+plot_sardist<-function(sardist, PEZ_poly_st, land_layer) {
+  
+  ggplot()+
+    geom_sf(data=sardist,fill="orange", col="black", size=0.6)+    
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    annotation_scale(location="br")+
+    theme_bw()+
+    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
+    labs(x=expression(paste("Longitude ",degree,"W",sep="")),
+         y=expression(paste("Latitude ",degree,"N",sep="")),
+         col="")+
+    watermark(show = TRUE, lab = "DFO Internal Use Only")
+  
+}
+
+#SAR distribution zoom
+plot_sardist_zoom<-function(sardist, PEZ_poly_st, land_layer) {
+  
+  bbox_list <- lapply(st_geometry(PEZ_poly_st), st_bbox)
+  maxmin <- as.data.frame(matrix(unlist(bbox_list),nrow=nrow(PEZ_poly_st)))
+  longmin<-(maxmin$V1)-1
+  longmax<-(maxmin$V3)+1
+  latmin<-(maxmin$V2)-0.5
+  latmax<-(maxmin$V4)+0.5
+  
+  ggplot()+
+    geom_sf(data=sardist,fill="orange",col="black", size=0.6)+    
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -44,7 +85,7 @@ plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
 
 #OBIS
 
-plot_obis<-function(studyArea,studyArea_st,site,land,intersect_obis,buf) {
+plot_obis<-function(studyArea,studyArea_st,site,land_layer,intersect_obis,buf) {
   
   # buf is in km, and now converted to degrees
   buf=buf/100
@@ -65,9 +106,9 @@ plot_obis<-function(studyArea,studyArea_st,site,land,intersect_obis,buf) {
   latmax<-bb$max[2]+buf
   
   ggplot()+
-    geom_sf(data=studyArea_st,fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=site,fill="yellow",col="black", size=0.6)+
-    geom_sf(data=land,fill=c("lightgrey"), col="black", size=0.7)+
+    geom_sf(data=studyArea_st,fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("lightgrey"), col="black", size=0.7)+
     geom_sf(data=intersect_obis, size = 3, shape = 16, fill = "black")+
     annotation_scale(location="bl")+
     theme_bw()+
@@ -81,7 +122,7 @@ plot_obis<-function(studyArea,studyArea_st,site,land,intersect_obis,buf) {
 
 #iNaturalist
 
-plot_inat<-function(studyArea,studyArea_st,site,land,intersect_inat,buf) {
+plot_inat<-function(studyArea,studyArea_st,site,land_layer,intersect_inat,buf) {
   
   # buf is in km, and now converted to degrees
   buf=buf/100
@@ -102,9 +143,9 @@ plot_inat<-function(studyArea,studyArea_st,site,land,intersect_inat,buf) {
   latmax<-bb$max[2]+buf
   
   ggplot()+
-    geom_sf(data=studyArea_st,fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=site,fill="yellow",col="black", size=0.6)+
-    geom_sf(data=land,fill=c("lightgrey"), col="black", size=0.7)+
+    geom_sf(data=studyArea_st,fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("lightgrey"), col="black", size=0.7)+
     geom_sf(data=intersect_inat, size = 3, shape = 16, fill = "black")+
     annotation_scale(location="bl")+
     theme_bw()+
@@ -118,7 +159,7 @@ plot_inat<-function(studyArea,studyArea_st,site,land,intersect_inat,buf) {
 
 #GBIF
 
-plot_gbif<-function(studyArea,studyArea_st,site,land,intersect_gbif,buf) {
+plot_gbif<-function(studyArea,studyArea_st,site,land_layer,intersect_gbif,buf) {
   
   # buf is in km, and now converted to degrees
   buf=buf/100
@@ -139,9 +180,9 @@ plot_gbif<-function(studyArea,studyArea_st,site,land,intersect_gbif,buf) {
   latmax<-bb$max[2]+buf
   
   ggplot()+
-    geom_sf(data=studyArea_st,fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=site,fill="yellow",col="black", size=0.6)+
-    geom_sf(data=land,fill=c("lightgrey"), col="black", size=0.7)+
+    geom_sf(data=studyArea_st,fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("lightgrey"), col="black", size=0.7)+
     geom_sf(data=intersect_gbif, size = 3, shape = 16, fill = "black")+
     annotation_scale(location="bl")+
     theme_bw()+
@@ -156,7 +197,7 @@ plot_gbif<-function(studyArea,studyArea_st,site,land,intersect_gbif,buf) {
 
 #CWS
 
-plot_cws<-function(studyArea,studyArea_st,site,land,intersect_cws,buf) {
+plot_cws<-function(studyArea,studyArea_st,site,land_layer,intersect_cws,buf) {
   
   # buf is in km, and now converted to degrees
   buf=buf/100
@@ -177,9 +218,9 @@ plot_cws<-function(studyArea,studyArea_st,site,land,intersect_cws,buf) {
   latmax<-bb$max[2]+buf
   
   ggplot()+
-    geom_sf(data=studyArea_st,fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
     geom_sf(data=site,fill="yellow",col="black", size=0.6)+
-    geom_sf(data=land,fill=c("lightgrey"), col="black", size=0.7)+
+    geom_sf(data=studyArea_st,fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("lightgrey"), col="black", size=0.7)+
     geom_sf(data=intersect_cws, size = 3, shape = 16, fill = "black")+
     annotation_scale(location="bl")+
     theme_bw()+
@@ -238,7 +279,7 @@ plot_narwc<-function(studyArea,narwc,buf) {
   leg$shapes=as.numeric(as.character(leg$shapes))
   leg$colors=as.character(leg$colors)
   
-  # add sybology to species dataframe, columns colors and shapes
+  # add symbology to species dataframe, columns colors and shapes
   dfBox=merge(dfBox,leg,by.x="SPECCODE",by.y="species")
   
   # ADD POINT DATA, only in the box
@@ -298,7 +339,7 @@ plot_wsdb<-function(studyArea,wsdb,buf) {
   leg$shapes=as.numeric(as.character(leg$shapes))
   leg$colors=as.character(leg$colors)
   
-  # add sybology to species dataframe, columns colors and shapes
+  # add symbology to species dataframe, columns colors and shapes
   dfBox=merge(dfBox,leg,by.x="COMMONNAME",by.y="species")
   
   # ADD POINT DATA, only in the box
@@ -317,14 +358,14 @@ plot_wsdb<-function(studyArea,wsdb,buf) {
 
 plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf, 
                                humpback_whale_sf, sei_whale_sf, PEZ_poly_st, 
-                               land_sf) {
+                               land_layer) {
   
 #Fin Whale
   
   fin_whale_plot <- ggplot()+
     geom_sf(data=fin_whale_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
-    geom_sf(data=land_sf,fill=c("grey90"), col="black")+
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Fin Whale")+
@@ -338,8 +379,8 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   harbour_porpoise_plot <- ggplot()+
     geom_sf(data=harbour_porpoise_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
-    geom_sf(data=land_sf,fill=c("grey90"), col="black")+
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Harbour Porpoise")+
@@ -353,8 +394,8 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   humpback_whale_plot <- ggplot()+
     geom_sf(data=humpback_whale_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
-    geom_sf(data=land_sf,fill=c("grey90"), col="black")+
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Humpback Whale")+
@@ -368,8 +409,8 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   sei_whale_plot <- ggplot()+
     geom_sf(data=sei_whale_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
-    geom_sf(data=land_sf,fill=c("grey90"), col="black")+
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Sei Whale")+
@@ -390,25 +431,25 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
 
 #Blue whale habitat
 
-plot_bw_hab <- function(Blue_4326, PEZ_poly_st, Landshp) {
+plot_bw_hab <- function(Blue_4326b, PEZ_poly_st, land_layer) {
 
-ggplot()+
-geom_sf(data=Blue_4326,fill="skyblue1",col="black")+
-geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
-geom_sf(data=Landshp,fill=c("grey90"), col="black")+
-annotation_scale(location="br")+
-theme_bw()+
-coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
-labs(x=expression(paste("Longitude ",degree,"W",sep="")),
-     y=expression(paste("Latitude ",degree,"N",sep="")),
-     col="")+
-watermark(show = TRUE, lab = "DFO Internal Use Only")
+  ggplot()+
+    geom_sf(data=Blue_4326b,aes(fill=Activity),col="black")+
+    scale_fill_manual(values=c("green4","green1"))+
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    annotation_scale(location="br")+
+    theme_bw()+
+    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
+    labs(x=expression(paste("Longitude ",degree,"W",sep="")),
+         y=expression(paste("Latitude ",degree,"N",sep="")),
+         col="")+
+    watermark(show = TRUE, lab = "DFO Internal Use Only")
 
 }
 
-
 #Blue whale habitat zoom
-plot_bw_hab_zoom <- function(Blue_4326, PEZ_poly_st, Landshp) {
+plot_bw_hab_zoom <- function(Blue_4326b, PEZ_poly_st, land_layer) {
   
   bbox_list <- lapply(st_geometry(PEZ_poly_st), st_bbox)
   maxmin <- as.data.frame(matrix(unlist(bbox_list),nrow=nrow(PEZ_poly_st)))
@@ -418,9 +459,10 @@ plot_bw_hab_zoom <- function(Blue_4326, PEZ_poly_st, Landshp) {
   latmax<-(maxmin$V4)+0.5
   
   ggplot()+
-    geom_sf(data=Blue_4326,fill="skyblue1",col="black")+
-    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
-    geom_sf(data=Landshp,fill=c("grey90"), col="black")+
+    geom_sf(data=Blue_4326b,aes(fill=Activity),col="black")+
+    scale_fill_manual(values=c("green4","green1"))+
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
@@ -436,8 +478,8 @@ plot_bw_hab_zoom <- function(Blue_4326, PEZ_poly_st, Landshp) {
 plot_EBSA<-function(EBSA_shp, PEZ_poly_st, land_layer) {
   
   ggplot()+
-    geom_sf(data=EBSA_shp,fill="plum1",col="black")+
-    geom_sf(data=PEZ_poly_st, fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
+    geom_sf(data=EBSA_shp, fill="plum",col="black")+
+    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
