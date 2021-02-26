@@ -41,7 +41,7 @@ library(standardPrintOutput)
 ```{r source functions, include=FALSE, cache=FALSE}
 # the .Rmd file sets the working directory based on where it resides and ignores the wd set by the .RProj file
 source("site_map.r")
-source("site_map_new.r")
+source("site_map.r")
 source("filter_wsdb.r")
 source("filter_narwc_new.r")
 # ## Another option is to load directly from the web and read in using Rcurl
@@ -174,7 +174,7 @@ listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(
 ```
 
 ```{r Fig 1 PEZ polygon, fig.height=8, fig.width=11, fig.cap="Map showing the user-defined search area consisting of the location of the proposed project/activity highlighted in yellow, surrounded by an exposure zone or buffer area in blue. The buffer area is used to query information and automatically generate this report."}
-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,40)
+site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,40)
 ```
 
 # **Search Results:**
@@ -577,7 +577,7 @@ endy <- rv_end_sites$latitude
 ```
 
 ```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11, fig.cap= "Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from the Maritimes Research Vessel (RV) Survey. Black lines and arrows indicate the location and direction of each bottom otter trawl sample."}
-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
   geom_point(data = rv_start_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, colour = "darkgreen")+
   geom_point(data = rv_end_sites, aes(x = longitude, y = latitude), size = 3, 
@@ -801,7 +801,7 @@ kable(marfis_record_table, align="l", caption="Quality Tier: Medium. Security le
 **Note:** A complete list of MARFIS observation records of all species within the provided polygon can be found in the Appendix.
 
 ```{r Fig MARFIS and ISDB records, fig.height=8, fig.width=11, fig.cap="Quality Tier: Medium. Security level: Protected B. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query aggregated information from Maritimes Fishery Information System (MARFIS) and/or Industry Survey Database (ISDB) observation records shown as black points, for all species. Rule of five was not applied."}
-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
   geom_point(data = isdb_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, fill = "black")+
   geom_point(data = marfis_sites, aes(x = longitude, y = latitude), size = 3, 
@@ -1261,7 +1261,7 @@ if(x > 1){WSDB_query_output_table}
 
 ```{r Fig 3 Whale Sightings Database, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map for internal use only is **Low**. Map represents cetacean sightings from the Whale Sightings Database (WSDB) (including sightings of groups of animals) in the search area. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-wsdb_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
+wsdb_plot<-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
   geom_point(data = wsdb_filter, aes(x = LONGITUDE, y = LATITUDE, color=Common_Name), 
              size = 3.5)
 if(x > 1){print(wsdb_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))}
@@ -1321,7 +1321,7 @@ if(x > 1){NARWC_query_output_table}
 
 ```{r Fig 5 NARWC Database, fig.height=8, fig.width=11, fig.cap="Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the North Atlantic Right Whale Consortium (NARWC) Sightings Database, for cetacean species in the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. Absence of a species in the map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area since survey effort is biased towards the Northeast US, and data on species presence from acoustic detections is not included. For more information, please visit: https://www.narwc.org/sightings-database.html"}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-narwc_plot<-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
+narwc_plot<-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
   geom_point(data = narwc_filter, aes(x = LONGITUDE, y = LATITUDE, color=Common_Name), 
              size = 3.5)
 if(x > 1){print(narwc_plot + scale_colour_manual(values=c("darkgoldenrod1", "chartreuse4", "black", "#00AFBB","#B337A3", "#0827EF", "#EF6408", "#F5A4E7")))}

@@ -1,4 +1,4 @@
-## **FISH AND INVERTEBRATES**
+## **FISH AND INVERTEBRATES** {-}    
 
 This section...
 
@@ -12,7 +12,7 @@ gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/GBI
 gbif<-subset(gbif,year>minYear)
 ```
 
-### **Maritimes Research Vessel (RV) Survey**   
+### **Maritimes Research Vessel (RV) Survey** {-}    
 
 Contact: <DFO.MAR-PED-Data-Request-Demande-de-donnes-DEP-MAR.MPO@dfo-mpo.gc.ca>  
 Last retrieved on: January 21, 2021 from Open Data <https://open.canada.ca/data/en/dataset/8ddcaeea-b806-4958-a79f-ba9ab645f53b>  
@@ -20,7 +20,7 @@ Quality Tier: High
 Search year: 1970-2020  
 Security level: none  
 
-#### ***Area-specific Maritimes Research Vessel (RV) Survey search results***
+#### ***Area-specific Maritimes Research Vessel (RV) Survey search results*** {-}    
 
 ```{r, include=FALSE, cache=FALSE}
 SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
@@ -63,6 +63,7 @@ RV_summarytable[2,3]<-Total_number_sets_RV
 RV_summarytable[1,2]<-Total_number_SAR_records_RV
 RV_summarytable[1,1]<-Total_number_SAR_individuals_RV
 RV_summarytable[1,3]<-Total_number_SAR_sets_RV
+RV_summarytable<-as.data.frame(RV_summarytable, position = "left")
 ```
 
 *
@@ -74,6 +75,11 @@ Report_RV<-if(Total_number_SAR_records_RV < 1){
   }
 Report_RV<-noquote(Report_RV)
 writeLines(Report_RV)
+```
+
+```{r}
+kable(RV_summarytable, align="l", caption='Quality Tier: High. Security level: none. Summary of Maritimes Research Vessel (RV) Survey observation records of species contained within the search area and listed by the Species At Risk Act (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listings, assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.') %>%
+kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
 ```{r}
@@ -100,8 +106,8 @@ endx <- rv_end_sites$longitude
 endy <- rv_end_sites$latitude
 ```
 
-```{r Fig 2 Ecosystem RV Survey records with polygon, fig.height=8, fig.width=11, fig.cap= "Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from the Maritimes Research Vessel (RV) Survey. Black lines and arrows indicate the location and direction of each bottom otter trawl sample."}
-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+```{r, fig.height=8, fig.width=11, fig.cap= 'Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from the Maritimes Research Vessel (RV) Survey. Black lines and arrows indicate the location and direction of each bottom otter trawl sample.'}
+site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
   geom_point(data = rv_start_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, colour = "darkgreen")+
   geom_point(data = rv_end_sites, aes(x = longitude, y = latitude), size = 3, 
@@ -110,18 +116,18 @@ site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
 ```
 
 ```{r}
-kable(rv_SAR_table, align="l", caption="Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+kable(rv_SAR_table, align="l", caption="\\label{tab:rv_SAR_table}Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
 ```{r}
-kable(rv_freq_table, caption="Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+kable(rv_freq_table, align="l", caption="\\label{tab:rv_freq_table}Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-### **Industry Survey and Maritimes Fishery Databases**  
+### **Industry Survey and Maritimes Fishery Databases** {-}    
 
-#### ***Industry Survey Database (ISDB)***  
+#### ***Industry Survey Database (ISDB)*** {-}    
 Contact: <Claire.Mussells@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
 info<-file.info("../../../Data/mar.wrangling/ISDB.ISSETTYPECODES.RData")
@@ -133,7 +139,7 @@ Quality Tier: Medium
 Search year: 2002-2019  
 Security level: Protected B  
 
-#### ***The Maritime Fishery Information System (MARFIS)***  
+#### ***The Maritime Fishery Information System (MARFIS)*** {-}    
 Contact: <XMARComData@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
 info<-file.info("../../../Data/mar.wrangling/MARFIS.PRO_SPC_INFO.RData")
@@ -145,7 +151,7 @@ Quality Tier: Medium
 Search year: 2002-2019  
 Security level: Protected B  
 
-#### ***Area-specific MARFIS & ISDB search results***
+#### ***Area-specific MARFIS & ISDB search results*** {-}    
 ```{r, include=FALSE, cache=FALSE}
 ##skip all of these steps and create an isdb file for all of the MAR region.
 #df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
@@ -240,7 +246,11 @@ isdb_set_summary_table[1,1]<-Total_number_records_isdb
 isdb_set_summary_table[1,2]<-Total_number_SAR_records_isdb
 isdb_set_summary_table<- isdb_set_summary_table %>% rename("Total organisms recorded in polygon"=Total_organisms_recorded_in_polygon,
                                                            "Listed organisms recorded in polygon"=LISTED_organisms_recorded_in_polygon)
+```
 
+```{r}
+kable(isdb_set_summary_table, align="c", caption="\\label{tab:isdb_set_summary_table}Quality Tier: Medium. Security level: Protected B. Summary of Industry Survey Database (ISDB) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
+  kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
 ```{r, include=FALSE, cache=FALSE}
@@ -311,7 +321,13 @@ Total_number_SAR_records_marfis<-sum(marfis_SAR_record_table$Records)
 marfis_record_summary_table<-data.frame(Total_organisms_recorded_in_polygon="", LISTED_organisms_recorded_in_polygon="")
 marfis_record_summary_table[1,1]<-Total_number_records_marfis
 marfis_record_summary_table[1,2]<-Total_number_SAR_records_marfis
+marfis_record_summary_table<- marfis_record_summary_table %>% rename("Total organisms recorded in polygon"=Total_organisms_recorded_in_polygon,
+                                                           "Listed organisms recorded in polygon"=LISTED_organisms_recorded_in_polygon)
+```
 
+```{r}
+(kable(marfis_record_summary_table, align="c", caption="\\label{tab:marfis_record_summary_table}Quality Tier: Medium. Security level: Protected B. Summary of Maritimes Fishery Information System (MARFIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+  kable_styling(bootstrap_options = "striped", full_width = T, position = "left"))
 ```
 
 ```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
@@ -335,8 +351,8 @@ Report_marfis<-noquote(Report_marfis)
 writeLines(Report_marfis)
 ```
 
-```{r Fig MARFIS and ISDB records, fig.height=8, fig.width=11, fig.cap="Quality Tier: Medium. Security level: Protected B. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query aggregated information from Maritimes Fishery Information System (MARFIS) and/or Industry Survey Database (ISDB) observation records shown as black points, for all species. Rule of five was not applied."}
-site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: Protected B. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query aggregated information from Maritimes Fishery Information System (MARFIS) and/or Industry Survey Database (ISDB) observation records shown as black points, for all species. Rule of five was not applied.'}
+site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
   geom_point(data = isdb_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, fill = "black")+
   geom_point(data = marfis_sites, aes(x = longitude, y = latitude), size = 3, 
@@ -344,26 +360,26 @@ site_map_new(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
 ```
 
 ```{r}
-kable(isdb_SAR_record_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+kable(isdb_SAR_record_table, align="l", caption="\\label{tab:isdb_SAR_record_table}Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
 ```{r}
-kable(isdb_freq, caption="Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+kable(isdb_freq, align="l", caption="\\label{tab:isdb_freq}Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
 ```{r}
-kable(marfis_SAR_record_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+kable(marfis_SAR_record_table, align="l", caption="\\label{tab:marfis_SAR_record_table}Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
 ```{r}
-kable(marfis_freq_table, caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
+kable(marfis_freq_table, caption="\\label{tab:marfis_freq_table}Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-### **Ocean Biodiversity Information System (OBIS)**  
+### **Ocean Biodiversity Information System (OBIS)** {-}    
 Contact: helpdesk@obis.org  
 URL: <https://obis.org/>  
 Last retrieved on: January 27 2021 from OBIS  
@@ -371,7 +387,7 @@ Quality Tier: Medium
 Search year: 2002-2020  
 Security level: none  
 
-#### ***Area-specific OBIS fish and invertebrate search results***
+#### ***Area-specific OBIS fish and invertebrate search results*** {-}    
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 obis_edit<-obis %>% 
@@ -382,8 +398,8 @@ obis_edit2<-obis_edit %>%
   filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
 obis_edit3<-obis_edit2 %>%
   filter(! collectionCode =="WHALESITINGS")
-obis_plot_locations<-st_as_sf(obis_edit3, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
-intersect_obis <- st_intersection(obis_plot_locations,PEZ_poly_st)
+obis_sf<-st_as_sf(obis_edit3, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+intersect_obis <- st_intersection(obis_sf,PEZ_poly_st)
 
 #append columns from listed species
 intersect_obis<- intersect_obis %>% rename(Scientific_Name=scientificName)
@@ -410,7 +426,7 @@ Report_obis2<-noquote(Report_obis)
 writeLines(c(Report_obis2), sep = "\n")
 ```
 
-```{r Fig OBIS records for fish and invertebrates in PEZ polygon, fig.height=8, fig.width=11, fig.cap="Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from Ocean Biodiversity Information System (OBIS) observation records, for species contained within the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore. The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area."}
+```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from Ocean Biodiversity Information System (OBIS) observation records, for species contained within the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore. The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.'}
 if(Total_number_SAR_records_obis > 1){plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)}
 ```
 
@@ -418,9 +434,8 @@ if(Total_number_SAR_records_obis > 1){plot_obis(PEZ_poly,PEZ_poly_st,site_sf,lan
 OBIS_query_output_table<-if(Total_number_SAR_records_obis < 1){
   ""
 } else {
-  kable(obis_fish_table, row.names = F, caption="Quality Tier: Medium. Security level: none. Ocean Biodiversity Information System (OBIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listing. <b>The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>") %>%
-    kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
-}
-
+  kable(obis_fish_table, align="l", row.names = F, caption="\\label{tab:obis_fish_table}Quality Tier: Medium. Security level: none. Ocean Biodiversity Information System (OBIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listing. <b>The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>",
+        booktabs = T, escape = F, linesep="") %>%
+    kable_styling(bootstrap_options = "striped", full_width = T, position = "left")}
 if(Total_number_SAR_records_obis > 1){OBIS_query_output_table}
 ```

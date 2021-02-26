@@ -1,4 +1,4 @@
-# **Document Notes**
+# **Document Notes** {-}    
 
 This synthesis is created using Rmarkdown and therefore this document can be reproduced and reused using the code  available in <https://github.com/AtlanticR/MSP/tree/master/SearchPEZ>. The full document can be updated rapidly as more or different information becomes available.
 
@@ -10,14 +10,14 @@ For information about seabirds please contact Environment and Climate Change Can
 
 There are sources of data and information that were not included in this report. These include data from past studies/publications, acoustic detections, prey sampling and tagging. While the value of these data in predicting and describing cetacean occurrence is vital, these types of data are not available for all species and are not yet available for data querying. In the future, as information from other data sources becomes available, it too will help to provide a more comprehensive understanding of cetacean use and occurrence in the search areas.
 
-# **Additional Notes**
+# **Additional Notes** {-}    
 Should you receive a request for set-level Observer data (ISDB) and MARFIS, please just forward to Peter Comeau and <XMARComData@dfo-mpo.gc.ca>, respectively. Please feel free to use the email template below. Note that the template includes an attachment which you can download here - Informal Release Guidelines <\\ent.dfo-mpo.ca\ATLShares\Shared\ATIP Information\Informal_Release_Guidelines-eng.docx>.
 
 Hi,
 
 I apologize, but we can not provide you with the level of detail as it has been requested.  Fisheries catch and effort information for an individual licence holder is considered personal information and is protected under section 19 of the Access to Information Act. Fisheries catch and effort information for a corporate licence holder is considered to be sensitive, proprietary information and protected under Section 20 of the Access to Information Act.  Without written consent, DFO is not permitted to release information or data products (e.g., maps and data layers) that might reveal personal or third party information such as catch, landed values, and vessel-specific fishing locations.  All of this is spelled out to DFO staff the attached document (i.e. Appendix B – “Catch and Effort and Quota Information: Do’s and Don’ts for Informal Release”)
 
-# **Acknowledgements**
+# **Acknowledgements** {-}    
 
 Science MSP Reproducible Reports Development Team: 
 Catalina Gomez <Catalina.Gomez@dfo-mpo.gc.ca>
@@ -35,7 +35,7 @@ Advisory board members:
 Shelley Lang, Hilary Moors-Murphy, Susan Heaslip, Emma Marotte, Amanda Babin, Nick Jeffery, Angelia Vanderlaan, Heath Stone, Mike McMahon, Koren Spence, Pam Emery, Diane Amirault-Langalis, Colin O’Neil, Andrea Morden, Sean Butler, Ross Claytor, Dwayne Lepitzki, Dave Fraser, Nick Mandrack, Tanya Pelrine, Peter O'Blenis, Karen Compton, David Fishman.
 The Atlantic R Learning & Development Initiative <https://github.com/AtlanticR> provided essential assistance with R code and advice.
 
-# **References**
+# **References** {-}    
 
 Gomez, C., Konrad, C.M., Vanderlaan, A., Moors-Murphy, H.B., Marotte, E., Lawson, J., Kouwenberg, A-L., Fuentes-Yaco, C., Buren, A. 2020. Identifying priority areas to enhance monitoring of cetaceans in the Northwest Atlantic Ocean. Can. Tech. Rep.Fish. Aquat. Sci. 3370: vi + 103 p. http://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf
 
@@ -45,7 +45,7 @@ Lesage, V., Gosselin, J-F., Lawson, J. W., McQuinn, I., Moors-Murphy, H., Plourd
 
 MacDonald, D., Emery, P., Themelis, D., Smedbol, R.K., Harris, L.E., and McCurdy, Q. 2017. Marine mammal and pelagic animal sightings (Whalesightings) database: a user’s guide. Can. Tech. Rep. Fish. Aquat. Sci. 3244: v + 44 p.<https://waves-vagues.dfo-mpo.gc.ca/Library/40642999.pdf> 
 
-# **Future databases and data products to be included**  
+# **Future databases and data products to be included** {-}    
 
 Examples:  
 
@@ -59,9 +59,9 @@ eDNA
 Lobster and scallop programs  
 Salmon    
 
-#### **Other species**  
+#### **Other species** {-}    
 
-#### **OBIS other species Search Results**
+#### **OBIS other species Search Results** {-}    
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 obis_edit<-obis %>% 
@@ -123,15 +123,11 @@ if(x > 1){
 }
 ```
 
-```{r Fig 5 OBIS records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked."}
-
-if(x > 1){
-  plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)
-}
-
+```{r, fig.height=8, fig.width=11, fig.cap='The tier of confidence of this map is **Medium**. Map represents OBIS records within the search area where other Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area (e.g. sightings information underrepresents presence of cetaceans as this search does not include acoustic detections). Sightings on land are an indicator that the sighting data have not yet been completely error-checked.'}
+if(x > 1){plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)}
 ```
 
-#### **GBIF other species Search Results**
+#### **GBIF other species Search Results** {-}    
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 gbif_sf<-st_as_sf(gbif, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
@@ -149,9 +145,8 @@ gbif_table2<-gbif_table %>%
 gbif_table3<- gbif_table2 %>% rename("SARA status"=Schedule.status,
                                      "COSEWIC listing"=COSEWIC.status,
                                      "Wild Species listing"=Wild_Species,
-                                                    "Scientific Name"=Scientific_Name,
-                                                    "Common Name"=Common_Name 
-                                     )
+                                     "Scientific Name"=Scientific_Name,
+                                     "Common Name"=Common_Name)
 gbif_table3$geometry<-NULL
 gbif_table4<-unique(gbif_table3)
 
@@ -177,6 +172,6 @@ GBIF_query_output_table<-if(x < 1){
 if(x > 1){GBIF_query_output_table}
 ```
 
-```{r Fig 5 GBIF records for other species section in PEZ polygon, fig.height=8, fig.width=11, fig.cap="The tier of confidence of this map is **Medium**. Map represents GBIF records within the search area where other Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area)."}
+```{r, fig.height=8, fig.width=11, fig.cap='The tier of confidence of this map is **Medium**. Map represents GBIF records within the search area where other Species at Risk (non cetacean, fish or invertebrate species) may have been observed. Absence of a species in the map should be interpreted as an absence of reporting, not as an absence of the species in the area).'}
 if(x > 1){plot_gbif(PEZ_poly,PEZ_poly_st,site_sf,land_sf,gbif_table,2)}
 ```

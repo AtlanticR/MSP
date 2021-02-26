@@ -1,14 +1,17 @@
-## **HABITAT INFORMATION**
+## **HABITAT INFORMATION** {-}  
 
-### **Intertidal Vegetation and Rockweed**
+### **Intertidal Vegetation and Rockweed** {-}  
 Satellite-based Maps of Intertidal Vegetation and Rockweed presence polygons  
 Contact: <Gordana.Lazin@dfo-mpo.gc.ca>  
 Last retrieved on: February 17 2021  
 Quality Tier: Medium  
 Security level: none.  
 
-#### ***Area-specific Intertidal Vegetation and Rockweed search results***  
+#### ***Area-specific Intertidal Vegetation and Rockweed search results*** {-}    
 
 * "There are no relevant records of predicted intertidal vegetation for this search area" OR "There are There are relevant records of predicted intertidal vegetation for this search area."  
 
-Figure x. Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Figure shows overlap between the search area and satellite-based maps of intertidal vegetation and rockweed presence polygons. 
+```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Figure shows overlap between the search area and satellite-based maps of intertidal vegetation and rockweed presence polygons.'}
+```
+
+Fig.X. Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Figure shows overlap between the search area and satellite-based maps of intertidal vegetation and rockweed presence polygons.
