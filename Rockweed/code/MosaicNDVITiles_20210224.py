@@ -52,7 +52,6 @@ arcpy.env.qualifiedFieldNames = False # Maintains original field names and does 
 
 # Create a new geodatabase
 # Set local variables
-# FolderPath = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/Imagery/Satellite" 
 FolderPath = "N:/MSP/Projects/Rockweed/Imagery/Satellite"
 # FolderPath = r"\\dcnsbiona01a\BIODataSVC\IN\MSP\Projects\Rockweed\Imagery\Satellite"
 
@@ -65,7 +64,6 @@ GDBname = "Processing.gdb"
 arcpy.CreateFileGDB_management(FolderPath, GDBname)
 gdbWorkspace = os.path.join(FolderPath, GDBname)
 
-# FolderPath = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/Imagery/Satellite/NDVI_Tiles" 
 FolderPath = "N:/MSP/Projects/Rockweed/Imagery/Satellite/NDVI_Tiles"
 arcpy.env.workspace = FolderPath
 
@@ -110,7 +108,6 @@ arcpy.env.workspace = gdbWorkspace
 # Set processing extent environments
 arcpy.env.snapRaster = newRast
 
-# outMask = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/Zones/ClippingMask.gdb/MARClippingMask"
 outMask = "N:/MSP/Projects/Rockweed/Zones/ClippingMask.gdb/MARClippingMask"
 # 
 # # using the clipping Mask remove all values that fall under the mask
@@ -137,12 +134,6 @@ arcpy.Compact_management(gdbWorkspace)
 Shoreline1 = "N:/MSP/Data/NaturalResources/CoastalEnvironment/AtlanticShorelineClassification_FGP/ECCC_Class.shp"
 Shoreline2 = "N:/MSP/Data/NaturalResources/CoastalEnvironment/BoFShorelineClassification/BoFscat_Simp.shp"
 
-Shoreline1 = "C:/Temp/ECCC_Class_Clip.shp"
-Shoreline2 = "C:/Temp/BoFscat_Simp_Clip.shp"
-
-
-# # Shoreline1 = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/NaturalResources/CoastalEnvironment/AtlanticShorelineClassification_FGP/ECCC_Class.shp"
-# # Shoreline2 = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/NaturalResources/CoastalEnvironment/BoFShorelineClassification/BoFscat_Simp.shp"
 PolyJoin1 = "NDVI_Poly_ECCCJoin"
 PolyJoin2 = "NDVI_Poly_FinalJoin"
 print("Joining Polys to coastal classification")
@@ -150,14 +141,7 @@ print(str(time.ctime(int(time.time()))))
 arcpy.SpatialJoin_analysis(Poly1, Shoreline1,PolyJoin1,"JOIN_ONE_TO_ONE", "KEEP_ALL", "#", "CLOSEST", "#", "#")
 arcpy.SpatialJoin_analysis(PolyJoin1, Shoreline2,PolyJoin2,"JOIN_ONE_TO_ONE", "KEEP_ALL", "#", "CLOSEST", "5000", "#")
 
-
-# arcpy.SpatialJoin_analysis(Polygons.shp, Points.shp, outFeatureClass,
-#         join_operation = "JOIN_ONE_TO_ONE", join_type = "KEEP_ALL",
-#         field_mapping = "", match_option = "COMPLETELY_CONTAINS",
-#         search_radius = "", distance_field_name = "")
-
-
- # Clean up interim rasters
+# Clean up interim rasters
 rasters = arcpy.ListRasters("*ras", "GRID")
 for raster in rasters:
     arcpy.Delete_management(raster,"")
@@ -169,9 +153,6 @@ for raster in rasters:
 
 BoFTable = "N:/MSP/Data/NaturalResources/CoastalEnvironment/BoF.csv"
 ECCCTable = "N:/MSP/Data/NaturalResources/CoastalEnvironment/ECCC.csv"
-# BoFTable = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/NaturalResources/CoastalEnvironment/BoF.csv"
-# ECCCTable = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/NaturalResources/CoastalEnvironment/ECCC.csv"
-
 
 # Set local variables    
 layerName = "NDVI_layer"
@@ -203,7 +184,6 @@ arcpy.env.compression = "LZW"
 # arcpy.env['compression']
 
 newRas = "NDVI_Final"
-# outTIF = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/Imagery/Satellite/Outputs/NDVI_UTM.TIF"
 outTIF = "N:/MSP/Projects/Rockweed/Outputs/NDVI_UTM.TIF"
 print("Exporting NDVI raster to tif")
 print(str(time.ctime(int(time.time()))))
@@ -241,14 +221,33 @@ arcpy.CopyRaster_management(outRas,outTIF)
 FolderPath = "N:/MSP/Projects/Rockweed/Outputs" 
 GDBname = "NDVI_poly.gdb"
 
+# CreateFileGDB
+arcpy.CreateFileGDB_management(FolderPath, GDBname)
+
+# copy the polygon feature class over to the new GDB
+
+outFeatureClass = os.path.join(FolderPath, GDBname, outFeature)
+arcpy.CopyFeatures_management(outFeature, outFeatureClass)
+
+###########################################################
 # Generate table of all points and polygons within 30 m
 # of each other (using the iNaturalist locations)
 
+PointObs = "N:/MSP/Projects/Rockweed/NaturalResources/Species/Rockweed/Rockweed_DB.shp"
+PointObsUTM = "N:/MSP/Projects/Rockweed/NaturalResources/Species/Rockweed/Rockweed_DB_UTM.shp"
+
+OutCoordSystem = arcpy.SpatialReference(32620)
+
+# Project iNaturalist observations to UTM Zone20
+arcpy.Project_management(PointObs, PointObsUTM, OutCoordSystem)
+
+outTable = "N:/MSP/Projects/Rockweed/Outputs/NearTable.dbf"
+# outTable = "N:/MSP/Projects/Rockweed/Outputs/NearTable.csv"
 print("Generate Near Table")
 try:
     arcpy.GenerateNearTable_analysis(in_features=outFeature,
-                near_features="R:/Shared/Greyson/Rockweed/Rockweed_DB.shp",
-                out_table="R:/Shared/Greyson/Rockweed/Near.dbf",
+                near_features= PointObsUTM,
+                out_table= outTable,
                 search_radius="30 Meters",
                 location="NO_LOCATION",
                 angle="NO_ANGLE",
@@ -257,11 +256,8 @@ try:
                 method="PLANAR")
 except:
     print("Generate near table failed")  
+outPath = "N:/MSP/Projects/Rockweed/Outputs"
+outCSV = "NearTable.csv"
+arcpy.TableToTable_conversion(outTable, outPath, outCSV)
 
-# CreateFileGDB
-arcpy.CreateFileGDB_management(FolderPath, GDBname)
 
-# copy the polygon feature class over to the new GDB
-
-outFeatureClass = os.path.join(FolderPath, GDBname, outFeature)
-arcpy.CopyFeatures_management(outFeature, outFeatureClass)
