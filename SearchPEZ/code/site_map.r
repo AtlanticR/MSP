@@ -12,11 +12,9 @@
 # this controls the "zoom" of the plot
 #
 # Output: map 
-#
-# Written for MSP, Gordana Lazin, September 13, 2019
 
 
-site_map <- function(studyArea,site,land,buf) {
+site_map <- function(studyArea,studyArea_st,site,land,buf) {
 
   # buf is in km, and now converted to degrees
   buf=buf/100
@@ -31,27 +29,21 @@ site_map <- function(studyArea,site,land,buf) {
   # longitude and latitude limits for the map
   lonLim=c(bb$min[1]-buf, bb$max[1]+buf)
   latLim=c(bb$min[2]-buf, bb$max[2]+buf)
+  longmin<-bb$min[1]-buf
+  longmax<-bb$max[1]+buf
+  latmin<-bb$min[2]-buf
+  latmax<-bb$max[2]+buf
   
-  # par(oma = c(0, 0, 0, 0))
-  # plot studyArea on the map with buffer around polygon, specified in buf
-  map(studyArea,fill=T, col="deepskyblue",xlim=lonLim, ylim=latLim)
+ggplot()+
+  geom_sf(data=studyArea_st,fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
+  geom_sf(data=site,fill="yellow",col="black", size=0.6)+
+  geom_sf(data=land,fill=c("lightgrey"), col="black", size=0.7)+
+  watermark(show = TRUE, lab = "DFO Internal Use Only")+
+  annotation_scale(location="bl")+
+  theme_bw()+
+  coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
+  labs(x="Longitude", y="Latitude", col="")+
+  theme(axis.title.y = element_text(size = 13))+
+  theme(axis.title.x = element_text(size = 13))
   
-  # ADD LAND
-  map(land,fill=TRUE,col="lightgrey",add=T) 
-  
-  # ADD SITE
-  map(site,fill=TRUE,col="yellow",add=T)
-  
-  # ADD AXES
-  map.axes(las=1, cex.axis=0.8)
-  
-  # add axis labels - does not want to add y label???
-  title(xlab="Longitude [deg]",ylab="Latitude [deg]")
-  
-  #watermark
-  # watermark("For Internal Use Only", col="grey")
-  #watermark(show = TRUE, lab = "DFO Internal Use Only")
-  
-
- 
 }
