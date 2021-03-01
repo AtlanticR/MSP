@@ -182,7 +182,7 @@ wd <- getwd() # store main project directory
   set2$LAT4[is.na(set2$LAT4)] <- set2$LAT3[is.na(set2$LAT4)]  
   set2$LONG4[is.na(set2$LONG4)] <- set2$LONG3[is.na(set2$LONG4)]
   
-  set2$YEAR<-str_sub(set2$DATE_TIME1, start=1, end=4)
+  set2$YEAR<-lubridate::year(set2$DATE_TIME1)
   set2<- set2 %>% rename(LATITUDE=LAT1)
   set2<- set2 %>% rename(LONGITUDE=LONG1)
   set3 <-  clip_by_poly(df = set2,
@@ -404,6 +404,9 @@ intersect_obis <- st_intersection(obis_sf,PEZ_poly_st)
 #append columns from listed species
 intersect_obis<- intersect_obis %>% rename(Scientific_Name=scientificName)
 obis_fish_table<-merge(intersect_obis, listed_fish_invert_species, by='Scientific_Name')
+intersect_obis_fish_sep <- obis_fish_table %>%
+    mutate(long = unlist(map(obis_fish_table$geometry,1)),
+           lat = unlist(map(obis_fish_table$geometry,2)))
 Total_number_SAR_records_obis<-as.numeric(nrow(obis_fish_table))
 obis_fish_table<-obis_fish_table %>% select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
 obis_fish_table<- obis_fish_table %>% rename("SARA status"=Schedule.status,
@@ -427,7 +430,12 @@ writeLines(c(Report_obis2), sep = "\n")
 ```
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from Ocean Biodiversity Information System (OBIS) observation records, for species contained within the search area and listed by the Species At Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore. The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.'}
-if(Total_number_SAR_records_obis > 1){plot_obis(PEZ_poly,PEZ_poly_st,site_sf,land_sf,intersect_obis,2)}
+par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
+obis_plot<-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
+  geom_point(data = intersect_obis_fish_sep, aes(x = long, y = lat), size = 3, 
+        shape = 16, fill = "black") 
+if(Total_number_SAR_records_obis > 1){print(obis_plot)}
+
 ```
 
 ```{r echo=FALSE, results='asis', caption="Priority species with observations contained in the OBIS database within the search polygon area."}
