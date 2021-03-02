@@ -1,4 +1,4 @@
-## **FISH AND INVERTEBRATES** {-}    
+## **FISH AND INVERTEBRATES**    
 
 This section...
 
@@ -12,15 +12,15 @@ gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/GBI
 gbif<-subset(gbif,year>minYear)
 ```
 
-### **Maritimes Research Vessel (RV) Survey** {-}    
+### **Maritimes Research Vessel (RV) Survey**    
 
 Contact: <DFO.MAR-PED-Data-Request-Demande-de-donnes-DEP-MAR.MPO@dfo-mpo.gc.ca>  
-Last retrieved on: January 21, 2021 from Open Data <https://open.canada.ca/data/en/dataset/8ddcaeea-b806-4958-a79f-ba9ab645f53b>  
+Last retrieved on: January 21, 2021 from [Open Data](https://open.canada.ca/data/en/dataset/8ddcaeea-b806-4958-a79f-ba9ab645f53b)  
 Quality Tier: High  
 Search year: 1970-2020  
 Security level: none  
 
-#### ***Area-specific Maritimes Research Vessel (RV) Survey search results*** {-}    
+#### ***Area-specific Maritimes Research Vessel (RV) Survey search results***    
 
 ```{r, include=FALSE, cache=FALSE}
 SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
@@ -125,9 +125,9 @@ kable(rv_freq_table, align="l", caption="\\label{tab:rv_freq_table}Quality Tier:
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-### **Industry Survey and Maritimes Fishery Databases** {-}    
+### **Industry Survey and Maritimes Fishery Databases**    
 
-#### ***Industry Survey Database (ISDB)*** {-}    
+#### ***Industry Survey Database (ISDB)***    
 Contact: <Claire.Mussells@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
 info<-file.info("../../../Data/mar.wrangling/ISDB.ISSETTYPECODES.RData")
@@ -139,7 +139,7 @@ Quality Tier: Medium
 Search year: 2002-2019  
 Security level: Protected B  
 
-#### ***The Maritime Fishery Information System (MARFIS)*** {-}    
+#### ***The Maritime Fishery Information System (MARFIS)***    
 Contact: <XMARComData@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
 info<-file.info("../../../Data/mar.wrangling/MARFIS.PRO_SPC_INFO.RData")
@@ -151,7 +151,7 @@ Quality Tier: Medium
 Search year: 2002-2019  
 Security level: Protected B  
 
-#### ***Area-specific MARFIS & ISDB search results*** {-}    
+#### ***Area-specific MARFIS & ISDB search results***    
 ```{r, include=FALSE, cache=FALSE}
 ##skip all of these steps and create an isdb file for all of the MAR region.
 #df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
@@ -330,6 +330,7 @@ marfis_record_summary_table<- marfis_record_summary_table %>% rename("Total orga
   kable_styling(bootstrap_options = "striped", full_width = T, position = "left"))
 ```
 
+*
 ```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
 Report_isdb<-if(Total_number_SAR_records_isdb < 1){
     "There are no relevant records in the Industry Survey Database (ISDB) for this search area."
@@ -379,15 +380,14 @@ kable(marfis_freq_table, caption="\\label{tab:marfis_freq_table}Quality Tier: Me
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-### **Ocean Biodiversity Information System (OBIS)** {-}    
+### **Ocean Biodiversity Information System (OBIS)**    
 Contact: helpdesk@obis.org  
-URL: <https://obis.org/>  
-Last retrieved on: January 27 2021 from OBIS  
+Last retrieved on: January 27, 2021 from [OBIS](https://obis.org/)  
 Quality Tier: Medium  
 Search year: 2002-2020  
 Security level: none  
 
-#### ***Area-specific OBIS fish and invertebrate search results*** {-}    
+#### ***Area-specific OBIS fish and invertebrate search results***    
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 obis_edit<-obis %>% 

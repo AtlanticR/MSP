@@ -1,13 +1,12 @@
-## **AREAS DESIGNATED FOR SPATIAL PLANNING** {-}    
+## **AREAS DESIGNATED FOR SPATIAL PLANNING**    
 
-### **Ecologically and Biologically Significant Areas (EBSA)** {-}    
+### **Ecologically and Biologically Significant Areas (EBSA)**    
 Contact: <Liisa.Peramaki@dfo-mpo.gc.ca>  
-Last retrieved on: January 21, 2021 from Open Data  
-<https://open.canada.ca/data/en/dataset/d2d6057f-d7c4-45d9-9fd9-0a58370577e0>  
+Last retrieved on: January 21, 2021 from [Open Data](https://open.canada.ca/data/en/dataset/d2d6057f-d7c4-45d9-9fd9-0a58370577e0)  
 Quality Tier: High  
 Security level: none  
 
-#### ***Area-specific EBSA search results*** {-}    
+#### ***Area-specific EBSA search results***    
 ```{r read other species database files for other species, include=FALSE, cache=FALSE}
 EBSA <- st_read("../../../Data/Zones/DFO_EBSA/DFO_EBSA.shp", quiet=TRUE)
 EBSA_shp <- st_transform(EBSA, crs = 4326)

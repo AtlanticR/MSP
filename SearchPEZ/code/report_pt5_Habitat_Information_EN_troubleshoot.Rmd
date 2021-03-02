@@ -1,13 +1,13 @@
-## **HABITAT INFORMATION** {-}  
+## **HABITAT INFORMATION**  
 
-### **Intertidal Vegetation and Rockweed** {-}  
+### **Intertidal Vegetation and Rockweed**  
 Satellite-based Maps of Intertidal Vegetation and Rockweed presence polygons  
 Contact: <Gordana.Lazin@dfo-mpo.gc.ca>  
 Last retrieved on: February 17 2021  
 Quality Tier: Medium  
 Security level: none.  
 
-#### ***Area-specific Intertidal Vegetation and Rockweed search results*** {-}    
+#### ***Area-specific Intertidal Vegetation and Rockweed search results***    
 
 * "There are no relevant records of predicted intertidal vegetation for this search area" OR "There are There are relevant records of predicted intertidal vegetation for this search area."  
 

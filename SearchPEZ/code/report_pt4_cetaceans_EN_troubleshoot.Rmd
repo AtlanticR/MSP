@@ -1,4 +1,4 @@
-## **CETACEANS** {-}    
+## **CETACEANS**    
 
 This section...
 
@@ -50,15 +50,15 @@ whale_col=values=c("Blue Whale"="darkgoldenrod1",
                    "Humpback Whale"="red")
 ```
 
-### **Whale Sightings Database (WSDB)** {-}    
+### **Whale Sightings Database (WSDB)**    
 Contact: <XMARWhaleSightings@dfo-mpo.gc.ca>  
 URL: <http://www.inter.dfo-mpo.gc.ca/Maritimes/SABS/popec/sara/Database>  
-Last retrieved on: October 27 2020  
+Last retrieved on: October 27, 2020  
 Quality Tier: Low  
 Search year: 2002-2020  
 Security level: none  
 
-#### ***Area-specific WSDB search results*** {-}    
+#### ***Area-specific WSDB search results***    
 
 ```{r read wsdb and filter SARA & COSEWIC cetacean spp, include=FALSE, cache=FALSE}
 wsdb_filter <- filter_wsdb(wsdb)
@@ -108,24 +108,23 @@ wsdb_plot<-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
 if(Total_number_records_WSDB > 1){print(wsdb_plot + scale_colour_manual(values=whale_col))}
 ```
 
-### **The Whitehead Lab, Dalhousie University** {-}    
+### **The Whitehead Lab, Dalhousie University**    
 URL: <https://whiteheadlab.weebly.com/contact.html>  
-Last retrieved on: January 12 2021  
+Last retrieved on: January 12, 2021  
 Quality Tier: High  
 Search year: 2002-2019  
 Security level: none 
 
-#### ***Area-specific Whitehead Lab search results*** {-}    
+#### ***Area-specific Whitehead Lab search results***    
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the Whitehead Lab, for cetacean species in the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. Field efforts were primarily conducted in the Gully Marine Protected Area, and adjacent canyons along the edge of the eastern Scotian Shelf, during good weather conditions (for example, see Whitehead 2013 for a map of effort between 1988-2011), though some data from surveys along the shelf edge off Nova Scotia, Newfoundland and Labrador are included. <b>The absence of a species in this map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. This map also does not include acoustic detections. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. For more information, please visit: <https://whiteheadlab.weebly.com/contact.html>'}
 ```
 
 Fig.X: Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the Whitehead Lab, for cetacean species in the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. Field efforts were primarily conducted in the Gully Marine Protected Area, and adjacent canyons along the edge of the eastern Scotian Shelf, during good weather conditions (for example, see Whitehead 2013 for a map of effort between 1988-2011), though some data from surveys along the shelf edge off Nova Scotia, Newfoundland and Labrador are included. <b>The absence of a species in this map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. This map also does not include acoustic detections. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. For more information, please visit: <https://whiteheadlab.weebly.com/contact.html>
 
-### **North Atlantic Right Whale Consortium (NARWC) Sightings Database** {-}    
+### **North Atlantic Right Whale Consortium (NARWC) Sightings Database**    
 Contact: <hpettis@neaq.org>  
-URL: <https://www.narwc.org/sightings-database.html>  
-Last retrieved on: September 18 2020  
+Last retrieved on: September 18, 2020 from [NARWC](https://www.narwc.org/sightings-database.html)  
 Quality Tier: High  
 Search year: 2000-2019  
 Security level: none  
@@ -177,15 +176,14 @@ narwc_plot<-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
 if(narwc_species > 1){print(narwc_plot + scale_colour_manual(values=whale_col))}
 ```
 
-### **Ocean Biodiversity Information System (OBIS) [for cetaceans]** {-}    
+### **Ocean Biodiversity Information System (OBIS) [for cetaceans]**    
 Contact: <helpdesk@obis.org>  
-URL: <https://obis.org/>  
-Last retrieved on: January 27 2021 from OBIS  
+Last retrieved on: January 27, 2021 from [OBIS](https://obis.org/)  
 Quality Tier: Medium  
 Search year: 2002-2020  
 Security level: none  
 
-#### ***Area-specific OBIS cetacean search results*** {-}    
+#### ***Area-specific OBIS cetacean search results***    
 ```{r, include=FALSE, cache=FALSE}
 #Select columns of interest from OBIS file
 obis_edit<-obis %>% 
@@ -243,16 +241,16 @@ obis_plot<-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
 if(obis_cetacean_species > 1){print(obis_plot + scale_colour_manual(values=whale_col))}
 ```
 
-### **Species Distribution Models (SDM): Priority Areas to Enhance Monitoring of Cetaceans** {-}    
+### **Species Distribution Models (SDM): Priority Areas to Enhance Monitoring of Cetaceans**    
 
 Contact: <Hilary.Moors-Murphy@dfo-mpo.gc.ca>  
 Site: <https://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf>  
-Last retrieved on: April 1 2020 from Open Data <https://open.canada.ca/data/en/dataset/c094782e-0d6f-4cc0-b5a3-58908493a433>  
+Last retrieved on: April 1, 2020 from [Open Data](https://open.canada.ca/data/en/dataset/c094782e-0d6f-4cc0-b5a3-58908493a433)  
 Quality Tier: Medium  
 Search year: 1975-2015  
 Security level: none.
 
-#### ***Area-specific SDM cetacean search results*** {-}    
+#### ***Area-specific SDM cetacean search results***    
 
 ```{r echo=FALSE, results='asis'}
 #function for overlap
@@ -280,16 +278,16 @@ kable(cetacean_matrix, align="l", caption="\\label{tab:cetacean_matrix}Quality T
 plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, PEZ_poly_st, land_sf)
 ```
 
-### **Blue Whale Important Habitat** {-}    
+### **Blue Whale Important Habitat**    
 
 Blue Whale Important Habitat in the Western North Atlantic  
 Contact: <gddaiss-dmsaisb@dfo-mpo.gc.ca>  
 URL: <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>  
-Last retrieved on: October 30 2020 from Open Data <https://open.canada.ca/data/en/dataset/8fafd919-fcbe-43a3-a911-3d9461273441>  
+Last retrieved on: October 30, 2020 from [Open Data](https://open.canada.ca/data/en/dataset/8fafd919-fcbe-43a3-a911-3d9461273441)  
 Quality Tier: High  
 Security level: none.  
 
-#### ***Area-specific Blue Whale Important Habitat search results*** {-}    
+#### ***Area-specific Blue Whale Important Habitat search results***    
 
 *    
 ```{r echo=FALSE, results='asis'}
@@ -321,7 +319,7 @@ plot_bw_hab(Blue_4326b, PEZ_poly_st, land_sf)
 plot_bw_hab_zoom(Blue_4326b, PEZ_poly_st, land_sf)
 ```
 
-### **Northern Bottlenose Whale Important Habitat** {-}    
+### **Northern Bottlenose Whale Important Habitat**    
 Northern bottlenose whales important habitat in inter-canyon areas on the eastern Scotian Shelf  
 Contact: <MaritimesRAP.XMAR@dfo-mpo.gc.ca>  
 URL: <http://publications.gc.ca/collections/collection_2020/mpo-dfo/fs70-6/Fs70-6-2020-008-eng.pdf>  
@@ -329,7 +327,7 @@ Last retrieved on: February 17 2021 from Maritimes Region
 Quality Tier: High  
 Security level: none.  
 
-#### ***Area-specific Northern Bottlenose Whale Important Habitat search results*** {-}    
+#### ***Area-specific Northern Bottlenose Whale Important Habitat search results***    
 
 * "Search area overlaps with Northern Bottlenose Whales important habitat in inter-canyon areas on the eastern Scotian Shelf " OR "Search area does not overlaps with Northern Bottlenose Whales important habitat in inter-canyon areas on the eastern Scotian Shelf."  
 

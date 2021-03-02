@@ -46,7 +46,7 @@ EBSA_reporturl <- function(EBSA_shp, PEZ_poly_st) {
   Query_output_EBSA_reporturl<-if(x < 1){
     ""
   } else {
-    c("Report URL: ",intersect$Report_URL)
+    c("Report URL:",intersect$Report_URL)
   }
   
   Query_output_EBSA_reporturl2<-noquote(Query_output_EBSA_reporturl)

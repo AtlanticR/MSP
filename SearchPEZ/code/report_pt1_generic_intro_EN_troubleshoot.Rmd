@@ -3,23 +3,26 @@ title: "Reproducible Report for Species in Maritimes Region - for Internal DFO u
 author: Synthesis prepared by the Reproducible Reporting Team, steering committee and advisors.
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
-  html_document:
+  bookdown::html_document2:
+    number_sections: FALSE
     toc: true
     toc_depth: 5
-    number_sections: false
-    fig_caption: true
-  pdf_document:
-    toc: true
-    toc_depth: 5
-    number_sections: true
-    fig_caption: true
+    theme: journal
 ---
+<style>
+table {
+  background-color: white !important;
+  color: black !important;
+}
+caption {
+  color: black !important;
+}
+</style>
+
 ```{r load packages, include=FALSE, cache=FALSE}
-#bookdown::html_document2
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
 library(easypackages)
-libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","raster","RCurl","sf","stringr","ggplot2","data.table","gridExtra","dplyr","stars","ggspatial","tidyverse","standardPrintOutput","tinytex")
-#tinytex::install_tinytex()
+libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","raster","RCurl","sf","stringr","ggplot2","data.table","gridExtra","dplyr","stars","ggspatial","tidyverse","standardPrintOutput")
 ```
 ```{r load source functions, include=FALSE, cache=FALSE}
 source("site_map.r")
@@ -65,17 +68,17 @@ obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBI
 obis<-subset(obis,year>minYear)
 ```
 
-# **REPRODUCIBLE REPORTING** {-}  
+# **REPRODUCIBLE REPORTING**    
 
-#### **About this report** {-}  
+#### **About this report**    
 
 This document summarizes regional data, including information on species and habitats, available at the time of report creation. …
  
-#### **How to use this report?**{-}  
+#### **How to use this report?**    
 
   -  This document
 
-# **SEARCH RESULTS: EMPHASIS ON SPECIES LISTED BY THE <i>SPECIES AT RISK ACT</i>, ASSESSED BY THE COMMITTEE ON THE STATUS OF THE ENDANGERED WILDLIFE IN CANADA (COSEWIC) AND/OR WILD SPECIES** {-}    
+# **SEARCH RESULTS: EMPHASIS ON SPECIES LISTED BY THE <i>SPECIES AT RISK ACT</i>, ASSESSED BY THE COMMITTEE ON THE STATUS OF THE ENDANGERED WILDLIFE IN CANADA (COSEWIC) AND/OR WILD SPECIES**    
 
 ```{r echo=FALSE, results='asis'}
 List_table<-data.frame("Framework"="", Description = "")
@@ -85,23 +88,25 @@ List_table[3,1]<-"Wild Species"
 ```
 ```{r}
 kable(
-  List_table, 
+  List_table,
   align="l", 
   caption = "\\label{tab:List_table}Definitions relevant for species listed by <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listings.",
 booktabs = T,
 escape = F,
 linesep="")%>%
-  kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
+column_spec(1,width = "3cm")%>%
+column_spec(2,width = "3cm")%>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
-#```{r child = 'report_pt2_SAR_dist_crithab_EN_troubleshoot.Rmd'}
-#```
+```{r child = 'report_pt2_SAR_dist_crithab_EN_troubleshoot.Rmd'}
+```
 
-#```{r child = 'report_pt3_fish_inverts_EN_troubleshoot.Rmd'}
-#```
+```{r child = 'report_pt3_fish_inverts_EN_troubleshoot.Rmd'}
+```
 
-#```{r child = 'report_pt4_cetaceans_EN_troubleshoot.Rmd'}
-#```
+```{r child = 'report_pt4_cetaceans_EN_troubleshoot.Rmd'}
+```
 
 ```{r child = 'report_pt5_Habitat_Information_EN_troubleshoot.Rmd'}
 ```
