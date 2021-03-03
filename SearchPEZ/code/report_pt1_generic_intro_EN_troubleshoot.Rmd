@@ -95,8 +95,7 @@ booktabs = T,
 escape = F,
 linesep="")%>%
 column_spec(1,width = "3cm")%>%
-column_spec(2,width = "3cm")%>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+  kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
 ```{r child = 'report_pt2_SAR_dist_crithab_EN_troubleshoot.Rmd'}

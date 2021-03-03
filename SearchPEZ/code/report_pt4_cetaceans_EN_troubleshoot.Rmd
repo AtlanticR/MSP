@@ -270,7 +270,7 @@ cetacean_matrix<- cetacean_matrix %>% rename("Fin Whale"=Fin_Whale,
 ```
 
 ```{r}
-kable(cetacean_matrix, align="l", caption="\\label{tab:cetacean_matrix}Quality Tier: Low. Security level: none. Results showing if the search area overlap with predicted Priority Areas to Enhance Monitoring of several species of cetaceans (Fin Whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; FALSE = polygon does NOT overlap with priority area.", booktabs = T, escape = F, linesep="") %>%
+kable(cetacean_matrix, align="cccc", caption="\\label{tab:cetacean_matrix}Quality Tier: Low. Security level: none. Results showing if the search area overlap with predicted Priority Areas to Enhance Monitoring of several species of cetaceans (Fin Whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; FALSE = polygon does NOT overlap with priority area.", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
