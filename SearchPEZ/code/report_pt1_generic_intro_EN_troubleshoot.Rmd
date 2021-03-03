@@ -17,6 +17,7 @@ table {
 caption {
   color: black !important;
 }
+
 </style>
 
 ```{r load packages, include=FALSE, cache=FALSE}
@@ -64,7 +65,7 @@ listed_other_species<-subset(listed_species, Common_Name %in% other_species_list
 listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
 ```
 ```{r load databases used in multiple sections, include=FALSE, cache=FALSE}
-obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/OBIS_MAR_priority_records.csv")
+obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/OBIS_MAR_priority_records.csv")
 obis<-subset(obis,year>minYear)
 ```
 

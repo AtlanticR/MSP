@@ -118,14 +118,12 @@ obis_datasetID<-unique(obis_edit$datasetID)
 write.csv(obis_datasetID,"obis_datasetID.csv") 
 
 #Separate CWS/ECCC records
-CWS.ECCC.OBIS_records<-filter(obis_edit, institutionCode=="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
-write.csv(CWS.ECCC.OBIS_records, "CWS_ECCC_OBIS_records.csv")
+#CWS.ECCC.OBIS_records<-filter(obis_edit, institutionCode=="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
+#write.csv(CWS.ECCC.OBIS_records, "CWS_ECCC_OBIS_records.csv")
 
 #Delete WSDB and CWS/ECCC records
-obis_edit2<-obis_edit %>%
-  filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
-obis_edit3<-obis_edit2 %>%
-  filter(! collectionCode =="WHALESITINGS")
+#obis_edit<-obis_edit %>% filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
+obis_edit<-obis_edit %>% filter(! collectionCode =="WHALESITINGS")
 
 
 # ==== GBIF ====

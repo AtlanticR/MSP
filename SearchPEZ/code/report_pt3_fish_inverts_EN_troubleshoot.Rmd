@@ -6,9 +6,9 @@ This section...
 fl <- list.files(dataPath,".csv")
 cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
 cws<-subset(cws,year>minYear)
-inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
+inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
 inat<-subset(inat,datetime>minYear)
-gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/GBIF_MAR_priority_records.csv")
+gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/GBIF_MAR_priority_records.csv")
 gbif<-subset(gbif,year>minYear)
 ```
 
@@ -412,11 +412,10 @@ obis_edit<-obis %>%
   transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
  
 #Delete WSDB and CWS/ECCC records
+#obis_edit2<-obis_edit %>% filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
 obis_edit2<-obis_edit %>%
-  filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
-obis_edit3<-obis_edit2 %>%
   filter(! collectionCode =="WHALESITINGS")
-obis_sf<-st_as_sf(obis_edit3, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+obis_sf<-st_as_sf(obis_edit2, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
 intersect_obis <- st_intersection(obis_sf,PEZ_poly_st)
 
 #append columns from listed species

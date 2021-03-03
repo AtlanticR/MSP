@@ -15,7 +15,7 @@ wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
 cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
 cws<-subset(cws,year>minYear)
 #read iNaturalist file
-inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_CBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
+inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
 inat<-subset(inat,datetime>minYear)
 #convert fin whale raster to sf object
 fin_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Fin_Whale.tif")
@@ -194,12 +194,11 @@ obis_edit<-obis %>%
 #write.csv(CWS.ECCC.OBIS_records, "CWS_ECCC_OBIS_records.csv")
 
 #Delete WSDB and CWS/ECCC records
+#obis_edit2<-obis_edit %>% filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
 obis_edit2<-obis_edit %>%
-  filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
-obis_edit3<-obis_edit2 %>%
   filter(! collectionCode =="WHALESITINGS")
 
-obis_sf<-st_as_sf(obis_edit3, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+obis_sf<-st_as_sf(obis_edit2, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
 intersect_obis <- st_intersection(obis_sf,PEZ_poly_st)
 
 #summarize individual counts
