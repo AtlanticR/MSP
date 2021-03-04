@@ -16,26 +16,13 @@
 # shoreline classification information attached in the attribute table.
 #
 # Bring in the iNaturalist/OBIS/GBIF points and join with presence polygons
-# Spatial Join, ONE TO MANY, don't keep all features, 30m distance.
-# Try 
-# 
+# GenerateNearTable creates a table of all points and polygons within
+# a specified distance
 #
 # Philip Greyson
 # February 2021
 ############################################################################################
 ######################################################################################################################
-
-
-
-# Mosaic individual .tif images to new raster
-# Raster processing environments set to Snap to Raster
-# use Ocean Mask to take out floating algae
-# convert to polygons (1,0)
-# (explode?) if necessary
-# Spatial Join with ECCC classifiction (perhaps convert to centroid, join centroid with closest line segment, table join back to polygon layer)
-# What's the process for determining polygons on land?
-# Export large mosaic as .tif (both UTM and WGS84)
-# 
 
 import arcpy
 import os
@@ -70,29 +57,7 @@ arcpy.env.workspace = FolderPath
 # create a list of all .TIF files in the workspace
 rasters = arcpy.ListRasters("*", "TIF")
 
-# ###################################################################################
 ######################################################################################################################
-
-# Export all raster names to a text file
-# In Excel make a second list of new names
-# Print List of all rasters to text file
-# and then create a list of new names for them
-# list1 = arcpy.ListRasters("*")
-
-# Get count of elements in the list
-fcCount = len(rasters)
-print(fcCount)
-# export the names of all rasters
-with open('C:/Temp/NDVIRastersList.txt', 'w') as f:
-    for item in rasters:
-        f.write("%s\n" % item)
-
-print("Exported text file to c:\Temp")
-print(str(time.ctime(int(time.time()))))
-
-######################################################################################################################
-
-
 # ######## Mosaic all tiles into a single raster in the geodatabase  ######## #
 
 newRast = "NDVI_Mosaic"
@@ -120,7 +85,6 @@ print(str(time.ctime(int(time.time()))))
 outCon2 = arcpy.sa.SetNull(outCon <0.4, 1)
 
 Poly1 = "NDVI_Poly"
-# # Poly2 = "NDVI_PolySingle"
 # #---------------------------------------------------------------------------------#
 # # Convert the raster to a polygon layer
 print("Converted raster to polygon layer")
@@ -189,11 +153,8 @@ print("Exporting NDVI raster to tif")
 print(str(time.ctime(int(time.time()))))
 arcpy.CopyRaster_management(newRas,outTIF)
 
-# reset export compression to NONE
-# arcpy.env.compression = "NONE"
 
 # Project Raster and export
-
 OutCoordSystem = arcpy.SpatialReference(4326)
 InCoordSystem = arcpy.SpatialReference(32620)
 
@@ -210,7 +171,7 @@ print("Projecting raster to WGS84")
 print(str(time.ctime(int(time.time()))))
 arcpy.ProjectRaster_management(newRas, outRas, OutCoordSystem, ReSample, CellSize, "", "", InCoordSystem)
 
-# outTIF = "C:/BIO/20200306/GIS/Projects/MSP/Rockweed/Imagery/Satellite/Outputs/NDVI_WGS84.TIF"
+# Export WGS84 version of the NDVI mosaic as .tif
 outTIF = "N:/MSP/Projects/Rockweed/Outputs/NDVI_WGS84.TIF"
 print("Exporting WGS version as tif")
 print(str(time.ctime(int(time.time()))))
@@ -225,13 +186,14 @@ GDBname = "NDVI_poly.gdb"
 arcpy.CreateFileGDB_management(FolderPath, GDBname)
 
 # copy the polygon feature class over to the new GDB
-
 outFeatureClass = os.path.join(FolderPath, GDBname, outFeature)
 arcpy.CopyFeatures_management(outFeature, outFeatureClass)
 
 ###########################################################
 # Generate table of all points and polygons within 30 m
 # of each other (using the iNaturalist locations)
+# arcpy GenerateNearTable requires the Advanced
+# ArcGIS license
 
 PointObs = "N:/MSP/Projects/Rockweed/NaturalResources/Species/Rockweed/Rockweed_DB.shp"
 PointObsUTM = "N:/MSP/Projects/Rockweed/NaturalResources/Species/Rockweed/Rockweed_DB_UTM.shp"
@@ -241,11 +203,12 @@ OutCoordSystem = arcpy.SpatialReference(32620)
 # Project iNaturalist observations to UTM Zone20
 arcpy.Project_management(PointObs, PointObsUTM, OutCoordSystem)
 
+# GenerateNearTable produces only a .DBF or a GDB table.
+# This can be opened in Excel or in R
 outTable = "N:/MSP/Projects/Rockweed/Outputs/NearTable.dbf"
-# outTable = "N:/MSP/Projects/Rockweed/Outputs/NearTable.csv"
 print("Generate Near Table")
 try:
-    arcpy.GenerateNearTable_analysis(in_features=outFeature,
+    arcpy.GenerateNearTable_analysis(in_features=outFeatureClass,
                 near_features= PointObsUTM,
                 out_table= outTable,
                 search_radius="30 Meters",
@@ -256,8 +219,5 @@ try:
                 method="PLANAR")
 except:
     print("Generate near table failed")  
-outPath = "N:/MSP/Projects/Rockweed/Outputs"
-outCSV = "NearTable.csv"
-arcpy.TableToTable_conversion(outTable, outPath, outCSV)
 
 
