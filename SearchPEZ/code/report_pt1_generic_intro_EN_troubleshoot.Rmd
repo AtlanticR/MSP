@@ -39,8 +39,8 @@ source("fn_maps.r")
 source("fn_Search_MARFIS_Data.r")
 ```
 ```{r Define Site, include=FALSE, cache=FALSE}
-AquaSiteName <- "FarmersLedge"
-PEZversion <- "4748m"
+AquaSiteName <- "AtlanticDestiny"
+PEZversion <- "60km"
 minYear <- 2002
 ```
 ```{r set up paths, include=FALSE, cache=FALSE}

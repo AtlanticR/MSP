@@ -4,12 +4,10 @@ This section...
 
 ```{r Set up paths for Cetacean section, include=FALSE, cache=FALSE}
 #read narwc file
-narwcFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/NARWC","NARWC_09-18-2020.csv")
-narwc <- read.csv(narwcFile)
+narwc <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv")
 narwc <- narwc[which(narwc$YEAR>=minYear),]
 #read wsdb file
-wsdbFile <- file.path("../../../Data/NaturalResources/Species/Cetaceans/WSDB","MarWSDBSightingsForCGomez_27Oct2020.csv")
-wsdb <- read.csv(wsdbFile)
+wsdb <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/WSDB/MarWSDBSightingsForCGomez_27Oct2020.csv")
 wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
 #read cws file
 cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")

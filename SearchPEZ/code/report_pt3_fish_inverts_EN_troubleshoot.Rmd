@@ -4,8 +4,8 @@ This section...
 
 ```{r read fish and invertebrate files, include=FALSE, cache=FALSE}
 fl <- list.files(dataPath,".csv")
-cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
-cws<-subset(cws,year>minYear)
+#cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
+#cws<-subset(cws,year>minYear)
 inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
 inat<-subset(inat,datetime>minYear)
 gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/GBIF_MAR_priority_records.csv")
@@ -133,9 +133,16 @@ kable(rv_freq_table, align="l", caption="\\label{tab:rv_freq_table}Quality Tier:
 
 ### **Industry Survey and Maritimes Fishery Databases**    
 
+```{r echo=FALSE, results='asis', warning=FALSE, comment=FALSE, message=FALSE}
+data.dir = "../../../Data/mar.wrangling"  # location of ISDB datafiles
+get_data('isdb', data.dir=data.dir)
+```
+
 #### ***Industry Survey Database (ISDB)***    
 Contact: <Claire.Mussells@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
+wd <- getwd() # store main project directory
+dsn <- "../../../Data/Zones/SearchPEZpolygons"
 info<-file.info("../../../Data/mar.wrangling/ISDB.ISSETTYPECODES.RData")
 LatestUpdate<-format(info[,"mtime"], format = "%B %d %Y")
 last_retrieved<-c("Last retrieved on: ",LatestUpdate)
@@ -164,61 +171,57 @@ Security level: Protected B
 #isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
 #ISDBCatch <-  SelectISDB_fn(AquaSiteName, PEZversion, minYear)
 wd <- getwd() # store main project directory
-  data.dir = "../../../Data/mar.wrangling"  # location of ISDB datafiles
-  dsn <- "../../../Data/Zones/SearchPEZpolygons"
+dsn <- "../../../Data/Zones/SearchPEZpolygons"
 
-  # Import the ISDB tables
-  get_data('isdb', data.dir=data.dir)
-  
-  #ISSETPROFILE_WIDE corrections 
-  set2<-ISSETPROFILE_WIDE %>%
-    mutate(DATE_TIME1 = na_if(DATE_TIME1, "9999-01-01 AST"))
-  set2<-set2 %>%
-    mutate(DATE_TIME2 = na_if(DATE_TIME2, "9999-01-01 AST"))
-  set2<-set2 %>%
-    mutate(DATE_TIME3 = na_if(DATE_TIME3, "9999-01-01 AST"))
-  set2<-set2 %>%
-    mutate(DATE_TIME4 = na_if(DATE_TIME4, "9999-01-01 AST"))
-  set2$DATE_TIME1[is.na(set2$DATE_TIME1)] <- set2$DATE_TIME2[is.na(set2$DATE_TIME1)]         
-  set2$DATE_TIME4[is.na(set2$DATE_TIME4)] <- set2$DATE_TIME3[is.na(set2$DATE_TIME4)]         
-  
-  set2$LAT1[is.na(set2$LAT1)] <- set2$LAT2[is.na(set2$LAT1)]  
-  set2$LONG1[is.na(set2$LONG1)] <- set2$LONG2[is.na(set2$LONG1)]
-  
-  set2$LAT4[is.na(set2$LAT4)] <- set2$LAT3[is.na(set2$LAT4)]  
-  set2$LONG4[is.na(set2$LONG4)] <- set2$LONG3[is.na(set2$LONG4)]
-  
-  set2$YEAR<-lubridate::year(set2$DATE_TIME1)
-  set2<- set2 %>% rename(LATITUDE=LAT1)
-  set2<- set2 %>% rename(LONGITUDE=LONG1)
-  set3 <-  clip_by_poly(df = set2,
-                        lat.field = "LATITUDE",
-                        lon.field = "LONGITUDE",
-                        clip.poly = PEZ_poly)
-  ISSETPROFILE_WIDE <- set3[set3$YEAR >= minYear,]
-  
-  # limit by year
-  self_filter(keep_nullsets = FALSE,quiet = TRUE)
-  dsn <- "C:/Temp"
-  setwd(dsn)
-  save_data(db='isdb')  # this creates both a csv and a shp
-  # of the clipped data.  Import the shp as an sf object and 
-  # pass back to main script as ISDB_INTERSECT
+#ISSETPROFILE_WIDE corrections 
+set2<-ISSETPROFILE_WIDE %>%
+  mutate(DATE_TIME1 = na_if(DATE_TIME1, "9999-01-01 AST"))
+set2<-set2 %>%
+  mutate(DATE_TIME2 = na_if(DATE_TIME2, "9999-01-01 AST"))
+set2<-set2 %>%
+  mutate(DATE_TIME3 = na_if(DATE_TIME3, "9999-01-01 AST"))
+set2<-set2 %>%
+  mutate(DATE_TIME4 = na_if(DATE_TIME4, "9999-01-01 AST"))
+set2$DATE_TIME1[is.na(set2$DATE_TIME1)] <- set2$DATE_TIME2[is.na(set2$DATE_TIME1)]         
+set2$DATE_TIME4[is.na(set2$DATE_TIME4)] <- set2$DATE_TIME3[is.na(set2$DATE_TIME4)]         
 
-    # read in the newly created ISDB shapefile
-  # as an sf object.
+set2$LAT1[is.na(set2$LAT1)] <- set2$LAT2[is.na(set2$LAT1)]  
+set2$LONG1[is.na(set2$LONG1)] <- set2$LONG2[is.na(set2$LONG1)]
 
-  files <- list.files(dsn,".shp")
-  isdb_shp <- files[grep("isdb_",files)] # get shapefile name
-  isdb_shp <- substr(isdb_shp,1,nchar(isdb_shp)-4) # remove '.shp' extension
+set2$LAT4[is.na(set2$LAT4)] <- set2$LAT3[is.na(set2$LAT4)]  
+set2$LONG4[is.na(set2$LONG4)] <- set2$LONG3[is.na(set2$LONG4)]
 
-  isdb_sf <- st_read(dsn, layer = isdb_shp, quiet=TRUE)
-  # remove all files created by save_data() (shapefile and CSV)
-  fl <- list.files(dsn,isdb_shp)
-  for(i in 1:length(fl)) {
-    file.remove(fl[i])
-  }  
-  setwd(wd) #revert to original working directory
+set2$YEAR<-lubridate::year(set2$DATE_TIME1)
+set2<- set2 %>% rename(LATITUDE=LAT1)
+set2<- set2 %>% rename(LONGITUDE=LONG1)
+set3 <-  clip_by_poly(df = set2,
+                      lat.field = "LATITUDE",
+                      lon.field = "LONGITUDE",
+                      clip.poly = PEZ_poly)
+ISSETPROFILE_WIDE <- set3[set3$YEAR >= minYear,]
+
+# limit by year
+self_filter(keep_nullsets = FALSE,quiet = TRUE)
+dsn <- "C:/Temp"
+setwd(dsn)
+save_data(db='isdb')  # this creates both a csv and a shp
+# of the clipped data.  Import the shp as an sf object and 
+# pass back to main script as ISDB_INTERSECT
+
+  # read in the newly created ISDB shapefile
+# as an sf object.
+
+files <- list.files(dsn,".shp")
+isdb_shp <- files[grep("isdb_",files)] # get shapefile name
+isdb_shp <- substr(isdb_shp,1,nchar(isdb_shp)-4) # remove '.shp' extension
+
+isdb_sf <- st_read(dsn, layer = isdb_shp, quiet=TRUE)
+# remove all files created by save_data() (shapefile and CSV)
+fl <- list.files(dsn,isdb_shp)
+for(i in 1:length(fl)) {
+  file.remove(fl[i])
+}  
+setwd(wd) #revert to original working directory
 
 isdb_intersect <- st_intersection(isdb_sf,PEZ_poly_st)
 isdb_sites<-data.frame(longitude=isdb_intersect$LONGI, latitude=isdb_intersect$LATIT)

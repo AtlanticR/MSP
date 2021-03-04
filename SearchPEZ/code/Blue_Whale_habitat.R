@@ -73,12 +73,11 @@ blue_whale_habitat_activity <- function(Blue_Whale_shp, PEZ_poly_st) {
     c(intersect$activite)
   }
   
-  Query_output_activite2<-noquote(Query_output_activite)
 
   Activity_result<-if(x < 1){
     ""
   } else {
-    c(Query_output_activity2,"/",Query_output_activite2)
+    c(Query_output_activity2,"/",Query_output_activite)
   }
   
   Activity_result<-if(x < 1){
