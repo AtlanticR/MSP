@@ -8,7 +8,7 @@ Security level: none
 
 #### ***Area-specific EBSA search results***    
 ```{r read other species database files for other species, include=FALSE, cache=FALSE}
-EBSA <- st_read("../../../Data/Zones/DFO_EBSA/DFO_EBSA.shp", quiet=TRUE)
+EBSA <- st_read("../../../Data/Zones/DFO_EBSA/DFO_EBSA_FGP.shp", quiet=TRUE)
 EBSA_shp <- st_transform(EBSA, crs = 4326)
 ```
 
