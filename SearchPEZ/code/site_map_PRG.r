@@ -26,7 +26,7 @@ site_map <- function(studyArea,studyArea_st,site,land,buf) {
   bb=st_as_sfc(st_bbox(studyArea))
   bb <- st_bbox(studyArea)
   
-  
+  bb[[1]]
   
   # buffer around bounding box
   #buf=0.05
