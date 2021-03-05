@@ -10,14 +10,11 @@ output:
     theme: journal
 ---
 <style>
-table {
-  background-color: white !important;
-  color: black !important;
-}
-caption {
-  color: black !important;
-}
-
+table {background-color: white !important;color: black !important;}
+caption {color: black !important;}
+a:link {color: #002080;}
+a:visited {color: #008040;}
+a:hover {color: #006080;}
 </style>
 
 ```{r load packages, include=FALSE, cache=FALSE}

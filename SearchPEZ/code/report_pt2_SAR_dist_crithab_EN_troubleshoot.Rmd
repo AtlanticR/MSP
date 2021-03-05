@@ -53,11 +53,11 @@ Query_output_dist<-if(Dist_overlap_result < 1){
 Query_output_dist<-noquote(Query_output_dist)
 writeLines(Query_output_dist)
 ```
-```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: High. Security level: none. This map summarizes areas where the search polygon overlaps with distribution (range) of Species At Risk listed as Endangered, Threatened or Special Concern under the Species At Risk Act. This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk [GIS tool](http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US) to create an authoritative SARA report.'}
+```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: High. Security level: none. This map summarizes areas where the search polygon overlaps with distribution (range) of Species At Risk listed as Endangered, Threatened or Special Concern under the <i>Species At Risk Act</i>. This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk [GIS tool](http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US) to create an authoritative SARA report.'}
 plot_sardist(sardist, PEZ_poly_st, land_sf)
 ```
 
-```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: High. Security level: none. This map summarizes areas where the search polygon overlaps with distribution (range) of Species At Risk listed as Endangered, Threatened or Special Concern under the Species At Risk Act. This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk [GIS tool](http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US) to create an authoritative SARA report.'}
+```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: High. Security level: none. This map summarizes areas where the search polygon overlaps with distribution (range) of Species At Risk listed as Endangered, Threatened or Special Concern under the <i>Species At Risk Act</i>. This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk [GIS tool](http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US) to create an authoritative SARA report.'}
 plot_sardist_zoom(sardist, PEZ_poly_st, land_sf)
 ```
 
@@ -66,7 +66,7 @@ plot_sardist_zoom(sardist, PEZ_poly_st, land_sf)
 Dist_query_output_table<-if(Dist_overlap_result < 1){
   ""
 } else {
-  kable(dist_table[!duplicated(dist_table),], align="l", caption= "\\label{tab:dist_table}Quality Tier: High. Security level: none. Species At Risk listed as Endangered, Threatened or Special Concern under the Species At Risk Act for which the search polygon overlaps with their distribution (range). This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk [GIS tool](http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US) to create anthe authoritative SARA report.", booktabs = T, escape = F, linesep="")%>%
+  kable(dist_table[!duplicated(dist_table),], align="l", caption= "\\label{tab:dist_table}Quality Tier: High. Security level: none. Species At Risk listed as Endangered, Threatened or Special Concern under the <i>Species At Risk Act</i> for which the search polygon overlaps with their distribution (range). This is not the authoritative source or advice for Species At Risk data. Please access the Species At Risk [GIS tool](http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US) to create anthe authoritative SARA report.", booktabs = T, escape = F, linesep="")%>%
     kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 }
 if(Dist_overlap_result > 1){Dist_query_output_table}

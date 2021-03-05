@@ -43,15 +43,17 @@ kableExtra          1.3.1       CRAN
 knitr               1.30        CRAN
 lubridate           1.7.9.2     CRAN
 maps                3.3.0       CRAN
-Mar.datawrangling   2021.02.05  GitHub
 raster              3.4-5       CRAN
 RCurl               1.98-1.2    CRAN
 rgdal               1.5-23      CRAN
 sf                  0.9-7       CRAN
 stars               0.4-3       CRAN
 stringr             1.4.0       CRAN
-standardPrintOutput 0.0.0.9000  GitHub
 tidyverse           1.3.0       CRAN
+
+Mar.datawrangling   2021.02.05  GitHub
+standardPrintOutput 0.0.0.9000  GitHub
+
 
 Directory Setup in ASCII format:
 
