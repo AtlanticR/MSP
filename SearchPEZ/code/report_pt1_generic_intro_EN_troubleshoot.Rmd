@@ -20,7 +20,11 @@ a:hover {color: #006080;}
 ```{r load packages, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.align="left")
 library(easypackages)
-libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","raster","RCurl","sf","stringr","ggplot2","data.table","gridExtra","dplyr","stars","ggspatial","tidyverse","standardPrintOutput")
+libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","raster","RCurl","sf","stringr","ggplot2","data.table","gridExtra","dplyr","stars","ggspatial","tidyverse")
+#These next two lines are necessary for the generation of the water mark on all plots.
+#install.packages("remotes")
+#remotes::install_github("terminological/standard-print-output")
+library(standardPrintOutput)
 ```
 ```{r load source functions, include=FALSE, cache=FALSE}
 source("site_map.r")
