@@ -3,7 +3,7 @@
 This section...
 
 ```{r Set up paths for Cetacean section, include=FALSE, cache=FALSE}
-#read narwc file
+#read narwc file - update 
 narwc <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv")
 narwc <- narwc[which(narwc$YEAR>=minYear),]
 #read wsdb file
