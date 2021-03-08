@@ -19,7 +19,9 @@ site_map <- function(studyArea,studyArea_st,site,land,buf) {
   # buf is in km, and now converted to degrees
   buf=buf/100
   #png("pez_and_site.png", width=1616, height=1410)
+ 
   
+  # PRG use the sf object to get bounding box 
   # bounding box
   bb=as.data.frame(summary(studyArea)$bbox)
   bb=as.data.frame(st_bbox(studyArea))
