@@ -3,12 +3,13 @@
 This section...
 
 ```{r read fish and invertebrate files, include=FALSE, cache=FALSE}
-fl <- list.files(dataPath,".csv")
+# this list.files doesn't seem to be used
+# fl <- list.files(dataPath,".csv")
 #cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
 #cws<-subset(cws,year>minYear)
-inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/iNaturalist_MAR_priority_records.csv")
+inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/iNaturalist_MAR_priority_records.csv", stringsAsFactors = FALSE)
 inat<-subset(inat,datetime>minYear)
-gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/GBIF_MAR_priority_records.csv")
+gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/GBIF_MAR_priority_records.csv",stringsAsFactors = FALSE)
 gbif<-subset(gbif,year>minYear)
 ```
 
