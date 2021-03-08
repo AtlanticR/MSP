@@ -33,7 +33,7 @@ EBSA_report <- function(EBSA_shp, PEZ_poly_st) {
   
   Query_output_EBSA_report2<-noquote(Query_output_EBSA_report)
 
-  writeLines(Query_output_EBSA_report2)
+  writeLines(Query_output_EBSA_report2, sep="\n")
   
 }
 
@@ -51,7 +51,7 @@ EBSA_reporturl <- function(EBSA_shp, PEZ_poly_st) {
   
   Query_output_EBSA_reporturl2<-noquote(Query_output_EBSA_reporturl)
   
-  writeLines(Query_output_EBSA_reporturl2)
+  writeLines(Query_output_EBSA_reporturl2, sep="\n")
   
 }
 
@@ -60,36 +60,15 @@ EBSA_location <- function(EBSA_shp, PEZ_poly_st) {
   
   intersect <- st_intersection(EBSA_shp,PEZ_poly_st)
   x<-as.numeric(nrow(intersect))
-  Query_output_Name<-if(x < 1){
+  Location_result<-if(x < 1){
     ""
   } else {
     c(("Location: "),intersect$Name)
   }
   
-  Query_output_Name2<-noquote(Query_output_Name)
-  
-  Query_output_nom<-if(x < 1){
-    ""
-  } else {
-    intersect$Nom
-  }
-  
-  Query_output_nom2<-noquote(Query_output_nom)  
-  
-  Location_result<-if(x < 1){
-    ""
-  } else {
-    c(Query_output_Name2,"/",Query_output_nom2)
-  }
-  
-  Location_result<-if(x < 1){
-    ""
-  } else {
-    writeLines(Location_result, sep="\n")
-  }
-  
-  
+  writeLines(Location_result, sep="\n")
 }
+  
 
 #Bioregion intersect
 EBSA_bioregion <- function(EBSA_shp, PEZ_poly_st) {

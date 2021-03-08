@@ -11,6 +11,7 @@ inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/iNa
 inat<-subset(inat,datetime>minYear)
 gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/GBIF_MAR_priority_records.csv",stringsAsFactors = FALSE)
 gbif<-subset(gbif,year>minYear)
+temp <- "C:/Temp"
 ```
 
 ### **Maritimes Research Vessel (RV) Survey**    
@@ -111,12 +112,12 @@ endy <- rv_end_sites$latitude
 
 
 ```{r, fig.height=8, fig.width=11, fig.cap= 'Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from the Maritimes Research Vessel (RV) Survey. Black lines and arrows indicate the location and direction of each bottom otter trawl sample.'}
-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+site_map(PEZ_poly_sf,site_sf,land_sf,10)+
   geom_point(data = rv_start_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, colour = "darkgreen")+
   geom_point(data = rv_end_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, colour = "firebrick4")+
-  geom_segment(aes(x = startx, y = starty, xend = endx, yend = endy),arrow=arrow(), size = 1.25)
+  geom_segment(aes(x = startx, y = starty, xend = endx, yend = endy),arrow=arrow(length = unit(0.2,"cm")), size = 1)
 ```
 
 
@@ -138,7 +139,6 @@ kable(rv_freq_table, align="l", caption="\\label{tab:rv_freq_table}Quality Tier:
 Contact: <Claire.Mussells@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
 wd <- getwd() # store main project directory
-dsn <- "../../../Data/Zones/SearchPEZpolygons"
 info<-file.info("../../../Data/mar.wrangling/ISDB.ISSETTYPECODES.RData")
 LatestUpdate<-format(info[,"mtime"], format = "%B %d %Y")
 last_retrieved<-c("Last retrieved on: ",LatestUpdate)
@@ -167,9 +167,8 @@ Security level: Protected B
 #isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
 #ISDBCatch <-  SelectISDB_fn(AquaSiteName, PEZversion, minYear)
 data.dir = "../../../Data/mar.wrangling"  # location of ISDB datafiles
-get_data('isdb', data.dir=data.dir)
+get_data(db="isdb", data.dir=file.path(data.dir))
 wd <- getwd() # store main project directory
-dsn <- "../../../Data/Zones/SearchPEZpolygons"
 
 #ISSETPROFILE_WIDE corrections 
 set2<-ISSETPROFILE_WIDE %>%
@@ -200,8 +199,7 @@ ISSETPROFILE_WIDE <- set3[set3$YEAR >= minYear,]
 
 # limit by year
 self_filter(keep_nullsets = FALSE,quiet = TRUE)
-dsn <- "C:/Temp"
-setwd(dsn)
+setwd(temp)
 save_data(db='isdb')  # this creates both a csv and a shp
 # of the clipped data.  Import the shp as an sf object and 
 # pass back to main script as ISDB_INTERSECT
@@ -209,19 +207,19 @@ save_data(db='isdb')  # this creates both a csv and a shp
   # read in the newly created ISDB shapefile
 # as an sf object.
 
-files <- list.files(dsn,".shp")
+files <- list.files(temp,".shp")
 isdb_shp <- files[grep("isdb_",files)] # get shapefile name
 isdb_shp <- substr(isdb_shp,1,nchar(isdb_shp)-4) # remove '.shp' extension
 
-isdb_sf <- st_read(dsn, layer = isdb_shp, quiet=TRUE)
+isdb_sf <- st_read(temp, layer = isdb_shp, quiet=TRUE)
 # remove all files created by save_data() (shapefile and CSV)
-fl <- list.files(dsn,isdb_shp)
+fl <- list.files(temp,isdb_shp)
 for(i in 1:length(fl)) {
   file.remove(fl[i])
 }  
 setwd(wd) #revert to original working directory
 
-isdb_intersect <- st_intersection(isdb_sf,PEZ_poly_st)
+isdb_intersect <- st_intersection(isdb_sf,PEZ_poly_sf)
 isdb_sites<-data.frame(longitude=isdb_intersect$LONGI, latitude=isdb_intersect$LATIT)
 ```
 
@@ -266,42 +264,40 @@ kable(isdb_set_summary_table, align="c", caption="Quality Tier: Medium. Security
 #source("fn_Search_MARFIS_Data.r")
 #MARFISCatch <-SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
 wd <- getwd() # store main project directory
-  data.dir = "../../../Data/mar.wrangling"  # location of MARFIS datafiles
-  dsn <- "../../../Data/Zones/SearchPEZpolygons"
+data.dir = "../../../Data/mar.wrangling"  # location of MARFIS datafiles
 
-  #Import the MARFIS tables
-  #This command did not work for me
-  #get_data('marfis', data.dir=data.dir)
-  #I developed these instead
-  filenames <- list.files(data.dir, pattern="MARFIS*", full.names=TRUE)
-  lapply(filenames,load,.GlobalEnv)
-    # limit data by MinYear and clip to PEZPoly
-  db='marfis'
-  PRO_SPC_INFO <-  clip_by_poly(df = PRO_SPC_INFO,
-                                lat.field = "LATITUDE",
-                                lon.field = "LONGITUDE",
-                                clip.poly = PEZ_poly)
-  # limit by year
-  PRO_SPC_INFO <- PRO_SPC_INFO[PRO_SPC_INFO$YEAR >= minYear,]
-  self_filter(keep_nullsets = FALSE,quiet = TRUE)
-  dsn <- "C:/Temp"
-  setwd(dsn)
-  save_data(db='marfis')  # this creates both a csv and a shp
-  # of the clipped data.  Import the shp as an sf object and 
-  # pass back to main script as MARFIS_INTERSECT
-    # read in the newly created MARFIS shapefile
-  # as an sf object.
-  files <- list.files(dsn,".shp")
-  marfis_shp <- files[grep("marfis_",files)] # get shapefile name
-  marfis_shp <- substr(marfis_shp,1,nchar(marfis_shp)-4) # remove '.shp' extension
-  marfis_sf <- st_read(dsn, layer = marfis_shp, quiet=TRUE)
-  # remove all files created by save_data() (shapefile and CSV)
-  fl <- list.files(dsn,marfis_shp)
-  for(i in 1:length(fl)) {
-    file.remove(fl[i])
-  }  
-  setwd(wd)
-marfis_intersect <- st_intersection(marfis_sf,PEZ_poly_st)
+#Import the MARFIS tables
+#This command did not work for me
+#get_data('marfis', data.dir=data.dir)
+#I developed these instead
+filenames <- list.files(data.dir, pattern="MARFIS*", full.names=TRUE)
+lapply(filenames,load,.GlobalEnv)
+  # limit data by MinYear and clip to PEZPoly
+db='marfis'
+PRO_SPC_INFO <-  clip_by_poly(df = PRO_SPC_INFO,
+                              lat.field = "LATITUDE",
+                              lon.field = "LONGITUDE",
+                              clip.poly = PEZ_poly)
+# limit by year
+PRO_SPC_INFO <- PRO_SPC_INFO[PRO_SPC_INFO$YEAR >= minYear,]
+self_filter(keep_nullsets = FALSE,quiet = TRUE)
+setwd(temp)
+save_data(db='marfis')  # this creates both a csv and a shp
+# of the clipped data.  Import the shp as an sf object and 
+# pass back to main script as MARFIS_INTERSECT
+  # read in the newly created MARFIS shapefile
+# as an sf object.
+files <- list.files(temp,".shp")
+marfis_shp <- files[grep("marfis_",files)] # get shapefile name
+marfis_shp <- substr(marfis_shp,1,nchar(marfis_shp)-4) # remove '.shp' extension
+marfis_sf <- st_read(temp, layer = marfis_shp, quiet=TRUE)
+# remove all files created by save_data() (shapefile and CSV)
+fl <- list.files(temp,marfis_shp)
+for(i in 1:length(fl)) {
+  file.remove(fl[i])
+}  
+setwd(wd)
+marfis_intersect <- st_intersection(marfis_sf,PEZ_poly_sf)
 marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
 ```
 
@@ -368,7 +364,7 @@ writeLines(Report_marfis)
 
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: Protected B. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query aggregated information from Maritimes Fishery Information System (MARFIS) and/or Industry Survey Database (ISDB) observation records shown as black points, for all species. Rule of five was not applied.'}
-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,2)+
+site_map(PEZ_poly_sf,site_sf,land_sf,10)+
   geom_point(data = isdb_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, fill = "black")+
   geom_point(data = marfis_sites, aes(x = longitude, y = latitude), size = 3, 
@@ -417,7 +413,7 @@ obis_edit<-obis %>%
 obis_edit2<-obis_edit %>%
   filter(! collectionCode =="WHALESITINGS")
 obis_sf<-st_as_sf(obis_edit2, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
-intersect_obis <- st_intersection(obis_sf,PEZ_poly_st)
+intersect_obis <- st_intersection(obis_sf,PEZ_poly_sf)
 
 #append columns from listed species
 intersect_obis<- intersect_obis %>% rename(Scientific_Name=scientificName)
@@ -449,7 +445,7 @@ writeLines(c(Report_obis2), sep = "\n")
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from Ocean Biodiversity Information System (OBIS) observation records, for species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore. The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-obis_plot<-site_map(PEZ_poly,PEZ_poly_st,site_sf,land_sf,5)+
+obis_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,10)+
   geom_point(data = intersect_obis_fish_sep, aes(x = long, y = lat), size = 3, 
         shape = 16, fill = "black") 
 if(Total_number_SAR_records_obis > 1){print(obis_plot)}

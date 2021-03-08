@@ -1,36 +1,25 @@
-
-#Critical habitat
-plot_crithab<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
+#critical habitat
+plot_crithab<-function(ClippedCritHab, PEZ_poly_sf, land_layer, buf) {
   
-  ggplot()+
-    geom_sf(data=ClippedCritHab,fill="red",col="red")+
-    geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
-    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
-    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
-    annotation_scale(location="br")+
-    theme_bw()+
-    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
-    labs(x=expression(paste("Longitude ",degree,"W",sep="")),
-         y=expression(paste("Latitude ",degree,"N",sep="")),
-         col="")+
-    watermark(show = TRUE, lab = "DFO Internal Use Only")
+  # buf is in km, and now converted to degrees
+  buf=buf/100
+  buf_lat=buf*0.72
+  #png("pez_and_site.png", width=1616, height=1410)
   
-}
-
-#critical habitat zoom
-plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
+  # bounding box
+  bb=st_as_sfc(st_bbox(PEZ_poly_sf))
+  bbox <- st_bbox(bb)
   
-  bbox_list <- lapply(st_geometry(PEZ_poly_st), st_bbox)
-  maxmin <- as.data.frame(matrix(unlist(bbox_list),nrow=nrow(PEZ_poly_st)))
-  longmin<-(maxmin$V1)-1
-  longmax<-(maxmin$V3)+1
-  latmin<-(maxmin$V2)-0.5
-  latmax<-(maxmin$V4)+0.5
+  # longitude and latitude limits for the map
+  longmin<-(bbox$xmin)-buf
+  longmax<-bbox$xmax+buf
+  latmin<-bbox$ymin-buf_lat
+  latmax<-bbox$ymax+buf_lat
   
   ggplot()+
     geom_sf(data=ClippedCritHab,fill="red",col="black")+
     geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
-    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=PEZ_poly_sf, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -43,35 +32,25 @@ plot_crithab_zoom<-function(ClippedCritHab, PEZ_poly_st, land_layer) {
 }
 
 #SAR distribution
-plot_sardist<-function(sardist, PEZ_poly_st, land_layer) {
+plot_sardist<-function(sardist, PEZ_poly_sf, land_layer, buf) {
+  
+  # buf is in km, and now converted to degrees
+  buf=buf/100
+  buf_lat=buf*0.72
+
+  # bounding box
+  bb=st_as_sfc(st_bbox(PEZ_poly_sf))
+  bbox <- st_bbox(bb)
+  
+  # longitude and latitude limits for the map
+  longmin<-(bbox$xmin)-buf
+  longmax<-bbox$xmax+buf
+  latmin<-bbox$ymin-buf_lat
+  latmax<-bbox$ymax+buf_lat
   
   ggplot()+
     geom_sf(data=sardist,fill="orange", col="black", size=0.6)+    
-    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
-    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
-    annotation_scale(location="br")+
-    theme_bw()+
-    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
-    labs(x=expression(paste("Longitude ",degree,"W",sep="")),
-         y=expression(paste("Latitude ",degree,"N",sep="")),
-         col="")+
-    watermark(show = TRUE, lab = "DFO Internal Use Only")
-  
-}
-
-#SAR distribution zoom
-plot_sardist_zoom<-function(sardist, PEZ_poly_st, land_layer) {
-  
-  bbox_list <- lapply(st_geometry(PEZ_poly_st), st_bbox)
-  maxmin <- as.data.frame(matrix(unlist(bbox_list),nrow=nrow(PEZ_poly_st)))
-  longmin<-(maxmin$V1)-1
-  longmax<-(maxmin$V3)+1
-  latmin<-(maxmin$V2)-0.5
-  latmax<-(maxmin$V4)+0.5
-  
-  ggplot()+
-    geom_sf(data=sardist,fill="orange",col="black", size=0.6)+    
-    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=PEZ_poly_sf, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
@@ -82,6 +61,7 @@ plot_sardist_zoom<-function(sardist, PEZ_poly_st, land_layer) {
     watermark(show = TRUE, lab = "DFO Internal Use Only")
   
 }
+
 
 #iNaturalist
 
@@ -198,19 +178,33 @@ plot_cws<-function(studyArea,studyArea_st,site,land_layer,intersect_cws,buf) {
 #Grid of 4 cetacean priority habitat
 
 plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf, 
-                               humpback_whale_sf, sei_whale_sf, PEZ_poly_st, 
-                               land_layer) {
+                               humpback_whale_sf, sei_whale_sf, PEZ_poly_sf, 
+                               land_layer,buf) {
+  # buf is in km, and now converted to degrees
+  buf=buf/100
+  buf_long=buf*2
+  #png("pez_and_site.png", width=1616, height=1410)
+  
+  # bounding box
+  bb=st_as_sfc(st_bbox(PEZ_poly_sf))
+  bbox <- st_bbox(bb)
+  
+  # longitude and latitude limits for the map
+  longmin<-(bbox$xmin)-buf_long
+  longmax<-bbox$xmax+buf_long
+  latmin<-bbox$ymin-buf
+  latmax<-bbox$ymax+buf
   
 #Fin Whale
   
   fin_whale_plot <- ggplot()+
     geom_sf(data=fin_whale_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=PEZ_poly_sf, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Fin Whale")+
-    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
+    coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
          col="")+
@@ -220,12 +214,12 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   harbour_porpoise_plot <- ggplot()+
     geom_sf(data=harbour_porpoise_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=PEZ_poly_sf, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Harbour Porpoise")+
-    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
+    coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
          col="")+
@@ -235,12 +229,12 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   humpback_whale_plot <- ggplot()+
     geom_sf(data=humpback_whale_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=PEZ_poly_sf, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Humpback Whale")+
-    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
+    coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
          col="")+
@@ -250,12 +244,12 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
   
   sei_whale_plot <- ggplot()+
     geom_sf(data=sei_whale_sf,fill="#F3E73B",col="#F3E73B")+
-    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=PEZ_poly_sf, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Sei Whale")+
-    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
+    coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
          col="")+
@@ -316,15 +310,30 @@ plot_bw_hab_zoom <- function(Blue_4326b, PEZ_poly_st, land_layer) {
 
 #EBSA
 
-plot_EBSA<-function(EBSA_shp, PEZ_poly_st, land_layer) {
+plot_EBSA<-function(EBSA_shp, PEZ_poly_sf, land_layer, buf) {
+  
+  # buf is in km, and now converted to degrees
+  buf=buf/100
+  buf_long=buf*2
+  #png("pez_and_site.png", width=1616, height=1410)
+  
+  # bounding box
+  bb=st_as_sfc(st_bbox(PEZ_poly_sf))
+  bbox <- st_bbox(bb)
+  
+  # longitude and latitude limits for the map
+  longmin<-(bbox$xmin)-buf_long
+  longmax<-bbox$xmax+buf_long
+  latmin<-bbox$ymin-buf
+  latmax<-bbox$ymax+buf
   
   ggplot()+
     geom_sf(data=EBSA_shp, fill="plum",col="black")+
-    geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=PEZ_poly_sf, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
-    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
+    coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
          col="")+

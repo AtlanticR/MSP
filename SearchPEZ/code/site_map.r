@@ -14,35 +14,26 @@
 # Output: map 
 
 
-site_map <- function(studyArea,studyArea_st,site,land,buf) {
+site_map <- function(PEZ_poly_sf,site_sf,land_sf,buf) {
 
   # buf is in km, and now converted to degrees
   buf=buf/100
   #png("pez_and_site.png", width=1616, height=1410)
   
   # bounding box
-  bb=as.data.frame(summary(studyArea)$bbox)
-  bb=as.data.frame(st_bbox(studyArea))
-  bb=st_as_sfc(st_bbox(studyArea))
-  bb <- st_bbox(studyArea)
-  
-  
-  
-  # buffer around bounding box
-  #buf=0.05
-  
+  bb=st_as_sfc(st_bbox(PEZ_poly_sf))
+  bbox <- st_bbox(bb)
+
   # longitude and latitude limits for the map
-  lonLim=c(bb$min[1]-buf, bb$max[1]+buf)
-  latLim=c(bb$min[2]-buf, bb$max[2]+buf)
-  longmin<-bb$min[1]-buf
-  longmax<-bb$max[1]+buf
-  latmin<-bb$min[2]-buf
-  latmax<-bb$max[2]+buf
+  longmin<-(bbox$xmin)-buf
+  longmax<-bbox$xmax+buf
+  latmin<-bbox$ymin-buf
+  latmax<-bbox$ymax+buf
   
 ggplot()+
-  geom_sf(data=studyArea_st,fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
-  geom_sf(data=site,fill="yellow",col="black", size=0.6)+
-  geom_sf(data=land,fill=c("lightgrey"), col="black", size=0.7)+
+  geom_sf(data=PEZ_poly_sf,fill="deepskyblue", col="black", size=0.6, alpha=0.4)+
+  geom_sf(data=site_sf,fill="yellow",col="black", size=0.6)+
+  geom_sf(data=land_sf,fill=c("lightgrey"), col="black", size=0.7)+
   watermark(show = TRUE, lab = "DFO Internal Use Only")+
   annotation_scale(location="bl")+
   theme_bw()+
