@@ -3,9 +3,9 @@
 
 #Multipolygon of blue whale habitat cropped to the maritime region.
 #Overlay blue whale habitat
-blue_whale_habitat_overlap <- function(Blue_Whale_shp, PEZ_poly_st) {
+blue_whale_habitat_overlap <- function(Blue_Whale_shp, PEZ_poly_sf) {
   
-  intersect <- st_intersection(Blue_Whale_shp,PEZ_poly_st)
+  intersect <- st_intersection(Blue_Whale_shp,PEZ_poly_sf)
   x<-as.numeric(nrow(intersect))
   Query_output_crit<-if(x < 1){
     "Search area overlaps with Blue Whale Important Habitat in the Western North Atlantic."
@@ -20,33 +20,17 @@ blue_whale_habitat_overlap <- function(Blue_Whale_shp, PEZ_poly_st) {
 }
 
 #Sector intersect
-blue_whale_habitat_sector <- function(Blue_Whale_shp, PEZ_poly_st) {
+blue_whale_habitat_sector <- function(Blue_Whale_shp, PEZ_poly_sf) {
   
-  intersect <- st_intersection(Blue_Whale_shp,PEZ_poly_st)
+  intersect <- st_intersection(Blue_Whale_shp,PEZ_poly_sf)
   x<-as.numeric(nrow(intersect))
-  Query_output_sector<-if(x < 1){
-    ""
-  } else {
-    c(("Sector/Secteur: "),intersect$sector)
-  }
-  
-  Query_output_sector2<-noquote(Query_output_sector)
-  
-  Query_output_secteur<-if(x < 1){
-    ""
-  } else {
-    c(intersect$secteur)
-  }
-  
-  Query_output_secteur2<-noquote(Query_output_secteur)
-  
   Sector_result<-if(x < 1){
     ""
   } else {
-    c(Query_output_sector2,"/",Query_output_secteur)
+    c(("Sector: "),intersect$sector)
   }
-
-  Activity_result<-if(x < 1){
+  
+  Sector_result<-if(x < 1){
     ""
   } else {
     writeLines(Sector_result, sep="\n")
@@ -56,28 +40,13 @@ blue_whale_habitat_sector <- function(Blue_Whale_shp, PEZ_poly_st) {
 }
 
 #Activity intersect
-blue_whale_habitat_activity <- function(Blue_Whale_shp, PEZ_poly_st) {
-  intersect <- st_intersection(Blue_Whale_shp,PEZ_poly_st)
+blue_whale_habitat_activity <- function(Blue_Whale_shp, PEZ_poly_sf) {
+  intersect <- st_intersection(Blue_Whale_shp,PEZ_poly_sf)
   x<-as.numeric(nrow(intersect))
-  Query_output_activity<-if(x < 1){
-    ""
-  } else {
-    c(("Activity/Activite: "),intersect$Activity)
-  }
-  
-  Query_output_activity2<-noquote(Query_output_activity)
-  
-  Query_output_activite<-if(x < 1){
-    ""
-  } else {
-    c(intersect$activite)
-  }
-  
-
   Activity_result<-if(x < 1){
     ""
   } else {
-    c(Query_output_activity2,"/",Query_output_activite)
+    c(("Activity: "),intersect$Activity)
   }
   
   Activity_result<-if(x < 1){
@@ -92,29 +61,13 @@ blue_whale_habitat_activity <- function(Blue_Whale_shp, PEZ_poly_st) {
 blue_whale_habitat_months <- function(Blue_Whale_shp, PEZ_poly_st) {
   intersect <- st_intersection(Blue_Whale_shp,PEZ_poly_st)
   x<-as.numeric(nrow(intersect))
-  Query_output_months<-if(x < 1){
-    ""
-  } else {
-    c(("Months/Mois: "),intersect$months)
-  }
-  
-  Query_output_months2<-noquote(Query_output_months)
-  
-  Query_output_mois<-if(x < 1){
-    ""
-  } else {
-    c(intersect$mois)
-  }
-  
-  Query_output_mois2<-noquote(Query_output_mois)
-  
   Months_result<-if(x < 1){
     ""
   } else {
-    c(Query_output_months2,"/",Query_output_mois2)
+    c(("Months: "),intersect$months)
   }
-
-  Months_result<-if(x < 1){
+  
+    Months_result<-if(x < 1){
     ""
   } else {
     writeLines(Months_result, sep="\n")

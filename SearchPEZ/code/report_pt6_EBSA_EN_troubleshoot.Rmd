@@ -15,29 +15,29 @@ EBSA <- st_transform(EBSA, crs = 4326)
 *
 ```{r echo=FALSE, results='asis'}
 #function for overlap
-EBSA_overlap(EBSA_shp=EBSA, PEZ_poly_st= PEZ_poly_st)
+EBSA_overlap(EBSA, PEZ_poly_sf)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for report
-EBSA_report(EBSA_shp=EBSA, PEZ_poly_st= PEZ_poly_st)
+EBSA_report(EBSA, PEZ_poly_sf)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for report url
-EBSA_reporturl(EBSA_shp=EBSA, PEZ_poly_st= PEZ_poly_st)
+EBSA_reporturl(EBSA, PEZ_poly_sf)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for location
-EBSA_location(EBSA_shp=EBSA, PEZ_poly_st= PEZ_poly_st)
+EBSA_location(EBSA, PEZ_poly_sf)
 ```
 
 ```{r echo=FALSE, results='asis'}
 #function for bioregion
-EBSA_bioregion(EBSA_shp=EBSA, PEZ_poly_st= PEZ_poly_st)
+EBSA_bioregion(EBSA, PEZ_poly_sf)
 ```
 
 ```{r, fig.height=8, fig.width=11, fig.cap= 'Quality Tier: High. Security level: none. Map showing Ecologically and Biologically Significant Areas (EBSA; pink) relative to the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue.'}
-plot_EBSA(EBSA, PEZ_poly_st, land_sf)
+plot_EBSA(EBSA, PEZ_poly_sf, land_sf, 300)
 ```
