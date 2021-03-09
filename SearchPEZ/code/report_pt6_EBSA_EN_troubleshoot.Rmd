@@ -7,10 +7,6 @@ Quality Tier: High
 Security level: none  
 
 #### ***Area-specific EBSA search results***    
-```{r read other species database files for other species, include=FALSE, cache=FALSE}
-EBSA <- st_read("../../../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp", quiet=TRUE)
-EBSA <- st_transform(EBSA, crs = 4326)
-```
 
 *
 ```{r echo=FALSE, results='asis'}

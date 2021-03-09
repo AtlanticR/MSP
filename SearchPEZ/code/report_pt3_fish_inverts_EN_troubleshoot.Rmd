@@ -2,18 +2,6 @@
 
 This section...
 
-```{r read fish and invertebrate files, include=FALSE, cache=FALSE}
-# this list.files doesn't seem to be used
-# fl <- list.files(dataPath,".csv")
-#cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
-#cws<-subset(cws,year>minYear)
-inat<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/iNaturalist_MAR_priority_records.csv", stringsAsFactors = FALSE)
-inat<-subset(inat,datetime>minYear)
-gbif<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/GBIF_MAR_priority_records.csv",stringsAsFactors = FALSE)
-gbif<-subset(gbif,year>minYear)
-temp <- "C:/Temp"
-```
-
 ### **Maritimes Research Vessel (RV) Survey**    
 
 Contact: <DFO.MAR-PED-Data-Request-Demande-de-donnes-DEP-MAR.MPO@dfo-mpo.gc.ca>  
@@ -25,6 +13,7 @@ Security level: none
 #### ***Area-specific Maritimes Research Vessel (RV) Survey search results***    
 
 ```{r, include=FALSE, cache=FALSE}
+temp <- "C:/Temp"
 SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
 File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
 RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, minYear)
