@@ -266,16 +266,32 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
 
 #Blue whale habitat
 
-plot_bw_hab <- function(Blue_4326b, PEZ_poly_st, land_layer) {
+plot_bw_hab <- function(Blue_Whale_sf, PEZ_poly_st, land_layer, buf) {
 
+  # buf is in km, and now converted to degrees
+  buf=buf/100
+  buf_long=buf*2
+  #png("pez_and_site.png", width=1616, height=1410)
+  
+  # bounding box
+  bb=st_as_sfc(st_bbox(PEZ_poly_sf))
+  bbox <- st_bbox(bb)
+  
+  # longitude and latitude limits for the map
+  longmin<-(bbox$xmin)-buf_long
+  longmax<-bbox$xmax+buf_long
+  latmin<-bbox$ymin-buf
+  latmax<-bbox$ymax+buf  
+  
   ggplot()+
-    geom_sf(data=Blue_4326b,aes(fill=Activity),col="black")+
+    geom_sf(data=Blue_Whale_sf,aes(fill=Activity), col="black")+
     scale_fill_manual(values=c("green4","green1"))+
     geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
-    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    geom_sf(data=land_sf,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
     theme_bw()+
-    coord_sf(xlim = c(-67.6, -56.5), ylim = c(42, 47.7))+
+    theme(legend.position = "none")+
+    coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
          col="")+
@@ -284,17 +300,26 @@ plot_bw_hab <- function(Blue_4326b, PEZ_poly_st, land_layer) {
 }
 
 #Blue whale habitat zoom
-plot_bw_hab_zoom <- function(Blue_4326b, PEZ_poly_st, land_layer) {
+
+plot_bw_hab_zoom <- function(Blue_Whale_sf, PEZ_poly_st, land_layer, buf) {
   
-  bbox_list <- lapply(st_geometry(PEZ_poly_st), st_bbox)
-  maxmin <- as.data.frame(matrix(unlist(bbox_list),nrow=nrow(PEZ_poly_st)))
-  longmin<-(maxmin$V1)-1
-  longmax<-(maxmin$V3)+1
-  latmin<-(maxmin$V2)-0.5
-  latmax<-(maxmin$V4)+0.5
+  # buf is in km, and now converted to degrees
+  buf=buf/100
+  buf_long=buf*2
+  #png("pez_and_site.png", width=1616, height=1410)
+  
+  # bounding box
+  bb=st_as_sfc(st_bbox(PEZ_poly_sf))
+  bbox <- st_bbox(bb)
+  
+  # longitude and latitude limits for the map
+  longmin<-(bbox$xmin)-buf_long
+  longmax<-bbox$xmax+buf_long
+  latmin<-bbox$ymin-buf
+  latmax<-bbox$ymax+buf  
   
   ggplot()+
-    geom_sf(data=Blue_4326b,aes(fill=Activity),col="black")+
+    geom_sf(data=Blue_Whale_sf,aes(fill=Activity),col="black")+
     scale_fill_manual(values=c("green4","green1"))+
     geom_sf(data=PEZ_poly_st, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+

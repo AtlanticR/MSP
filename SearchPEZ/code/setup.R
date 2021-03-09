@@ -36,7 +36,7 @@ pl <- pl[-grep("xml",pl)]
 site_sf <- st_read(file.path(polyPath,pl[grep(paste0("Site_",AquaSiteName),pl)]))
 land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
-PEZ_poly_st<-st_as_sf(PEZ_poly)
+PEZ_poly_sf<-st_as_sf(PEZ_poly)
 
 ####### Species List  #######
 # This section reads table that lists species listed by SARA, assesed by COSEWIC or assessed by Wildlife Species listings
@@ -97,10 +97,10 @@ sei_whale_sf<-st_as_stars(sei_whale)%>%st_as_sf()
 
 #Read Blue Whale Important Habitat shape file crs
 Blue_32198 <- st_read("../../../Data/NaturalResources/Species/Cetaceans/BlueWhaleHabitat_FGP/BlueWhaleHabitat_HabitatBaleineBleue.shp", quiet=TRUE)
-Blue_4326 <- st_transform(Blue_32198, crs = 4326)
-Blue_4326b<-setNames(Blue_4326, replace(names(Blue_4326), names(Blue_4326) == 'activité', 'activite'))
-Blue_4326b<-setNames(Blue_4326, replace(names(Blue_4326), names(Blue_4326) == 'activity', 'Activity'))
-Blue_4326b$Activity[Blue_4326b$Activity == "foraging/Feeding"] <- "Foraging/Feeding"
+Blue_Whale_sf <- st_transform(Blue_32198, crs = 4326)
+Blue_Whale_sf<-setNames(Blue_Whale_sf, replace(names(Blue_Whale_sf), names(Blue_Whale_sf) == 'activité', 'activite'))
+Blue_Whale_sf<-setNames(Blue_Whale_sf, replace(names(Blue_Whale_sf), names(Blue_Whale_sf) == 'activity', 'Activity'))
+Blue_Whale_sf$Activity[Blue_Whale_sf$Activity == "foraging/Feeding"] <- "Foraging/Feeding"
 
 #Define colour coding for all cetacean plots for consistency
 whale_col=values=c("Blue Whale"="darkgoldenrod1",
@@ -113,5 +113,7 @@ whale_col=values=c("Blue Whale"="darkgoldenrod1",
                    "Sowerby's Beaked Whale"="#F5A4E7",
                    "Humpback Whale"="red")
 
-EBSA <- st_read("../../../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp", quiet=TRUE)
-EBSA <- st_transform(EBSA, crs = 4326)
+EBSA_sf <- st_read("../../../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp", quiet=TRUE)
+EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
+EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
+
