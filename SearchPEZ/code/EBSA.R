@@ -3,9 +3,9 @@
 
 #Multipolygon of EBSA.
 #Overlay EBSA
-EBSA_overlap <- function(EBSA_shp, PEZ_poly_st) {
+EBSA_overlap <- function(EBSA_sf, PEZ_poly_sf) {
   
-  intersect <- st_intersection(EBSA_shp,PEZ_poly_st)
+  intersect <- st_intersection(EBSA_sf,PEZ_poly_sf)
   x<-as.numeric(nrow(intersect))
   Query_output_EBSA<-if(x < 1){
     "The search area does not overlap with identified Ecologically and Biologically Significant Areas (EBSA)."
@@ -21,9 +21,9 @@ EBSA_overlap <- function(EBSA_shp, PEZ_poly_st) {
 
 
 #EBSA report
-EBSA_report <- function(EBSA_shp, PEZ_poly_st) {
+EBSA_report <- function(EBSA_sf, PEZ_poly_sf) {
   
-  intersect <- st_intersection(EBSA_shp,PEZ_poly_st)
+  intersect <- st_intersection(EBSA_sf,PEZ_poly_sf)
   x<-as.numeric(nrow(intersect))
   Query_output_EBSA_report<-if(x < 1){
     ""
@@ -31,7 +31,7 @@ EBSA_report <- function(EBSA_shp, PEZ_poly_st) {
     c("Report: ",intersect$Report)
   }
   
-  Query_output_EBSA_report2<-noquote(Query_output_EBSA_report)
+  Query_output_EBSA_report2<-unique(noquote(Query_output_EBSA_report))
 
   writeLines(Query_output_EBSA_report2, sep="\n")
   
@@ -39,9 +39,9 @@ EBSA_report <- function(EBSA_shp, PEZ_poly_st) {
 
 #EBSA report URL
 
-EBSA_reporturl <- function(EBSA_shp, PEZ_poly_st) {
+EBSA_reporturl <- function(EBSA_sf, PEZ_poly_sf) {
   
-  intersect <- st_intersection(EBSA_shp,PEZ_poly_st)
+  intersect <- st_intersection(EBSA_sf,PEZ_poly_sf)
   x<-as.numeric(nrow(intersect))
   Query_output_EBSA_reporturl<-if(x < 1){
     ""
@@ -49,21 +49,21 @@ EBSA_reporturl <- function(EBSA_shp, PEZ_poly_st) {
     c("Report URL:",intersect$Report_URL)
   }
   
-  Query_output_EBSA_reporturl2<-noquote(Query_output_EBSA_reporturl)
+  Query_output_EBSA_reporturl2<-unique(noquote(Query_output_EBSA_reporturl))
   
   writeLines(Query_output_EBSA_reporturl2, sep="\n")
   
 }
 
 #Location intersect
-EBSA_location <- function(EBSA_shp, PEZ_poly_st) {
+EBSA_location <- function(EBSA_sf, PEZ_poly_sf) {
   
-  intersect <- st_intersection(EBSA_shp,PEZ_poly_st)
+  intersect <- st_intersection(EBSA_sf,PEZ_poly_sf)
   x<-as.numeric(nrow(intersect))
   Location_result<-if(x < 1){
     ""
   } else {
-    c(("Location: "),intersect$Name)
+    c(("Location: "),intersect$Name, sep="\n")
   }
   
   writeLines(Location_result, sep="\n")
@@ -71,9 +71,9 @@ EBSA_location <- function(EBSA_shp, PEZ_poly_st) {
   
 
 #Bioregion intersect
-EBSA_bioregion <- function(EBSA_shp, PEZ_poly_st) {
+EBSA_bioregion <- function(EBSA_sf, PEZ_poly_sf) {
   
-  intersect <- st_intersection(EBSA_shp,PEZ_poly_st)
+  intersect <- st_intersection(EBSA_sf,PEZ_poly_sf)
   x<-as.numeric(nrow(intersect))
   Query_output_area<-if(x < 1){
     ""
