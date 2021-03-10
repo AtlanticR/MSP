@@ -21,7 +21,7 @@ site_map <- function(PEZ_poly_sf,site_sf,land_sf,buf) {
   #png("pez_and_site.png", width=1616, height=1410)
   
   # bounding box
-  bb=st_as_sfc(st_bbox(PEZ_poly_sf))
+  bb=st_as_sf(st_bbox(PEZ_poly_sf))
   bbox <- st_bbox(bb)
 
   # longitude and latitude limits for the map
