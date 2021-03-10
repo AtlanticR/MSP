@@ -8,7 +8,6 @@ library(standardPrintOutput)
 
 ####### Functions  #######
 source("site_map.r")
-source("filter_wsdb.r")
 source("filter_narwc_new.r")
 source("EBSA.R")
 source("leatherback.R")
@@ -18,6 +17,7 @@ source("fn_SearchRVData.r")
 source("fn_Search_ISDB_Data.r")
 source("fn_maps.r")
 source("fn_Search_MARFIS_Data.r")
+source("fn_intersect_operations.R")
 
 ####### Search Area  #######
 AquaSiteName <- "AtlanticDestiny"
@@ -26,8 +26,9 @@ minYear <- 2002
 
 ####### Paths  #######
 mspPath <- "../"
-data.dir = "../../../Data/mar.wrangling"
+SurveyPath = "../../../Data/mar.wrangling"
 dataPath <- file.path("../../../Data/outputs",paste0(AquaSiteName,PEZversion))
+RDataPath <- "../../../Data/RData"
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
@@ -35,6 +36,10 @@ pl <- pl[-grep("xml",pl)]
 #site_sf <- st_as_sf(site)
 site_sf <- st_read(file.path(polyPath,pl[grep(paste0("Site_",AquaSiteName),pl)]))
 land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
+#landfile10m <- file.path(RDataPath,"Land10M.rds")
+#landfile50k <-  file.path(RDataPath,"land50k.rds")
+#land50k_sf <- readRDS(landfile50k)
+#land10m_sf <- readRDS(landfile10m)
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
 PEZ_poly_sf<-st_as_sf(PEZ_poly)
 

@@ -12,35 +12,12 @@ Security level: none
 
 #### ***Area-specific WSDB search results***    
 
-```{r read wsdb and filter SARA & COSEWIC cetacean spp, include=FALSE, cache=FALSE}
+```{r wsdb, include=FALSE, cache=FALSE}
 wsdb_filter <- filter_wsdb(wsdb)
-wsdb_filter <- wsdb_filter %>% rename(Scientific_Name = SCIENTIFICNAME)
-wsdb_filter <- merge(wsdb_filter, listed_cetacean_species, by='Scientific_Name')
+wsdb_intersect_points <-intersect_points_wsdb(wsdb_filter, PEZ_poly_sf)
+wsdb_table <- table_wsdb(wsdb_filter, PEZ_poly_sf)
+Total_number_records_WSDB <- nrow(wsdb_table)
 ```
-
-```{r echo=FALSE, results='asis'}
-wsdb_plot_locations<-st_as_sf(wsdb_filter, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
-intersect_wsdb <- st_intersection(wsdb_plot_locations,PEZ_poly_sf)
-intersect_wsdb_sep <- intersect_wsdb %>%
-    mutate(long = unlist(map(intersect_wsdb$geometry,1)),
-           lat = unlist(map(intersect_wsdb$geometry,2)))
-Common_Name<-intersect_wsdb$Common_Name
-Scientific_Name<-intersect_wsdb$Scientific_Name
-intersect_wsdb_df<-as.data.frame(cbind(Common_Name, Scientific_Name, row.names = FALSE))
-
-#append columns from listed species 
-wsdb_table<-merge(intersect_wsdb_df, listed_cetacean_species, by='Scientific_Name')
-x<-as.numeric(nrow(wsdb_table))
-wsdb_table<-wsdb_table %>% 
-  transmute(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
-wsdb_table<- wsdb_table %>% rename("SARA status"=Schedule.status,
-                                   "COSEWIC listing"=COSEWIC.status,
-                                   "Wild Species listing"=Wild_Species,
-                                   "Scientific Name"=Scientific_Name,
-                                   "Common Name"=Common_Name)
-Total_number_records_WSDB <- length(wsdb_table)
-```
-
 *
 ```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
 Query_output_wsdb<-if(Total_number_records_WSDB < 1){
@@ -48,14 +25,13 @@ Query_output_wsdb<-if(Total_number_records_WSDB < 1){
 } else {
   "There are relevant records in the WSDB for this search area."
 }
-Query_output_wsdb<-noquote(Query_output_wsdb)
 writeLines(Query_output_wsdb)
 ```
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Low. Security level: none. Observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listings. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. This table also does not include acoustic detections.'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 wsdb_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,5)+
-  geom_point(data = intersect_wsdb_sep, aes(x = long, y = lat, color=Common_Name), 
+  geom_point(data = wsdb_intersect_points, aes(x = long, y = lat, color=Common_Name), 
              size = 3.5)
 if(Total_number_records_WSDB > 1){print(wsdb_plot + scale_colour_manual(values=whale_col))}
 ```
@@ -87,50 +63,28 @@ Search year: 2000-2019
 Security level: none  
 
 #### ***Area-specific NARWC search results*** {-}    
-```{r read narwc and filter SARA & COSEWIC cetacean spp, include=FALSE, cache=FALSE}
-narwc_filter <- filter_narwc_new(narwc)
-narwc_filter <- narwc_filter %>% rename(Scientific_Name = SPECCODE)
-narwc_filter <- merge(narwc_filter, listed_species, by='Scientific_Name')
+```{r narwc, include=FALSE, cache=FALSE}
+narwc_filter <- filter_narwc(narwc)
+narwc_intersect_points <-intersect_points_narwc(narwc_filter, PEZ_poly_sf)
+narwc_table <- table_narwc(narwc_filter, PEZ_poly_sf)
+Total_number_records_narwc <- nrow(narwc_table)
 ```
-```{r echo=FALSE, results='asis'}
-narwc_sf<-st_as_sf(narwc_filter, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
-intersect_narwc <- st_intersection(narwc_sf,PEZ_poly_sf)
-intersect_narwc_sep <- intersect_narwc %>%
-    mutate(long = unlist(map(intersect_narwc$geometry,1)),
-           lat = unlist(map(intersect_narwc$geometry,2)))
-Common_Name<-intersect_narwc$Common_Name
-Scientific_Name<-intersect_narwc$Scientific_Name
-intersect_narwc_df<-as.data.frame(cbind(Common_Name, Scientific_Name, row.names = FALSE))
-
-#append columns from listed species 
-narwc_table<-merge(intersect_narwc_df, listed_species, by='Scientific_Name')
-narwc_table<-narwc_table %>% 
-  transmute(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
-narwc_table<- narwc_table %>% rename("SARA status"=Schedule.status,
-                                     "COSEWIC listing"=COSEWIC.status,
-                                     "Wild Species listing"=Wild_Species,
-                                     "Scientific Name"=Scientific_Name,
-                                     "Common Name"=Common_Name)
-narwc_species<-length(narwc_table)
-```
-
 *
 ```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
-Query_output_narwc<-if(narwc_species < 1){
+Query_output_narwc<-if(Total_number_records_narwc < 1){
   "There are no relevant records in the NARWC data base for the defiend search area."
 } else {
   "There are relevant records in the NARWC data base for the defiend search area."
 }
-Query_output_narwc<-noquote(Query_output_narwc)
 writeLines(Query_output_narwc)
 ```
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the North Atlantic Right Whale Consortium (NARWC) Sightings Database, for cetacean species in the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. <b>Absence of a species in the map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area</b> since survey effort is biased towards the Northeast US, and data on species presence from acoustic detections is not included. For more information, please visit: <https://www.narwc.org/sightings-database.html>'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 narwc_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,5)+
-  geom_point(data = intersect_narwc_sep, aes(x = long, y = lat, color=Common_Name), 
+  geom_point(data = narwc_intersect_points, aes(x = long, y = lat, color=Common_Name), 
              size = 3.5)
-if(narwc_species > 1){print(narwc_plot + scale_colour_manual(values=whale_col))}
+if(Total_number_records_narwc > 1){print(narwc_plot + scale_colour_manual(values=whale_col))}
 ```
 
 <br><br>
@@ -143,48 +97,17 @@ Quality Tier: Medium
 Search year: 2002-2020  
 Security level: none  
 
-#### ***Area-specific OBIS cetacean search results***    
-```{r, include=FALSE, cache=FALSE}
-#Select columns of interest from OBIS file
-obis_edit<-obis %>% 
-  transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
- 
-#Separate CWS/ECCC records
-#CWS.ECCC.OBIS_records<-filter(obis_edit, institutionCode=="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
-#write.csv(CWS.ECCC.OBIS_records, "CWS_ECCC_OBIS_records.csv")
-
-#Delete WSDB and CWS/ECCC records
-#obis_edit2<-obis_edit %>% filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
-obis_edit2<-obis_edit %>%
-  filter(! collectionCode =="WHALESITINGS")
-
-obis_sf<-st_as_sf(obis_edit2, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
-intersect_obis <- st_intersection(obis_sf,PEZ_poly_sf)
-
-#summarize individual counts
-#species_sum<-aggregate(intersect_obis$individualCount, by=list(Species=intersect_obis$scientificName), FUN=sum)
-
-#append columns from listed species
-intersect_obis<- intersect_obis %>% rename(Scientific_Name=scientificName)
-obis_whale_table<-merge(intersect_obis, listed_cetacean_species, by='Scientific_Name')
-intersect_obis_sep <- obis_whale_table %>%
-    mutate(long = unlist(map(obis_whale_table$geometry,1)),
-           lat = unlist(map(obis_whale_table$geometry,2)))
-obis_whale_table<-obis_whale_table %>% 
-  select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
-obis_whale_table<- obis_whale_table %>% rename("SARA status"=Schedule.status,
-                                               "COSEWIC listing"=COSEWIC.status,
-                                               "Wild Species listing"=Wild_Species,
-                                               "Scientific Name"=Scientific_Name,
-                                               "Common Name"=Common_Name)
-obis_whale_table$geometry<-NULL
-obis_whale_table<-unique(obis_whale_table)
-obis_cetacean_species<-length(obis_whale_table)
+#### ***Area-specific OBIS cetacean search results***   
+```{r wsdb, include=FALSE, cache=FALSE}
+obis_filter <- filter_obis(obis)
+obis_intersect_points <-intersect_points_obis(obis_filter, PEZ_poly_sf)
+obis_whale_table <- table_obis(obis_filter, PEZ_poly_sf)
+Total_number_cet_records_obis <- nrow(obis_whale_table)
 ```
 
 *
 ```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
-Query_output_obis<-if(obis_cetacean_species < 1){
+Query_output_obis<-if(Total_number_cet_records_obis < 1){
   "There are no relevant records of cetaceans in the Ocean Biodiversity Information System (OBIS) for this search area."
 } else {
   "There are relevant records of cetaceans in the Ocean Biodiversity Information System (OBIS) for this search area."
@@ -195,9 +118,9 @@ writeLines(Query_output_obis)
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the Ocean Biodiversity Information System (OBIS), for cetacean species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. <b>The absence of a species in this map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. This map also does not include acoustic detections. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore.'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 obis_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,5)+
-  geom_point(data = intersect_obis_sep, aes(x = long, y = lat, color=Common_Name), 
+  geom_point(data = obis_intersect_points, aes(x = long, y = lat, color=Common_Name), 
              size = 3.5)
-if(obis_cetacean_species > 1){print(obis_plot + scale_colour_manual(values=whale_col))}
+if(Total_number_cet_records_obis > 1){print(obis_plot + scale_colour_manual(values=whale_col))}
 ```
 
 <br><br>
