@@ -1,5 +1,5 @@
 #critical habitat
-plot_crithab<-function(ClippedCritHab, PEZ_poly_sf, land_layer, buf) {
+plot_crithab<-function(ClippedCritHab_sf, PEZ_poly_sf, land_layer, buf) {
   
   # buf is in km, and now converted to degrees
   buf=buf/100
@@ -17,8 +17,8 @@ plot_crithab<-function(ClippedCritHab, PEZ_poly_sf, land_layer, buf) {
   latmax<-bbox$ymax+buf_lat
   
   ggplot()+
-    geom_sf(data=ClippedCritHab,fill="red",col="black")+
-    geom_sf(data=leatherback_shp,fill="lightgreen",col="black")+
+    geom_sf(data=ClippedCritHab_sf,fill="red",col="black")+
+    geom_sf(data=leatherback_sf,fill="lightgreen",col="black")+
     geom_sf(data=PEZ_poly_sf, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -32,7 +32,7 @@ plot_crithab<-function(ClippedCritHab, PEZ_poly_sf, land_layer, buf) {
 }
 
 #SAR distribution
-plot_sardist<-function(sardist, PEZ_poly_sf, land_layer, buf) {
+plot_sardist<-function(sardist_sf, PEZ_poly_sf, land_layer, buf) {
   
   # buf is in km, and now converted to degrees
   buf=buf/100
@@ -49,7 +49,7 @@ plot_sardist<-function(sardist, PEZ_poly_sf, land_layer, buf) {
   latmax<-bbox$ymax+buf_lat
   
   ggplot()+
-    geom_sf(data=sardist,fill="orange", col="black", size=0.6)+    
+    geom_sf(data=sardist_sf,fill="orange", col="black", size=0.6)+    
     geom_sf(data=PEZ_poly_sf, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -270,7 +270,7 @@ plot_bw_hab <- function(Blue_Whale_sf, PEZ_poly_st, land_layer, buf) {
 
   # buf is in km, and now converted to degrees
   buf=buf/100
-  buf_long=buf*2
+  buf_lat=buf*0.72
   #png("pez_and_site.png", width=1616, height=1410)
   
   # bounding box
@@ -278,10 +278,10 @@ plot_bw_hab <- function(Blue_Whale_sf, PEZ_poly_st, land_layer, buf) {
   bbox <- st_bbox(bb)
   
   # longitude and latitude limits for the map
-  longmin<-(bbox$xmin)-buf_long
-  longmax<-bbox$xmax+buf_long
-  latmin<-bbox$ymin-buf
-  latmax<-bbox$ymax+buf  
+  longmin<-(bbox$xmin)-buf
+  longmax<-bbox$xmax+buf
+  latmin<-bbox$ymin-buf_lat
+  latmax<-bbox$ymax+buf_lat   
   
   ggplot()+
     geom_sf(data=Blue_Whale_sf,aes(fill=Activity), col="black")+
@@ -305,7 +305,7 @@ plot_bw_hab_zoom <- function(Blue_Whale_sf, PEZ_poly_st, land_layer, buf) {
   
   # buf is in km, and now converted to degrees
   buf=buf/100
-  buf_long=buf*2
+  buf_lat=buf*0.72
   #png("pez_and_site.png", width=1616, height=1410)
   
   # bounding box
@@ -313,10 +313,10 @@ plot_bw_hab_zoom <- function(Blue_Whale_sf, PEZ_poly_st, land_layer, buf) {
   bbox <- st_bbox(bb)
   
   # longitude and latitude limits for the map
-  longmin<-(bbox$xmin)-buf_long
-  longmax<-bbox$xmax+buf_long
-  latmin<-bbox$ymin-buf
-  latmax<-bbox$ymax+buf  
+  longmin<-(bbox$xmin)-buf
+  longmax<-bbox$xmax+buf
+  latmin<-bbox$ymin-buf_lat
+  latmax<-bbox$ymax+buf_lat  
   
   ggplot()+
     geom_sf(data=Blue_Whale_sf,aes(fill=Activity),col="black")+
@@ -339,7 +339,7 @@ plot_EBSA<-function(EBSA_shp, PEZ_poly_sf, land_layer, buf) {
   
   # buf is in km, and now converted to degrees
   buf=buf/100
-  buf_long=buf*2
+  buf_lat=buf*0.72
   #png("pez_and_site.png", width=1616, height=1410)
   
   # bounding box
@@ -347,10 +347,10 @@ plot_EBSA<-function(EBSA_shp, PEZ_poly_sf, land_layer, buf) {
   bbox <- st_bbox(bb)
   
   # longitude and latitude limits for the map
-  longmin<-(bbox$xmin)-buf_long
-  longmax<-bbox$xmax+buf_long
-  latmin<-bbox$ymin-buf
-  latmax<-bbox$ymax+buf
+  longmin<-(bbox$xmin)-buf
+  longmax<-bbox$xmax+buf
+  latmin<-bbox$ymin-buf_lat
+  latmax<-bbox$ymax+buf_lat
   
   ggplot()+
     geom_sf(data=EBSA_shp, fill="plum",col="black")+

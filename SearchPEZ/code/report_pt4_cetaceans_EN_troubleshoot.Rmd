@@ -60,6 +60,8 @@ wsdb_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,5)+
 if(Total_number_records_WSDB > 1){print(wsdb_plot + scale_colour_manual(values=whale_col))}
 ```
 
+<br><br>
+
 ### **The Whitehead Lab, Dalhousie University**    
 URL: <https://whiteheadlab.weebly.com/contact.html>  
 Last retrieved on: January 12, 2021  
@@ -74,9 +76,12 @@ Security level: none
 
 Fig.X: Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the Whitehead Lab, for cetacean species in the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. Field efforts were primarily conducted in the Gully Marine Protected Area, and adjacent canyons along the edge of the eastern Scotian Shelf, during good weather conditions (for example, see Whitehead 2013 for a map of effort between 1988-2011), though some data from surveys along the shelf edge off Nova Scotia, Newfoundland and Labrador are included. <b>The absence of a species in this map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. This map also does not include acoustic detections. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. For more information, please visit: <https://whiteheadlab.weebly.com/contact.html>
 
+<br><br>
+
 ### **North Atlantic Right Whale Consortium (NARWC) Sightings Database**    
 Contact: <hpettis@neaq.org>  
-Last retrieved on: September 18, 2020 from [NARWC](https://www.narwc.org/sightings-database.html)  
+Last retrieved on: September 18, 2020  
+Link: <https://www.narwc.org/sightings-database.html>    
 Quality Tier: High  
 Search year: 2000-2019  
 Security level: none  
@@ -128,9 +133,12 @@ narwc_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,5)+
 if(narwc_species > 1){print(narwc_plot + scale_colour_manual(values=whale_col))}
 ```
 
+<br><br>
+
 ### **Ocean Biodiversity Information System (OBIS) [for cetaceans]**    
 Contact: <helpdesk@obis.org>  
-Last retrieved on: January 27, 2021 from [OBIS](https://obis.org/)  
+Last retrieved on: January 27, 2021  
+Link: <https://obis.org/>  
 Quality Tier: Medium  
 Search year: 2002-2020  
 Security level: none  
@@ -192,11 +200,14 @@ obis_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,5)+
 if(obis_cetacean_species > 1){print(obis_plot + scale_colour_manual(values=whale_col))}
 ```
 
+<br><br>
+
 ### **Species Distribution Models (SDM): Priority Areas to Enhance Monitoring of Cetaceans**    
 
 Contact: <Hilary.Moors-Murphy@dfo-mpo.gc.ca>  
 Site: <https://waves-vagues.dfo-mpo.gc.ca/Library/40869155.pdf>  
-Last retrieved on: April 1, 2020 from [Open Data](https://open.canada.ca/data/en/dataset/c094782e-0d6f-4cc0-b5a3-58908493a433)  
+Last retrieved on: April 1, 2020 from Open Data  
+Link: <https://open.canada.ca/data/en/dataset/c094782e-0d6f-4cc0-b5a3-58908493a433>  
 Quality Tier: Medium  
 Search year: 1975-2015  
 Security level: none.
@@ -225,16 +236,21 @@ kable(cetacean_matrix, align="cccc", caption="\\label{tab:cetacean_matrix}Qualit
   kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
+<br><br>
+
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Low. Security level: none. Map shows consolidated Species Distribution Modelling outputs (60-100% relative predicted occurrence rate). Yellow polygons (habitats with high suitability) are to be interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts. Due to the many reasons listed in the discussion section in Gomez et al. (2020), these cetacean modelling outputs do not represent a complete and current distribution of cetaceans in the region. They represent priority areas to direct cetacean monitoring efforts. Their use in marine spatial planning processes should be accompanied by complementary approaches such as the process summarized in the section below. The data product summarized in the section below (Blue Whale Important Habitat in the Western North Atlantic) represents an excellent framework in which to properly use the outputs of this figure.'}
 plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, PEZ_poly_sf, land_sf, 200)
 ```
+
+<br><br>
 
 ### **Blue Whale Important Habitat**    
 
 Blue Whale Important Habitat in the Western North Atlantic  
 Contact: <gddaiss-dmsaisb@dfo-mpo.gc.ca>  
 URL: <https://waves-vagues.dfo-mpo.gc.ca/Library/40687776.pdf>  
-Last retrieved on: October 30, 2020 from [Open Data](https://open.canada.ca/data/en/dataset/8fafd919-fcbe-43a3-a911-3d9461273441)  
+Last retrieved on: October 30, 2020 from Open Data  
+Link: <https://open.canada.ca/data/en/dataset/8fafd919-fcbe-43a3-a911-3d9461273441>  
 Quality Tier: High  
 Security level: none.  
 
@@ -263,7 +279,7 @@ blue_whale_habitat_months(Blue_Whale_sf, PEZ_poly_sf)
 ```
 
 ```{r echo=FALSE, results='asis'}
-BW_wide<-plot_bw_hab(Blue_Whale_sf, PEZ_poly_sf, land_sf, 300)
+BW_wide<-plot_bw_hab(Blue_Whale_sf, PEZ_poly_sf, land_sf, 500)
 BW_zoom<-plot_bw_hab_zoom(Blue_Whale_sf, PEZ_poly_sf, land_sf, 50)
 ```
 
@@ -272,14 +288,16 @@ grid.arrange(BW_wide, BW_zoom,
              bottom = expression(paste("Longitude ",degree,"N",sep="")),
              left = expression(paste("Latitude ",degree,"N",sep="")),
              nrow = 1,
-             widths = c(2.22/5, 2.78/5))
+             widths = c(2.2/5, 2.8/5))
 ```
+
+<br><br>
 
 ### **Northern Bottlenose Whale Important Habitat**    
 Northern bottlenose whales important habitat in inter-canyon areas on the eastern Scotian Shelf  
 Contact: <MaritimesRAP.XMAR@dfo-mpo.gc.ca>  
 URL: <http://publications.gc.ca/collections/collection_2020/mpo-dfo/fs70-6/Fs70-6-2020-008-eng.pdf>  
-Last retrieved on: February 17 2021 from Maritimes Region   
+Last retrieved on: February 17, 2021 
 Quality Tier: High  
 Security level: none.  
 

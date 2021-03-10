@@ -55,9 +55,9 @@ obis<-subset(obis,year>minYear)
 
 ####### Files & Code for SAR distribution and critical habitat Section  #######
 
-ClippedCritHab <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", quiet=TRUE)
-sardist<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/sardist_4326.shp", quiet=TRUE)
-leatherback_shp<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
+ClippedCritHab_sf <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", quiet=TRUE)
+sardist_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/sardist_4326.shp", quiet=TRUE)
+leatherback_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
 
 ####### Files & Code for Fish and Invertebrate Section  #######
 #cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
@@ -112,6 +112,8 @@ whale_col=values=c("Blue Whale"="darkgoldenrod1",
                    "Sei Whale"="#EF6408",
                    "Sowerby's Beaked Whale"="#F5A4E7",
                    "Humpback Whale"="red")
+
+####### Files & Code for Cetacean Section  #######
 
 EBSA_sf <- st_read("../../../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp", quiet=TRUE)
 EBSA_sf <- st_transform(EBSA_sf, crs = 4326)

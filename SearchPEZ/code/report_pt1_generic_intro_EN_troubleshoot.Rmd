@@ -56,20 +56,20 @@ column_spec(1,width = "3cm")%>%
   kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
-```{r child = 'report_pt2_SAR_dist_crithab_EN_troubleshoot.Rmd'}
-```
+#```{r child = 'report_pt2_SAR_dist_crithab_EN_troubleshoot.Rmd'}
+#```
 
 ```{r child = 'report_pt3_fish_inverts_EN_troubleshoot.Rmd'}
 ```
 
-```{r child = 'report_pt4_cetaceans_EN_troubleshoot.Rmd'}
-```
+#```{r child = 'report_pt4_cetaceans_EN_troubleshoot.Rmd'}
+#```
 
-```{r child = 'report_pt5_Habitat_Information_EN_troubleshoot.Rmd'}
-```
+#```{r child = 'report_pt5_Habitat_Information_EN_troubleshoot.Rmd'}
+#```
 
-```{r child = 'report_pt6_EBSA_EN_troubleshoot.Rmd'}
-```
+#```{r child = 'report_pt6_EBSA_EN_troubleshoot.Rmd'}
+#```
 
 #```{r child = 'report_pt7_generic_END_EN.Rmd'}
 #```
