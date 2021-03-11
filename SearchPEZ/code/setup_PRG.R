@@ -53,7 +53,6 @@ PEZPoly_sf <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZv
 landfile10m <- file.path(RDataPath,"Land10M.rds")
 landfile50k <-  file.path(RDataPath,"land50k.rds")
 
-## Load land
 land50k_sf <- readRDS(landfile50k)
 land10m_sf <- readRDS(landfile10m)
 
