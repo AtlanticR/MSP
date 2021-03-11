@@ -1,4 +1,42 @@
+###SAR distribution###
+table_dist <- function(sardist_sf,studyArea) {
 
+intersect_dist <- st_intersection(sardist_sf,studyArea)
+intersect_dist$Common_Nam[intersect_dist$Common_Nam == "Sowerby`s Beaked Whale"] <- "Sowerby's Beaked Whale"
+Common_Name<-intersect_dist$Common_Nam
+Scientific_Name<-intersect_dist$Scientific
+Population<-intersect_dist$Population
+Area<-intersect_dist$Waterbody
+intersect_dist_df<-as.data.frame(cbind(Common_Name, Scientific_Name, Population, Area))
+dist_table<-merge(intersect_dist_df, listed_species, by='Scientific_Name')
+dist_table<-dist_table %>% 
+  transmute(Common_Name, Scientific_Name, Population, Area, Schedule.status, COSEWIC.status, Wild_Species)
+dist_table<- dist_table %>% rename("SARA status"=Schedule.status,
+                                   "COSEWIC listing"=COSEWIC.status,
+                                   "Wild Species listing"=Wild_Species,
+                                   "Common Name"=Common_Name,
+                                   "Scientific Name"=Scientific_Name)
+}
+
+
+###SAR critical habitat###
+table_crit <- function(ClippedCritHab_sf,studyArea, leatherback_sf) {
+  
+intersect_crit <- st_intersection(ClippedCritHab_sf,studyArea)
+crit_table<-data.frame(CommonName=intersect_crit$Common_Nam,
+                       Population=intersect_crit$Population, 
+                       Area=intersect_crit$Waterbody,
+                       SARA_status=intersect_crit$SARA_Statu)
+intersect_leatherback <- st_intersection(leatherback_sf,studyArea)
+leatherback_result<-as.numeric(nrow(intersect_leatherback))
+leatherback_table<-data.frame(CommonName="",Population="", Area="", SARA_status="")
+leatherback_table[1,1]<-"Leatherback Sea Turtle"
+leatherback_table[1,2]<-NA
+leatherback_table[1,3]<-intersect_leatherback$AreaName
+leatherback_table[1,4]<-"Endangered"
+crit_table<-bind_rows(crit_table,leatherback_table)
+
+}
 
 
 ###Cetacean section###
@@ -45,6 +83,32 @@ table_wsdb <- function(wsdb_filter, studyArea) {
                                    "Common Name"=Common_Name.x)
 }
 
+filter_whitehead <- function(whitehead) {
+  whitehead <- whitehead %>% rename(Scientific_Name = species.name)
+  whitehead_filter <- merge(whitehead, listed_cetacean_species, by='Scientific_Name')
+}
+
+intersect_points_whitehead <- function(whitehead_filter, studyArea) {
+  whitehead_sf<-st_as_sf(whitehead_filter, coords = c("Long", "Lat"), crs = 4326)
+  intersect_whitehead <- st_intersection(whitehead_sf,studyArea)
+  whitehead_intersect_points <- intersect_whitehead %>%
+    mutate(long = unlist(map(intersect_whitehead$geometry,1)),
+           lat = unlist(map(intersect_whitehead$geometry,2)))
+}
+
+table_whitehead <- function(whitehead_filter, studyArea) {
+  whitehead_sf<-st_as_sf(whitehead_filter, coords = c("Long", "Lat"), crs = 4326)
+  intersect_whitehead <- st_intersection(whitehead_sf,studyArea)
+  whitehead_table<-merge(intersect_whitehead, listed_species, by='Scientific_Name')
+  whitehead_table<-whitehead_table %>% 
+    transmute(Common_Name.x, Scientific_Name, Schedule.status.x, COSEWIC.status.x, Wild_Species.x)
+  whitehead_table<- whitehead_table %>% rename("SARA status"=Schedule.status.x,
+                                               "COSEWIC listing"=COSEWIC.status.x,
+                                               "Wild Species listing"=Wild_Species.x,
+                                               "Scientific Name"=Scientific_Name,
+                                               "Common Name"=Common_Name.x)
+}
+
 
 filter_narwc <- function(narwc) {
   narwc_filt <- narwc[narwc$SPECCODE %in% c('HAPO', 'SEWH', 'FIWH','RIWH', 'NBWH','KIWH', 'BLWH',  "SOBW"), ]
@@ -80,6 +144,10 @@ table_narwc <- function(narwc_filter, studyArea) {
                                        "Scientific Name"=Scientific_Name,
                                        "Common Name"=Common_Name.x)
 }
+
+
+
+
 
 filter_obis <- function(obis) {
   obis_filter<-obis %>% 

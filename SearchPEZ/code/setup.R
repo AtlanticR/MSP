@@ -7,11 +7,6 @@ libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","r
 library(standardPrintOutput)
 
 ####### Functions  #######
-#source("site_map.r")
-#source("EBSA.R")
-#source("leatherback.R")
-#source("cetacean_priority_areas.R")
-#source("Blue_Whale_habitat.R")
 source("fn_maps.r")
 source("fn_intersect_operations.R")
 source("fn_SearchRVData.r")
@@ -73,13 +68,19 @@ leatherback_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/Le
 
 ####### Files & Code for Cetacean Section  #######
 
+#read wsdb file
+wsdb <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/WSDB/MarWSDBSightingsForCGomez_27Oct2020.csv")
+wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
+
+#read whitehead lab file
+whitehead <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/Whitehead_Lab/whitehead_lab.csv")
+whitehead$YEAR<-lubridate::year(whitehead$Date)
+whitehead <- whitehead[which(whitehead$YEAR>=minYear),]
+
 #read narwc file - update 
 narwc <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv")
 narwc <- narwc[which(narwc$YEAR>=minYear),]
 
-#read wsdb file
-wsdb <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/WSDB/MarWSDBSightingsForCGomez_27Oct2020.csv")
-wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
 
 #Read Priority Areas for cetacean monitoring
 # Convert rasters to sf object
