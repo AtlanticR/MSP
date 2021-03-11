@@ -7,17 +7,16 @@ libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","r
 library(standardPrintOutput)
 
 ####### Functions  #######
-source("site_map.r")
-source("filter_narwc_new.r")
-source("EBSA.R")
-source("leatherback.R")
-source("cetacean_priority_areas.R")
-source("Blue_Whale_habitat.R")
+#source("site_map.r")
+#source("EBSA.R")
+#source("leatherback.R")
+#source("cetacean_priority_areas.R")
+#source("Blue_Whale_habitat.R")
+source("fn_maps.r")
+source("fn_intersect_operations.R")
 source("fn_SearchRVData.r")
 source("fn_Search_ISDB_Data.r")
-source("fn_maps.r")
 source("fn_Search_MARFIS_Data.r")
-source("fn_intersect_operations.R")
 
 ####### Search Area  #######
 AquaSiteName <- "AtlanticDestiny"
@@ -35,13 +34,13 @@ pl <- pl[-grep("xml",pl)]
 #site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
 #site_sf <- st_as_sf(site)
 site_sf <- st_read(file.path(polyPath,pl[grep(paste0("Site_",AquaSiteName),pl)]))
-land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
-#landfile10m <- file.path(RDataPath,"Land10M.rds")
+#land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
 #landfile50k <-  file.path(RDataPath,"land50k.rds")
 #land50k_sf <- readRDS(landfile50k)
-#land10m_sf <- readRDS(landfile10m)
+landfile10m <- file.path(RDataPath,"Land10M.rds")
+land10m_sf <- readRDS(landfile10m)
 PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
-PEZ_poly_sf<-st_as_sf(PEZ_poly)
+studyArea<-st_as_sf(PEZ_poly)
 
 ####### Species List  #######
 # This section reads table that lists species listed by SARA, assesed by COSEWIC or assessed by Wildlife Species listings
@@ -104,8 +103,13 @@ sei_whale_sf<-st_as_stars(sei_whale)%>%st_as_sf()
 Blue_32198 <- st_read("../../../Data/NaturalResources/Species/Cetaceans/BlueWhaleHabitat_FGP/BlueWhaleHabitat_HabitatBaleineBleue.shp", quiet=TRUE)
 Blue_Whale_sf <- st_transform(Blue_32198, crs = 4326)
 Blue_Whale_sf<-setNames(Blue_Whale_sf, replace(names(Blue_Whale_sf), names(Blue_Whale_sf) == 'activité', 'activite'))
-Blue_Whale_sf<-setNames(Blue_Whale_sf, replace(names(Blue_Whale_sf), names(Blue_Whale_sf) == 'activity', 'Activity'))
-Blue_Whale_sf$Activity[Blue_Whale_sf$Activity == "foraging/Feeding"] <- "Foraging/Feeding"
+Blue_Whale_sf$activity[Blue_Whale_sf$activity == "foraging/Feeding"] <- "Foraging/Feeding"
+Blue_Whale_sf$activity[Blue_Whale_sf$activity == "Migrant"] <- "Migration"
+Blue_Whale_sf$months[Blue_Whale_sf$months == "all year"] <- "All year"
+Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/March to May"] <- "Dec-Feb/Mar-May"
+Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/June to August"] <- "Dec-Feb/Jun-Aug"
+Blue_Whale_sf$months[Blue_Whale_sf$months == "March to May/June to August"] <- "Mar-May/Jun-Aug"
+Blue_Whale_sf$Activity<-paste(Blue_Whale_sf$activity,"-",Blue_Whale_sf$months)
 
 #Define colour coding for all cetacean plots for consistency
 whale_col=values=c("Blue Whale"="darkgoldenrod1",

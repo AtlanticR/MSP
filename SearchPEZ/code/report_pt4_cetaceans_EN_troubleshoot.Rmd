@@ -14,12 +14,12 @@ Security level: none
 
 ```{r wsdb, include=FALSE, cache=FALSE}
 wsdb_filter <- filter_wsdb(wsdb)
-wsdb_intersect_points <-intersect_points_wsdb(wsdb_filter, PEZ_poly_sf)
-wsdb_table <- table_wsdb(wsdb_filter, PEZ_poly_sf)
+wsdb_intersect_points <-intersect_points_wsdb(wsdb_filter, studyArea)
+wsdb_table <- table_wsdb(wsdb_filter, studyArea)
 Total_number_records_WSDB <- nrow(wsdb_table)
 ```
 *
-```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
+```{r wsdb result, comment="", prompt=TRUE, echo=FALSE, results='asis'}
 Query_output_wsdb<-if(Total_number_records_WSDB < 1){
   "There are no relevant records in the WSDB for this search area."
 } else {
@@ -30,7 +30,7 @@ writeLines(Query_output_wsdb)
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Low. Security level: none. Observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listings. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. This table also does not include acoustic detections.'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-wsdb_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,5)+
+wsdb_plot<-site_map(studyArea,site_sf,land10m_sf,5)+
   geom_point(data = wsdb_intersect_points, aes(x = long, y = lat, color=Common_Name), 
              size = 3.5)
 if(Total_number_records_WSDB > 1){print(wsdb_plot + scale_colour_manual(values=whale_col))}
@@ -65,12 +65,12 @@ Security level: none
 #### ***Area-specific NARWC search results*** {-}    
 ```{r narwc, include=FALSE, cache=FALSE}
 narwc_filter <- filter_narwc(narwc)
-narwc_intersect_points <-intersect_points_narwc(narwc_filter, PEZ_poly_sf)
-narwc_table <- table_narwc(narwc_filter, PEZ_poly_sf)
+narwc_intersect_points <-intersect_points_narwc(narwc_filter, studyArea)
+narwc_table <- table_narwc(narwc_filter, studyArea)
 Total_number_records_narwc <- nrow(narwc_table)
 ```
 *
-```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
+```{r narwc result, comment="", prompt=TRUE, echo=FALSE, results='asis'}
 Query_output_narwc<-if(Total_number_records_narwc < 1){
   "There are no relevant records in the NARWC data base for the defiend search area."
 } else {
@@ -81,7 +81,7 @@ writeLines(Query_output_narwc)
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the North Atlantic Right Whale Consortium (NARWC) Sightings Database, for cetacean species in the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. <b>Absence of a species in the map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area</b> since survey effort is biased towards the Northeast US, and data on species presence from acoustic detections is not included. For more information, please visit: <https://www.narwc.org/sightings-database.html>'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-narwc_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,5)+
+narwc_plot<-site_map(studyArea,site_sf,land10m_sf,5)+
   geom_point(data = narwc_intersect_points, aes(x = long, y = lat, color=Common_Name), 
              size = 3.5)
 if(Total_number_records_narwc > 1){print(narwc_plot + scale_colour_manual(values=whale_col))}
@@ -98,15 +98,15 @@ Search year: 2002-2020
 Security level: none  
 
 #### ***Area-specific OBIS cetacean search results***   
-```{r wsdb, include=FALSE, cache=FALSE}
+```{r obis, include=FALSE, cache=FALSE}
 obis_filter <- filter_obis(obis)
-obis_intersect_points <-intersect_points_obis(obis_filter, PEZ_poly_sf)
-obis_whale_table <- table_obis(obis_filter, PEZ_poly_sf)
+obis_intersect_points <-intersect_points_obis(obis_filter, studyArea)
+obis_whale_table <- table_obis(obis_filter, studyArea)
 Total_number_cet_records_obis <- nrow(obis_whale_table)
 ```
 
 *
-```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
+```{r obis result, comment="", prompt=TRUE, echo=FALSE, results='asis'}
 Query_output_obis<-if(Total_number_cet_records_obis < 1){
   "There are no relevant records of cetaceans in the Ocean Biodiversity Information System (OBIS) for this search area."
 } else {
@@ -117,7 +117,7 @@ writeLines(Query_output_obis)
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the Ocean Biodiversity Information System (OBIS), for cetacean species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. <b>The absence of a species in this map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. This map also does not include acoustic detections. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore.'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-obis_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,5)+
+obis_plot<-site_map(studyArea,site_sf,land10m_sf,5)+
   geom_point(data = obis_intersect_points, aes(x = long, y = lat, color=Common_Name), 
              size = 3.5)
 if(Total_number_cet_records_obis > 1){print(obis_plot + scale_colour_manual(values=whale_col))}
@@ -137,32 +137,19 @@ Security level: none.
 
 #### ***Area-specific SDM cetacean search results***    
 
-```{r echo=FALSE, results='asis'}
-#function for overlap
-fin_area<-fin_overlap(fin_whale_sf, PEZ_poly_sf)
-harbour_area<-harbour_overlap(harbour_porpoise_sf, PEZ_poly_sf)
-humpback_area<-humpback_overlap(humpback_whale_sf, PEZ_poly_sf)
-sei_area<-sei_overlap(sei_whale_sf, PEZ_poly_sf)
-cetacean_matrix<-data.frame(Fin_Whale="",Habour_Porpoise="", Humpback_Whale="", Sei_Whale="")
-cetacean_matrix[1,1]<-fin_area
-cetacean_matrix[1,2]<-harbour_area
-cetacean_matrix[1,3]<-humpback_area
-cetacean_matrix[1,4]<-sei_area
-cetacean_matrix<- cetacean_matrix %>% rename("Fin Whale"=Fin_Whale,
-                                     "Habour Porpoise"=Habour_Porpoise,
-                                     "Humpback Whale"=Humpback_Whale,
-                                     "Sei Whale"=Sei_Whale)
+```{r sdm, include=FALSE, cache=FALSE}
+table_sdm<-sdm_table(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, studyArea)
 ```
 
 ```{r}
-kable(cetacean_matrix, align="cccc", caption="\\label{tab:cetacean_matrix}Quality Tier: Low. Security level: none. Results showing if the search area overlap with predicted Priority Areas to Enhance Monitoring of several species of cetaceans (Fin Whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; FALSE = polygon does NOT overlap with priority area.", booktabs = T, escape = F, linesep="") %>%
+kable(table_sdm, align="cccc", caption="Quality Tier: Low. Security level: none. Results showing if the search area overlap with predicted Priority Areas to Enhance Monitoring of several species of cetaceans (Fin Whale, Harbour Porpoise, Humpback Whale and Sei Whale). TRUE = polygon does overlap with priority area; FALSE = polygon does NOT overlap with priority area.", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
 <br><br>
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Low. Security level: none. Map shows consolidated Species Distribution Modelling outputs (60-100% relative predicted occurrence rate). Yellow polygons (habitats with high suitability) are to be interpreted as areas where cetacean monitoring efforts may be prioritized, and results can help direct future survey efforts. Due to the many reasons listed in the discussion section in Gomez et al. (2020), these cetacean modelling outputs do not represent a complete and current distribution of cetaceans in the region. They represent priority areas to direct cetacean monitoring efforts. Their use in marine spatial planning processes should be accompanied by complementary approaches such as the process summarized in the section below. The data product summarized in the section below (Blue Whale Important Habitat in the Western North Atlantic) represents an excellent framework in which to properly use the outputs of this figure.'}
-plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, PEZ_poly_sf, land_sf, 200)
+plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, studyArea, land10m_sf, 200)
 ```
 
 <br><br>
@@ -180,30 +167,14 @@ Security level: none.
 #### ***Area-specific Blue Whale Important Habitat search results***    
 
 *    
-```{r echo=FALSE, results='asis'}
+```{r bw result, echo=FALSE, results='asis'}
 #function for overlap
-BW<-blue_whale_habitat_overlap(Blue_Whale_sf, PEZ_poly_sf)
+BW<-blue_whale_habitat_overlap(Blue_Whale_sf, studyArea)
 writeLines(BW)
 ```
-
-```{r echo=FALSE, results='asis'}
-#function for sector
-blue_whale_habitat_sector(Blue_Whale_sf, PEZ_poly_sf)
-```
-
-```{r echo=FALSE, results='asis'}
-#function for activity
-blue_whale_habitat_activity(Blue_Whale_sf, PEZ_poly_sf)
-```
-
-```{r echo=FALSE, results='asis'}
-#function for months
-blue_whale_habitat_months(Blue_Whale_sf, PEZ_poly_sf)
-```
-
-```{r echo=FALSE, results='asis'}
-BW_wide<-plot_bw_hab(Blue_Whale_sf, PEZ_poly_sf, land_sf, 500)
-BW_zoom<-plot_bw_hab_zoom(Blue_Whale_sf, PEZ_poly_sf, land_sf, 50)
+```{r bw plots, echo=FALSE, results='asis'}
+BW_wide<-plot_bw_hab(Blue_Whale_sf, studyArea, land10m_sf)
+BW_zoom<-plot_bw_hab_zoom(Blue_Whale_sf, studyArea, land10m_sf, 100)
 ```
 
 ```{r, fig.height=4, fig.width=11, fig.cap='Quality Tier: High. Security level: none. Blue Whale Important Habitat in the Western North Atlantic. Polygons delimit areas in Canadian waters that are important to Blue Whales for foraging (dark green) and migration (light green). These areas identified in the report by Lesage et al. (2018) are considered important for the survival and recovery of Blue Whales from the western North Atlantic population. Blue Whales most likely need to use several of these important habitats to fulfill their biological needs. As a result, access corridors and habitat they connect need to be considered equally important for the population.'}
@@ -211,7 +182,7 @@ grid.arrange(BW_wide, BW_zoom,
              bottom = expression(paste("Longitude ",degree,"N",sep="")),
              left = expression(paste("Latitude ",degree,"N",sep="")),
              nrow = 1,
-             widths = c(2.2/5, 2.8/5))
+             widths = c(4.1/10, 5.9/10))
 ```
 
 <br><br>

@@ -43,18 +43,6 @@ Total_number_sets_RV<-length(unique(rv_freq$Set_No))
 Total_number_SAR_records_RV <- sum(rv_freq_SAR2[[4]])
 Total_number_SAR_individuals_RV <- sum(rv_freq_SAR2[[3]])
 Total_number_SAR_sets_RV<-length(unique(rv_freq_SAR$Set_No))
-
-RV_summarytable<-data.frame(matrix(ncol = 3, nrow = 2)) 
-colnames(RV_summarytable)<-c("Total Individuals", "Total Records", "Total Sets")
-rownames(RV_summarytable)<-c("Species at Risk", "All Species")
-
-RV_summarytable[2,2]<-Total_number_records_RV
-RV_summarytable[2,1]<-Total_number_individuals_RV
-RV_summarytable[2,3]<-Total_number_sets_RV
-RV_summarytable[1,2]<-Total_number_SAR_records_RV
-RV_summarytable[1,1]<-Total_number_SAR_individuals_RV
-RV_summarytable[1,3]<-Total_number_SAR_sets_RV
-RV_summarytable<-as.data.frame(RV_summarytable, position = "left")
 ```
 
 
@@ -67,11 +55,6 @@ Report_RV<-if(Total_number_SAR_records_RV < 1){
   }
 Report_RV<-noquote(Report_RV)
 writeLines(Report_RV)
-```
-
-```{r}
-kable(RV_summarytable, align="ccc", caption='Quality Tier: High. Security level: none. Summary of Maritimes Research Vessel (RV) Survey observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listing. The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.') %>%
-kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
 ```
 
 ```{r}
@@ -101,7 +84,7 @@ endy <- rv_end_sites$latitude
 <br><br>
 
 ```{r, fig.height=8, fig.width=11, fig.cap= 'Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from the Maritimes Research Vessel (RV) Survey. Black lines and arrows indicate the location and direction of each bottom otter trawl sample.'}
-site_map(PEZ_poly_sf,site_sf,land_sf,10)+
+site_map(studyArea,site_sf,land10m_sf,10)+
   geom_point(data = rv_start_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, colour = "darkgreen")+
   geom_point(data = rv_end_sites, aes(x = longitude, y = latitude), size = 3, 
@@ -212,7 +195,7 @@ for(i in 1:length(fl)) {
 }  
 setwd(wd) #revert to original working directory
 
-isdb_intersect <- st_intersection(isdb_sf,PEZ_poly_sf)
+isdb_intersect <- st_intersection(isdb_sf,studyArea)
 isdb_sites<-data.frame(longitude=isdb_intersect$LONGI, latitude=isdb_intersect$LATIT)
 ```
 
@@ -284,7 +267,7 @@ for(i in 1:length(fl)) {
   file.remove(fl[i])
 }  
 setwd(wd)
-marfis_intersect <- st_intersection(marfis_sf,PEZ_poly_sf)
+marfis_intersect <- st_intersection(marfis_sf,studyArea)
 marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
 ```
 
@@ -342,7 +325,7 @@ writeLines(Report_marfis)
 <br>
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: Protected B. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query aggregated information from Maritimes Fishery Information System (MARFIS) and/or Industry Survey Database (ISDB) observation records shown as black points, for all species. Rule of five was not applied.'}
-site_map(PEZ_poly_sf,site_sf,land_sf,10)+
+site_map(studyArea,site_sf,land10m_sf,10)+
   geom_point(data = isdb_sites, aes(x = longitude, y = latitude), size = 3, 
         shape = 16, fill = "black")+
   geom_point(data = marfis_sites, aes(x = longitude, y = latitude), size = 3, 
@@ -398,7 +381,7 @@ obis_edit<-obis %>%
 obis_edit2<-obis_edit %>%
   filter(! collectionCode =="WHALESITINGS")
 obis_sf<-st_as_sf(obis_edit2, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
-intersect_obis <- st_intersection(obis_sf,PEZ_poly_sf)
+intersect_obis <- st_intersection(obis_sf,studyArea)
 
 #append columns from listed species
 intersect_obis<- intersect_obis %>% rename(Scientific_Name=scientificName)
@@ -430,7 +413,7 @@ writeLines(c(Report_obis2), sep = "\n")
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from Ocean Biodiversity Information System (OBIS) observation records, for species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore. The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
-obis_plot<-site_map(PEZ_poly_sf,site_sf,land_sf,10)+
+obis_plot<-site_map(studyArea,site_sf,land10m_sf,10)+
   geom_point(data = intersect_obis_fish_sep, aes(x = long, y = lat), size = 3, 
         shape = 16, fill = "black") 
 if(Total_number_SAR_records_obis > 1){print(obis_plot)}
