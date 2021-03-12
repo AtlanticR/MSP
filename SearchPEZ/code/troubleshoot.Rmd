@@ -57,6 +57,7 @@ column_spec(1,width = "3cm")%>%
 
 RVCatch_sf <-  SelectRV_fn(SurveyPrefix, File, studyArea, minYear)
 MARFISCatch_sf <- SelectMARFIS_fn(studyArea, minYear)
+ISDBCatch_sf <- SelectISDB_fn(studyArea, minYear)
 # Add in a plot
 # site_map(PEZPoly_sf,site_sf,land50k_sf,5)
 # plot_wsdb(PEZPoly_sf,wsdb_filter,5)
