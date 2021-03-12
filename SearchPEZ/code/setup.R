@@ -7,11 +7,9 @@ libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","r
 library(standardPrintOutput)
 
 ####### Functions  #######
-source("fn_maps.r")
-source("fn_intersect_operations.R")
-source("fn_SearchRVData.r")
-source("fn_Search_ISDB_Data.r")
-source("fn_Search_MARFIS_Data.r")
+source("fn_maps.r") #Functions used to plot figure
+source("fn_intersect_operations.R") #Functions used to intersect data polygons and points with studyArea 
+source("fn_SurveyData.r") # functions for selecting and intersecting RV, MARFIS, and ISDB data
 
 ####### Search Area  #######
 AquaSiteName <- "AtlanticDestiny"
@@ -26,19 +24,17 @@ RDataPath <- "../../../Data/RData"
 polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
-#site <- readOGR(polyPath,layer=paste0("Site_",AquaSiteName))
-#site_sf <- st_as_sf(site)
 site_sf <- st_read(file.path(polyPath,pl[grep(paste0("Site_",AquaSiteName),pl)]))
-#land_sf<-st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp", quiet=TRUE)
 #landfile50k <-  file.path(RDataPath,"land50k.rds")
 #land50k_sf <- readRDS(landfile50k)
 landfile10m <- file.path(RDataPath,"Land10M.rds")
 land10m_sf <- readRDS(landfile10m)
-PEZ_poly <- readOGR(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
-studyArea<-st_as_sf(PEZ_poly)
+# remove State and Province column from land10m
+land10m_sf <- land10m_sf[-c(2)]
+studyArea <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
 
 ####### Species List  #######
-# This section reads table that lists species listed by SARA, assesed by COSEWIC or assessed by Wildlife Species listings
+# This section reads table that lists species listed by SARA, assessed by COSEWIC or assessed by Wildlife Species listings
 listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
                  "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")

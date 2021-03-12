@@ -4,7 +4,7 @@ library(lubridate)
 
 # this script can work from data stored locally or on the IN/MSP/Data/mar.wrangling folder
 
-data.dir <- "N:/MSP/Data/mar.wrangling"
+data.dir <- "../../../MSP/Data/mar.wrangling"
 setwd(data.dir)
 
 
@@ -29,6 +29,7 @@ save_data(db='marfis', formats = 'csv')  # this creates a  timestamped csv
 
 
 file <- list.files(data.dir,"*.csv")
+
 # Read in the CSV datafile
 marfis1 <- read.csv(file.path(data.dir, file))
 
@@ -47,7 +48,7 @@ save(marfis1, file="marfis.RData", compress = TRUE)
 # ISDB
 # You may have to run the data_tweaks() function to fix a few
 # things in the tables
-data_tweaks('isdb', data.dir = data.dir)
+data_tweaks2('isdb', data.dir = data.dir)
 get_data('isdb', data.dir=data.dir)
 
 # select only those records later than 2009

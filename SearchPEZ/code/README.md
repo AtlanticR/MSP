@@ -130,5 +130,125 @@ Shapefiles must be in CRS 4326 WGS84!!!!
 
 
 
+##functions for selecting and intersecting RV, MARFIS, and ISDB data and contained in "fn_SurveyData.r" 
+
+#Aggregate and filter RV survey data
+SelectRV_fn(SurveyPrefix, File, studyArea, minYear)
+>aggregates data from multiple RV survey data files and produces an sf object (RVCatch_sf).
+
+#Aggregate and filter MARFIS survey data
+SelectMARFIS_fn(studyArea, minYear)
+>aggregates data from multiple MARFIS data files and produces an sf object (MARFISCatch_sf).
+
+#Aggregate and filter ISDB survey data
+SelectISDB_fn(studyArea, minYear)
+>aggregates data from multiple ISDB files and produces an sf object (ISDBCatch_sf).
+
+
+
+
+##Functions used to plot figures and contained in "fn_maps.r"
+
+#Map of studyArea
+site_map(studyArea,site_sf,land_layer,buf)
+
+
+#Map of studyArea with Species at Risk Critical Habitat
+plot_crithab(ClippedCritHab_sf, studyArea, land_layer, buf)
+
+
+#Map of studyArea with Species at Risk Distribution
+plot_sardist(sardist_sf, studyArea, land_layer, buf)
+
+
+#Map of studyArea with Priority Areas to Enhance Monitoring of Cetaceans
+plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, 
+                    sei_whale_sf, studyArea, land_layer,buf)
+                               
+#Map of studyArea with Blue Whale habitat wide angle
+plot_bw_hab(Blue_Whale_sf, studyArea, land_layer)
+
+
+#Map of studyArea with Blue Whale habitat zoomed
+plot_bw_hab_zoom(Blue_Whale_sf, studyArea, land_layer, buf)
+
+
+#Map of studyArea with Ecologically and Biologically Significant Areas (EBSA)
+plot_EBSA(EBSA_shp, studyArea, land_layer, buf)
+
+
+
+
+
+
+
+##Functions used to intersect data polygons and points with studyArea and contained in "fn_intersect_operations.R"
+
+#SAR distribution
+table_dist(sardist_sf,studyArea)
+
+#SAR critical habitat
+table_crit(ClippedCritHab_sf,studyArea, leatherback_sf)
+
+#Whale Sightings Database (WSDB)
+filter_wsdb(wsdb)
+intersect_points_wsdb(wsdb_filter, studyArea)
+table_wsdb(wsdb_filter, studyArea)
+
+#Whitehead Lab database
+filter_whitehead(whitehead)
+intersect_points_whitehead(whitehead_filter, studyArea)
+table_whitehead(whitehead_filter, studyArea)
+
+#North Atlantic Right Whale Consortium (NARWC) database
+filter_narwc(narwc)
+intersect_points_narwc(narwc_filter, studyArea)
+table_narwc(narwc_filter, studyArea)
+
+#Ocean Biodiversity Information System
+filter_obis(obis)
+intersect_points_obis(obis_filter, studyArea)
+table_obis(obis_filter, studyArea)
+
+#Species Distribution Models (SDM): Priority Areas to Enhance Monitoring of Cetaceans
+sdm_table(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, studyArea)
+
+
+#Blue Whale Important Habitat
+blue_whale_habitat_overlap(Blue_Whale_sf, studyArea)
+
+#Ecologically and Biologically Significant Areas (EBSA)
+EBSA_overlap(EBSA_sf, studyArea)
+
+#EBSA report
+EBSA_report(EBSA_sf, studyArea)
+
+#EBSA report URL
+EBSA_reporturl(EBSA_sf, studyArea)
+
+#Location intersect
+EBSA_location(EBSA_sf, studyArea)
+
+#Bioregion intersect
+EBSA_bioregion <- function(EBSA_sf, studyArea)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

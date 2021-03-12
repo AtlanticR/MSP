@@ -30,7 +30,11 @@ source("setup.R", local = knitr::knit_global())
 
 #### **About this report**    
 
-This document summarizes regional data, including information on species and habitats, available at the time of report creation. …
+This document summarizes regional data, including information on species and habitats, available at the time of report creation.  
+
+```{r, fig.height=8, fig.width=11, fig.cap='Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area is used by this tool to query information and automatically generate a report. '}
+site_map(studyArea,site_sf,land10m_sf,10)
+```
  
 #### **How to use this report?**    
 
@@ -62,14 +66,14 @@ column_spec(1,width = "3cm")%>%
 #```{r child = 'report_pt3_fish_inverts_EN_troubleshoot.Rmd'}
 #```
 
-#```{r child = 'report_pt4_cetaceans_EN_troubleshoot.Rmd'}
-#```
+```{r child = 'report_pt4_cetaceans_EN_troubleshoot.Rmd'}
+```
 
-#```{r child = 'report_pt5_Habitat_Information_EN_troubleshoot.Rmd'}
-#```
+```{r child = 'report_pt5_Habitat_Information_EN_troubleshoot.Rmd'}
+```
 
-#```{r child = 'report_pt6_EBSA_EN_troubleshoot.Rmd'}
-#```
+```{r child = 'report_pt6_EBSA_EN_troubleshoot.Rmd'}
+```
 
 #```{r child = 'report_pt7_generic_END_EN.Rmd'}
 #```

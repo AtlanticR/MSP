@@ -47,15 +47,15 @@ Security level: none
 
 #### ***Area-specific Whitehead Lab search results***
 
-```{r wsdb, include=FALSE, cache=FALSE}
+```{r whitehead, include=FALSE, cache=FALSE}
 whitehead_filter <- filter_whitehead(whitehead)
 whitehead_intersect_points <-intersect_points_whitehead(whitehead_filter, studyArea)
 whitehead_table <- table_whitehead(whitehead_filter, studyArea)
 Total_number_records_whitehead <- nrow(whitehead_table)
 ```
 *
-```{r wsdb result, comment="", prompt=TRUE, echo=FALSE, results='asis'}
-Query_output_whitehead<-if(Total_number_records_Whitehead < 1){
+```{r whitehead result, comment="", prompt=TRUE, echo=FALSE, results='asis'}
+Query_output_whitehead<-if(Total_number_records_whitehead < 1){
   "There are no relevant records in the Whitehead Lab database for this search area."
 } else {
   "There are relevant records in the Whitehead Lab database for this search area."
