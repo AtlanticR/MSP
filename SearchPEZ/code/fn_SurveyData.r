@@ -1,21 +1,18 @@
-# Here are two of the arguments passed to SelectRV_fn
-SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
-File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
 
-AquaSiteName and PEZVersion can be replaced with Study Area
+########## - Select RV data and intersect with the study area #########################-
 
-FUNCTION CALL:
-RVCatch <-  SelectRV_fn(SurveyPrefix, File, StudyArea, minYear)
-
-SelectRV_fn <- function(SurveyPrefix, File, StudyArea, minYear) {
-
-  RVdata.dir = "../../../Data/mar.wrangling/RVSurvey_FGP"
+SelectRV_fn <- function(SurveyPrefix, File, studyArea, minYear) {
+  
+  # RVdataPath = "../Data/mar.wrangling/RVSurvey_FGP"
+  
   
   # Create single GSCAT table, rename the SPEC field to CODE
   f = File[1]
   tablelist <- list()
   for(i in 1:length(SurveyPrefix)) {
-    df <- read.csv(file.path(RVdata.dir, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
+    #RVdataPath
+    #df <- read.csv(file.path(RVdata.dir, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
+    df <- read.csv(file.path(RVdataPath, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
     df <- df %>% tidyr::unite("MISSION_SET", MISSION:SETNO, remove = TRUE)
     # Keep only the columns necessary
     # ("MISSION_SET" "SPEC", "TOTNO")
@@ -26,7 +23,7 @@ SelectRV_fn <- function(SurveyPrefix, File, StudyArea, minYear) {
         CODE = SPEC)
     tablelist[[i]] <- df
   }
-
+  
   # combine all four RV survey catch tables together
   GSCAT <- rbind(tablelist[[1]],tablelist[[2]],tablelist[[3]],tablelist[[4]])
   
@@ -34,7 +31,7 @@ SelectRV_fn <- function(SurveyPrefix, File, StudyArea, minYear) {
   f = File[2]
   tablelist <- list()
   for(i in 1:length(SurveyPrefix)) {
-    df <- read.csv(file.path(RVdata.dir, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
+    df <- read.csv(file.path(RVdataPath, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
     df <- df %>% tidyr::unite("MISSION_SET", MISSION:SETNO, remove = FALSE)
     # Keep only the columns necessary
     # ("MISSION_SET", "MISSION", "SETNO", "SDATE", "SLAT", "SLONG", "ELAT", "ELONG")
@@ -53,7 +50,7 @@ SelectRV_fn <- function(SurveyPrefix, File, StudyArea, minYear) {
   f = File[3]
   tablelist <- list()
   for(i in 1:length(SurveyPrefix)) {
-    df <- read.csv(file.path(RVdata.dir, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
+    df <- read.csv(file.path(RVdataPath, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
     # Remove TSN field
     df <- dplyr::select(df,(1:3))
     tablelist[[i]] <- df
@@ -66,18 +63,75 @@ SelectRV_fn <- function(SurveyPrefix, File, StudyArea, minYear) {
   
   # Convert GSINF to sf object
   GSINF_sf = st_as_sf(GSINF, coords = c("SLONG", "SLAT"), crs = 4326) #WGS84
-
-  # import PEZ polygon
-  # dsn <- "../../../Data/Zones/SearchPEZpolygons"
-  # PEZ_poly_sf <- st_read(dsn, layer=paste0("PEZ_",AquaSiteName, PEZversion))
   
-  # Select all RV survey points within the Exposure Zone (PEZ) using st_intersect
-  RVintersect <- st_intersection(GSINF_sf,StudyArea)
+  # Select all RV survey points within the Exposure Zone (studyArea) using st_intersect
+  RVintersect <- st_intersection(GSINF_sf,studyArea)
   
   # Join all GSCAT records that match those RV survey points AND join species
   # names to those records
   RVintersect <- left_join(RVintersect, GSCAT, by = "MISSION_SET")
-  RVintersect <- left_join(Catch, GSSPECIES, by = "CODE")
+  RVintersect <- left_join(RVintersect, GSSPECIES, by = "CODE")
   
   return(RVintersect)
+}
+
+########## - Select MARFIS data and intersect with the study area #########################-
+
+SelectMARFIS_fn <- function(studyArea, minYear) {
+  
+  # SurveyPath = "../Data/mar.wrangling"
+  
+  #############################################-
+  # to use this .RData file and convert to a SF object
+  # load data file and species file
+  
+  filelist <- c(file.path(SurveyPath,"marfis.RData"), file.path(SurveyPath,"MARFIS.SPECIES.RData"))
+  lapply(filelist, load, envir=.GlobalEnv)
+  
+  # Reduce MARFIS species table down to only species code, common name
+  SPECIES <- dplyr::select(SPECIES,SPECIES_CODE, SPECIES_NAME)
+  
+  # add YEAR column and filter for records from minYear onwards
+  marfis1$YEAR <- lubridate::year(marfis1$DATE_FISHED)
+  marfis1 <- marfis1 %>% dplyr::filter(YEAR >= minYear)
+  
+  # Convert to SF object
+  marfis1 <- st_as_sf(marfis1, coords = c("LONGITUDE", "LATITUDE"))
+  st_crs(marfis1) <-  4326
+  
+   # Select all MARFIS points within the Exposure Zone (PEZ) using st_intersect
+  Catch <- st_intersection(marfis1,studyArea)
+  # merge the data file with species names using common species codes
+  Catch <- merge(Catch,SPECIES, by = 'SPECIES_CODE')
+  
+  return(Catch)
+  
+}
+
+########## - Select ISDB data and intersect with the study area #########################-
+
+SelectISDB_fn <- function(studyArea, minYear) {
+  SurveyPath = "../Data/mar.wrangling"
+  
+  filelist <- c(file.path(SurveyPath,"isdb.RData"), file.path(SurveyPath,"ISDB.ISSPECIESCODES.RData"))
+  lapply(filelist, load, envir=.GlobalEnv)
+  
+  # Reduce MARFIS species table down to only species code, common name
+  ISSPECIESCODES <- dplyr::select(ISSPECIESCODES,SPECCD_ID,COMMON, SCIENTIFIC)
+  
+  # add YEAR column and filter for records from minYear onwards
+  isdb1$YEAR <- lubridate::year(isdb1$DATA_TIME1)
+  isdb1 <- isdb1 %>% dplyr::filter(YEAR >= minYear)
+  
+  # Convert to SF object
+  isdb1 <- st_as_sf(isdb1, coords = c("LONGITUDE", "LATITUDE"))
+  st_crs(marfis1) <-  4326
+  
+  # Select all MARFIS points within the Exposure Zone (PEZ) using st_intersect
+  Catch <- st_intersection(isdb1,studyArea)
+  # merge the data file with species names using common species codes
+  Catch <- merge(Catch,SPECIES, by = 'SPECIES_CODE')
+  
+  return(Catch)
+
 }
