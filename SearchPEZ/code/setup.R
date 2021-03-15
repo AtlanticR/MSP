@@ -1,10 +1,26 @@
 ####### Libraries  #######
-library(easypackages)
-libraries("Mar.datawrangling","knitr","kableExtra","rgdal","maps","lubridate","raster","RCurl","sf","stringr","ggplot2","data.table","gridExtra","dplyr","stars","ggspatial","tidyverse","standardPrintOutput")
+
+library(knitr) # generates reproducible reports from R Markdown scripts
+library(kableExtra) # needed to build and manipulate tables
+library(rgdal) # needed top read geospatial data files into report
+library(maps) # uncouple latitude and longitude coordinates in sf objects
+library(lubridate) # extract YEAR from columns containing dates
+library(raster) # needed for manipulation of raster files
+#library(RCurl)
+library(sf) # needed for manipulation of simple features and to determine overlap of studyArea and databases
+library(stringr) # general manipulation of individual characters within strings in character vectors.
+library(ggplot2) #needed to plot maps
+library(data.table) # needed for manipulation of dataframes
+library(gridExtra) # used to plot a grid of plots (priority cetacean habitat)
+library(dplyr) # core R package used for manipulation of dataframes
+library(stars) # needed to transform features and assign or modify coordinate reference systems in objects
+library(ggspatial) #required for mapping
+library(tidyverse) # a set of packages required for general data manipulation
+library(Mar.datawrangling) # needed to harvest and manipulate data from ISDB, MARFIS and RV databases
 #These next two lines are necessary for the generation of the water mark on all plots.
 #install.packages("remotes")
 #remotes::install_github("terminological/standard-print-output")
-library(standardPrintOutput)
+library(standardPrintOutput) # required for watermarks on maps
 
 ####### Functions  #######
 source("fn_maps.r") #Functions used to plot figure
