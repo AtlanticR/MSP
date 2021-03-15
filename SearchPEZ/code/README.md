@@ -32,66 +32,34 @@ Search results for additional species and information (optional):
 
 **Required packages**
 
-data.table          1.13.6      CRAN
-dplyr               1.0.2       CRAN
-easypackages        0.1.0       CRAN
-ggplot2             3.3.2       CRAN
-ggspatial           1.1.5       CRAN
-gridExtra           2.3         CRAN
-kableExtra          1.3.1       CRAN
-knitr               1.30        CRAN
-lubridate           1.7.9.2     CRAN
-maps                3.3.0       CRAN
-raster              3.4-5       CRAN
-RCurl               1.98-1.2    CRAN
-rgdal               1.5-23      CRAN
-sf                  0.9-7       CRAN
-stars               0.4-3       CRAN
-stringr             1.4.0       CRAN
-tidyverse           1.3.0       CRAN
+*data.table (v.1.13.6) [link](https://cran.r-project.org/web/packages/data.table/index.html)  
+*dplyr (v.1.0.2) [link](https://cran.r-project.org/web/packages/dplyr/index.html)  
+*ggplot2 (v.3.3.2) [link](https://cran.r-project.org/web/packages/ggplot2/index.html)  
+*ggspatial (v.1.1.5) [link](https://cran.r-project.org/web/packages/ggspatial/index.html)  
+*gridExtra (v.2.3) [link](https://cran.r-project.org/web/packages/gridExtra/index.html)  
+*kableExtra (v.1.3.1) [link](https://cran.r-project.org/web/packages/kableExtra/index.html)  
+*knitr (v.1.30) [link](https://cran.r-project.org/web/packages/knitr/index.html)  
+*lubridate (v.1.7.9.2) [link](https://cloud.r-project.org/web/packages/lubridate/index.html)  
+*maps (v.3.3.0) [link](https://cran.r-project.org/web/packages/maps/)  
+*raster (v.3.4-5) [link](https://cran.r-project.org/web/packages/raster/)  
+*RCurl (v.1.98-1.2) [link](https://cran.r-project.org/web/packages/RCurl/index.html)  
+*rgdal (v.1.5-23) [link](https://cran.r-project.org/web/packages/rgdal/index.html)  
+*sf (v.0.9-7) [link](https://cran.r-project.org/web/packages/sf/index.html)  
+*stars (v.0.4-3) [link](https://cran.r-project.org/web/packages/stars/index.html)  
+*stringr (v.1.4.0) [link](https://cran.r-project.org/web/packages/stringr/)  
+*tidyverse (v.1.3.0) [link](https://cran.r-project.org/web/packages/tidyverse/index.html)  
 
 Mar.datawrangling   2021.02.05  GitHub
 standardPrintOutput 0.0.0.9000  GitHub
 
 
-# **Directory Setup in ASCII format**
+***
 
-|
-+---Data
-|   +---Boundaries
-|   |   ----Coast50K
-|   |       ----Coastline50k_SHP
-|   +---mar.wrangling
-|   +---NaturalResources
-|   |   ----Species
-|   |       +---Cetaceans
-|   |       |   +---BlueWhaleHabitat_FGP
-|   |       |   +---NARWC
-|   |       |   +---NorthernBottlenoseWhale
-|   |       |   +---PriorityAreas_FGP
-|   |       |   ----WSDB
-|   |       +---OBIS_GBIF_iNaturalist
-|   |       +---PassamaquoddyBayBiodiversityTrawl
-|   |       ----SpeciesAtRisk
-|   |           +---clipped_layers
-|   |           ----LeatherBackTurtleCriticalHabitat
-|   +---outputs
-|   ----Zones
-|       +---DFO_EBSA_FGP
-|       ----SearchPEZpolygons
-----Projects
-    ----SearchPEZ
-        |   .gitignore
-        |   .Rbuildignore
-        |   .Rhistory
-        |   DESCRIPTION
-        |   MSP.Rproj
-        |   README.md
-        |   
-        ----code
-                fn_maps.r
-                fn_intersect_operations.R
-                fn_SurveyData.r
+![directory-diagram](../../../Projects/SearchPEZ/code/directory_structure.jpg)
+
+__Fig 1.__ **Directories** *set up of directories*
+
+***
                 
 # **Required data files**
 **Note:** All shapefiles (.shp) also require associated files (.cpg, .dbf, .prj, .shx)
