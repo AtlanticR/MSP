@@ -4,6 +4,9 @@
 .Ruserdata
 .Rprofile
 
+SearchPEZ/SearchPEZ.Rproj
+*.Rproj
+
 ## reports with privacy concerns
 SearchPEZ_CablesZone1Aug2020.Rmd
 SearchPEZ_CablesZone2Aug2020.Rmd
