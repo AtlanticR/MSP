@@ -41,17 +41,34 @@ polyPath <- "../../../Data/Zones/SearchPEZpolygons"
 pl <- list.files(polyPath,"*.shp")
 pl <- pl[-grep("xml",pl)]
 site_sf <- st_read(file.path(polyPath,pl[grep(paste0("Site_",AquaSiteName),pl)]))
+studyArea <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
+
+####### Load datasets #######
+load("../../../Projects/SearchPEZ/code/OpenData.RData")
+
+#listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
+#ClippedCritHab_sf <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", quiet=TRUE)
+#sardist_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/sardist_4326.shp", quiet=TRUE)
+#obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/OBIS_MAR_priority_records.csv")
+#fin_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Fin_Whale.tif")
+#harbour_porpoise<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Harbour_Porpoise.tif")
+#humpback_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Humpback_Whale.tif")
+#sei_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Sei_Whale.tif")
+#Blue_32198 <- st_read("../../../Data/NaturalResources/Species/Cetaceans/BlueWhaleHabitat_FGP/BlueWhaleHabitat_HabitatBaleineBleue.shp", quiet=TRUE)
+#EBSA_sf <- st_read("../../../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp", quiet=TRUE)
+#landfile10m <- file.path(RDataPath,"Land10M.rds")
+#land10m_sf <- readRDS(landfile10m)
+#SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
+#File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
+#RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, minYear)
+#modify land files
 #landfile50k <-  file.path(RDataPath,"land50k.rds")
 #land50k_sf <- readRDS(landfile50k)
-landfile10m <- file.path(RDataPath,"Land10M.rds")
-land10m_sf <- readRDS(landfile10m)
 # remove State and Province column from land10m
 land10m_sf <- land10m_sf[-c(2)]
-studyArea <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
 
 ####### Species List  #######
 # This section reads table that lists species listed by SARA, assessed by COSEWIC or assessed by Wildlife Species listings
-listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
                  "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
 other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
@@ -61,13 +78,10 @@ listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(
 
 ####### Files used in multiple sections  #######
 
-obis<-read.csv("../../../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/OBIS_MAR_priority_records.csv")
 obis<-subset(obis,year>minYear)
 
 ####### Files & Code for SAR distribution and critical habitat Section  #######
 
-ClippedCritHab_sf <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", quiet=TRUE)
-sardist_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/sardist_4326.shp", quiet=TRUE)
 leatherback_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
 
 ####### Files & Code for Fish and Invertebrate Section  #######
@@ -93,27 +107,21 @@ whitehead <- whitehead[which(whitehead$YEAR>=minYear),]
 narwc <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv")
 narwc <- narwc[which(narwc$YEAR>=minYear),]
 
-
 #Read Priority Areas for cetacean monitoring
 # Convert rasters to sf object
-fin_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Fin_Whale.tif")
 fin_whale[fin_whale==0] <- NA
 fin_whale_sf<-st_as_stars(fin_whale)%>%st_as_sf()
 
-harbour_porpoise<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Harbour_Porpoise.tif")
 harbour_porpoise[harbour_porpoise==0] <- NA
 harbour_porpoise_sf<-st_as_stars(harbour_porpoise)%>%st_as_sf()
 
-humpback_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Humpback_Whale.tif")
 humpback_whale[humpback_whale==0] <- NA
 humpback_whale_sf<-st_as_stars(humpback_whale)%>%st_as_sf()
 
-sei_whale<- raster("../../../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Sei_Whale.tif")
 sei_whale[sei_whale==0] <- NA
 sei_whale_sf<-st_as_stars(sei_whale)%>%st_as_sf()
 
 #Read Blue Whale Important Habitat shape file crs
-Blue_32198 <- st_read("../../../Data/NaturalResources/Species/Cetaceans/BlueWhaleHabitat_FGP/BlueWhaleHabitat_HabitatBaleineBleue.shp", quiet=TRUE)
 Blue_Whale_sf <- st_transform(Blue_32198, crs = 4326)
 Blue_Whale_sf<-setNames(Blue_Whale_sf, replace(names(Blue_Whale_sf), names(Blue_Whale_sf) == 'activité', 'activite'))
 Blue_Whale_sf$activity[Blue_Whale_sf$activity == "foraging/Feeding"] <- "Foraging/Feeding"
@@ -137,7 +145,5 @@ whale_col=values=c("Blue Whale"="darkgoldenrod1",
 
 ####### Files & Code for Cetacean Section  #######
 
-EBSA_sf <- st_read("../../../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp", quiet=TRUE)
 EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
 EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
-

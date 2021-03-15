@@ -90,134 +90,353 @@ __Fig 1.__ **Directories** *set up of directories*
 
 # **Functions for selecting and intersecting RV, MARFIS, and ISDB data and contained in "fn_SurveyData.r" **
 
-####SelectRV_fn
-*aggregate data from multiple RV survey data files
-*produce an sf object (RVCatch_sf) for polygon overlay analysis
+####SelectRV_fn  
+*aggregate data from multiple RV survey data files  
+*produce an sf object (RVCatch_sf) for polygon overlay analysis  
 
-[_example use_](#SelectRV_fn)
+[_example use_](#SelectRV_fn)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**SurveyPrefix** | Prefix indicative of database (ISDB, RV, MARFIS)  
+**File** |  
+**studyArea** |  
+**minYear** |  
+
+####SelectMARFIS_fn  
+*aggregate data from multiple MARFIS data files  
+*produce an sf object (MARFISCatch_sf) for polygon overlay analysis  
+
+[_example use_](#SelectMARFIS_fn)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**studyArea** |  
+**minYear** |  
+
+####SelectMARFIS_fn  
+*aggregate data from multiple ISDB data files  
+*produce an sf object (ISDBCatch_sf) for polygon overlay analysis  
+
+[_example use_](#SelectISDB_fn)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**studyArea** |  
+**minYear** |  
+
+
+# **Functions used to plot figures and contained in "fn_maps.r"**  
+
+####site_map  
+*plot of map of site and studyArea  
+
+[_example use_](#site_map)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**studyArea** |  
+**site_sf** |  
+**land_layer** |  
+**buf** |  
+
+####plot_crithab  
+*plot of map of studyArea relative to species at risk critical habitat  
+
+[_example use_](#plot_crithab)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**studyArea** |  
+**ClippedCritHab_sf** |  
+**land_layer** |  
+**buf** |  
+
+####plot_crithab  
+*plot of studyArea relative to species at risk distribution range  
+
+[_example use_](#plot_sardist)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**sardist_sf** |  
+**studyArea** |  
+**land_layer** |  
+**buf** |  
+
+####plot_cetaceans_4grid  
+*plot of studyArea relative to priority areas to enhance monitoring of cetaceans  
+
+[_example use_](#plot_cetaceans_4grid)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**fin_whale_sf** |  
+**harbour_porpoise_sf** |  
+**humpback_whale_sf** |  
+**sei_whale_sf** |  
+**studyArea** |  
+**land_layer** |  
+**buf** |  
+
+####plot_bw_hab  
+*plot of studyArea with Blue Whale habitat wide angle  
+
+[_example use_](#plot_bw_hab)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**Blue_Whale_sf** |  
+**studyArea** |  
+**land_layer** |  
+
+####plot_bw_hab_zoom  
+*plot of studyArea with Blue Whale habitat zoomed  
+
+[_example use_](#plot_bw_hab_zoom)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**Blue_Whale_sf** |  
+**studyArea** |  
+**land_layer** |  
+**buf** |  
+
+####plot_EBSA  
+*plot of studyArea with Ecologically and Biologically Significant Areas (EBSA)  
+
+[_example use_](#plot_EBSA)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**EBSA_shp** |  
+**studyArea** |  
+**land_layer** |  
+**buf** |  
+
+#Functions used to intersect data polygons and points with studyArea and contained in "fn_intersect_operations.R"
+
+##Information from National aquatic ***Species at Risk*** Program   
+
+####table_dist
+*create table of species at risk distribution range overlapping with studyArea
+
+[_example use_](#table_dist)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**SurveyPrefix** | Prefix indicative of database (ISDB, RV, MARFIS)
-**File** | 
-**studyArea** | 
-**minYear** | 
+**sardist_sf** |  
+**studyArea** |  
 
-####SelectMARFIS_fn
-*aggregate data from multiple MARFIS data files
-*produce an sf object (MARFISCatch_sf) for polygon overlay analysis
+####table_crit
+*create table of species at risk critical habitat overlapping with studyArea
 
-[_example use_](#SelectMARFIS_fn)
+[_example use_](#table_crit)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**studyArea** | 
-**minYear** | 
+**ClippedCritHab_sf** |  
+**studyArea** |  
+**leatherback_sf** |
 
+## Whale Sightings Database (WSDB)
 
+####filter_wsdb
+*filter wsdb data
 
-###Aggregate and filter ISDB survey data
-SelectISDB_fn(studyArea, minYear)
->aggregates data from multiple ISDB files and produces an sf object (ISDBCatch_sf).
-
-####SelectMARFIS_fn
-*aggregate data from multiple ISDB data files
-*produce an sf object (ISDBCatch_sf) for polygon overlay analysis
-
-[_example use_](#SelectISDB_fn)
+[_example use_](#filter_wsdb)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
+**wsdb** |  
+
+####intersect_points_wsdb  
+*find overlap between wsdb and studyArea
+
+[_example use_](#intersect_points_wsdb)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**wsdb_filter** |  
+**studyArea** |  
+
+####table_wsdb
+*creat table of overlapping data from WSDB  
+
+[_example use_](#table_wsdb)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**wsdb_filter** |  
+**studyArea** |  
+
+
+##Whitehead Lab database
+####filter_whitehead
+*create table containing records from the Whitehead Lab database overlapping with studyArea
+
+[_example use_](#filter_whitehead)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**whitehead** |  
+
+####intersect_points_whitehead  
+*find overlap between the Whitehead Lab database and studyArea
+
+[_example use_](#intersect_points_whitehead)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**whitehead_filter** |  
+**studyArea** |  
+
+####table_whitehead
+*creat table of overlapping data from Whitehead Lab database  
+
+[_example use_](#table_whitehead)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**whitehead_filter** |  
+**studyArea** |  
+
+##North Atlantic Right Whale Consortium (NARWC) database  
+
+####filter_narwc
+*create table containing records from the NARWC database overlapping with studyArea
+
+[_example use_](#filter_narwc)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**narwc** |  
+
+####intersect_points_narwc  
+*find overlap between the NARWC database and studyArea
+
+[_example use_](#intersect_points_narwc)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**narwc_filter** |  
+**studyArea** |  
+
+####table_narwc
+*creat table of overlapping data from NARWC database  
+
+[_example use_](#table_narwc)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**narwc_filter** |  
+**studyArea** |  
+
+
+
+##Ocean Biodiversity Information System
+
+####filter_obis
+*create table containing records from the OBIS database overlapping with studyArea
+
+[_example use_](#filter_obis)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**obis** |  
+
+####intersect_points_obis  
+*find overlap between the OBIS database and studyArea
+
+[_example use_](#intersect_points_obis)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**obis_filter** |  
+**studyArea** |  
+
+####table_obis
+*creat table of overlapping data from OBIS database  
+
+[_example use_](#table_obis)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**obis_filter** |  
+**studyArea** |  
+
+####sdm_table
+*creat table of overlapping data from Priority Areas to Enhance Monitoring of Cetaceans  
+
+[_example use_](#sdm_table)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**fin_whale_sf** |  
+**harbour_porpoise_sf** |  
+**humpback_whale_sf** |  
+**sei_whale_sf** |  
 **studyArea** | 
-**minYear** | 
 
+####blue_whale_habitat_overlap
+*creat table of overlapping data from Important Blue Whale Habitat  
 
+[_example use_](#blue_whale_habitat_overlap)
 
-##Functions used to plot figures and contained in "fn_maps.r"
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**Blue_Whale_sf** |  
+**studyArea** | 
 
-#Map of studyArea
-site_map(studyArea,site_sf,land_layer,buf)
+####EBSA_overlap
+*creat table of overlapping data from Ecologically and Biologically Significant Areas (EBSA)
 
+[_example use_](#EBSA_overlap)
 
-#Map of studyArea with Species at Risk Critical Habitat
-plot_crithab(ClippedCritHab_sf, studyArea, land_layer, buf)
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**EBSA_sf** |  
+**studyArea** | 
 
+####EBSA_report
+*determine whether studyArea overlaps with EBSA
 
-#Map of studyArea with Species at Risk Distribution
-plot_sardist(sardist_sf, studyArea, land_layer, buf)
+[_example use_](#EBSA_report)
 
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**EBSA_sf** |  
+**studyArea** | 
 
-#Map of studyArea with Priority Areas to Enhance Monitoring of Cetaceans
-plot_cetaceans_4grid(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, 
-                    sei_whale_sf, studyArea, land_layer,buf)
-                               
-#Map of studyArea with Blue Whale habitat wide angle
-plot_bw_hab(Blue_Whale_sf, studyArea, land_layer)
+####EBSA_reporturl
+*print url of report corresponding to EBSA that overlaps with studyArea
 
+[_example use_](#EBSA_reporturl)
 
-#Map of studyArea with Blue Whale habitat zoomed
-plot_bw_hab_zoom(Blue_Whale_sf, studyArea, land_layer, buf)
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**EBSA_sf** |  
+**studyArea** | 
 
+####EBSA_location
+*print name of EBSA that overlaps with studyArea
 
-#Map of studyArea with Ecologically and Biologically Significant Areas (EBSA)
-plot_EBSA(EBSA_shp, studyArea, land_layer, buf)
+[_example use_](#EBSA_location)
 
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**EBSA_sf** |  
+**studyArea** | 
 
+####EBSA_bioregion 
+*determine if an EBSA overlaps with studyArea
 
+[_example use_](#EBSA_bioregion )
 
-
-
-
-##Functions used to intersect data polygons and points with studyArea and contained in "fn_intersect_operations.R"
-
-#SAR distribution
-table_dist(sardist_sf,studyArea)
-
-#SAR critical habitat
-table_crit(ClippedCritHab_sf,studyArea, leatherback_sf)
-
-#Whale Sightings Database (WSDB)
-filter_wsdb(wsdb)
-intersect_points_wsdb(wsdb_filter, studyArea)
-table_wsdb(wsdb_filter, studyArea)
-
-#Whitehead Lab database
-filter_whitehead(whitehead)
-intersect_points_whitehead(whitehead_filter, studyArea)
-table_whitehead(whitehead_filter, studyArea)
-
-#North Atlantic Right Whale Consortium (NARWC) database
-filter_narwc(narwc)
-intersect_points_narwc(narwc_filter, studyArea)
-table_narwc(narwc_filter, studyArea)
-
-#Ocean Biodiversity Information System
-filter_obis(obis)
-intersect_points_obis(obis_filter, studyArea)
-table_obis(obis_filter, studyArea)
-
-#Species Distribution Models (SDM): Priority Areas to Enhance Monitoring of Cetaceans
-sdm_table(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, studyArea)
-
-
-#Blue Whale Important Habitat
-blue_whale_habitat_overlap(Blue_Whale_sf, studyArea)
-
-#Ecologically and Biologically Significant Areas (EBSA)
-EBSA_overlap(EBSA_sf, studyArea)
-
-#EBSA report
-EBSA_report(EBSA_sf, studyArea)
-
-#EBSA report URL
-EBSA_reporturl(EBSA_sf, studyArea)
-
-#Location intersect
-EBSA_location(EBSA_sf, studyArea)
-
-#Bioregion intersect
-EBSA_bioregion <- function(EBSA_sf, studyArea)
-
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**EBSA_sf** |  
+**studyArea** | 
 
 
 
