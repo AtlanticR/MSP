@@ -55,7 +55,7 @@ standardPrintOutput 0.0.0.9000  GitHub
 
 ***
 
-![directory-diagram](../../../Projects/SearchPEZ/code/directory_structure.jpg)
+![directory-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/directory_structure.jpg)
 
 __Fig 1.__ **Directories** *set up of directories*
 
@@ -129,7 +129,7 @@ __Fig 1.__ **Directories** *set up of directories*
 # **Functions used to plot figures and contained in "fn_maps.r"**  
 
 #### site_map  
-*plot of map of site and studyArea  
+* plot of map of site and studyArea  
 
 [_example use_](#site_map)  
 
@@ -141,7 +141,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **buf** |  
 
 #### plot_crithab  
-*plot of map of studyArea relative to species at risk critical habitat  
+* plot of map of studyArea relative to species at risk critical habitat  
 
 [_example use_](#plot_crithab)  
 
@@ -191,7 +191,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **land_layer** |  
 
 #### plot_bw_hab_zoom  
-*plot of studyArea with Blue Whale habitat zoomed  
+* plot of studyArea with Blue Whale habitat zoomed  
 
 [_example use_](#plot_bw_hab_zoom)  
 
@@ -270,7 +270,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **wsdb_filter** |  
 **studyArea** |  
 
-##Whitehead Lab database
+## Whitehead Lab database
 
 #### filter_whitehead
 * create table containing records from the Whitehead Lab database overlapping with studyArea
@@ -301,7 +301,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **whitehead_filter** |  
 **studyArea** |  
 
-##North Atlantic Right Whale Consortium (NARWC) database  
+## North Atlantic Right Whale Consortium (NARWC) database  
 
 #### filter_narwc
 * create table containing records from the NARWC database overlapping with studyArea
@@ -378,7 +378,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** | 
 
 #### blue_whale_habitat_overlap
-*create table of overlapping data from Important Blue Whale Habitat  
+* create table of overlapping data from Important Blue Whale Habitat  
 
 [_example use_](#blue_whale_habitat_overlap)
 
