@@ -91,8 +91,8 @@ __Fig 1.__ **Directories** *set up of directories*
 # **Functions for selecting and intersecting RV, MARFIS, and ISDB data and contained in "fn_SurveyData.r" **
 
 #### SelectRV_fn  
-*aggregate data from multiple RV survey data files  
-*produce an sf object (RVCatch_sf) for polygon overlay analysis  
+* aggregate data from multiple RV survey data files  
+* produce an sf object (RVCatch_sf) for polygon overlay analysis  
 
 [_example use_](#SelectRV_fn)  
 
@@ -104,8 +104,8 @@ __Fig 1.__ **Directories** *set up of directories*
 **minYear** |  
 
 #### SelectMARFIS_fn  
-*aggregate data from multiple MARFIS data files  
-*produce an sf object (MARFISCatch_sf) for polygon overlay analysis  
+* aggregate data from multiple MARFIS data files  
+* produce an sf object (MARFISCatch_sf) for polygon overlay analysis  
 
 [_example use_](#SelectMARFIS_fn)  
 
@@ -153,7 +153,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **buf** |  
 
 #### plot_crithab  
-*plot of studyArea relative to species at risk distribution range  
+* plot of studyArea relative to species at risk distribution range  
 
 [_example use_](#plot_sardist)  
 
@@ -165,7 +165,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **buf** |  
 
 #### plot_cetaceans_4grid  
-*plot of studyArea relative to priority areas to enhance monitoring of cetaceans  
+* plot of studyArea relative to priority areas to enhance monitoring of cetaceans  
 
 [_example use_](#plot_cetaceans_4grid)  
 
@@ -180,7 +180,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **buf** |  
 
 #### plot_bw_hab  
-*plot of studyArea with Blue Whale habitat wide angle  
+* plot of studyArea with Blue Whale habitat wide angle  
 
 [_example use_](#plot_bw_hab)  
 
@@ -203,7 +203,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **buf** |  
 
 #### plot_EBSA  
-*plot of studyArea with Ecologically and Biologically Significant Areas (EBSA)  
+* plot of studyArea with Ecologically and Biologically Significant Areas (EBSA)  
 
 [_example use_](#plot_EBSA)  
 
@@ -214,12 +214,12 @@ __Fig 1.__ **Directories** *set up of directories*
 **land_layer** |  
 **buf** |  
 
-#Functions used to intersect data polygons and points with studyArea and contained in "fn_intersect_operations.R"
+# Functions used to intersect data polygons and points with studyArea and contained in "fn_intersect_operations.R"
 
-##Information from National aquatic ***Species at Risk*** Program   
+## Information from National aquatic ***Species at Risk*** Program   
 
 #### table_dist
-*create table of species at risk distribution range overlapping with studyArea
+* create table of species at risk distribution range overlapping with studyArea
 
 [_example use_](#table_dist)
 
@@ -229,7 +229,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** |  
 
 #### table_crit
-*create table of species at risk critical habitat overlapping with studyArea
+* create table of species at risk critical habitat overlapping with studyArea
 
 [_example use_](#table_crit)
 
@@ -242,7 +242,7 @@ __Fig 1.__ **Directories** *set up of directories*
 ## Whale Sightings Database (WSDB)
 
 #### filter_wsdb
-*filter wsdb data
+* filter wsdb data
 
 [_example use_](#filter_wsdb)
 
@@ -251,7 +251,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **wsdb** |  
 
 #### intersect_points_wsdb  
-*find overlap between wsdb and studyArea
+* find overlap between wsdb and studyArea
 
 [_example use_](#intersect_points_wsdb)
 
@@ -261,7 +261,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** |  
 
 #### table_wsdb
-*creat table of overlapping data from WSDB  
+* create table of overlapping data from WSDB  
 
 [_example use_](#table_wsdb)
 
@@ -270,11 +270,10 @@ __Fig 1.__ **Directories** *set up of directories*
 **wsdb_filter** |  
 **studyArea** |  
 
-
 ##Whitehead Lab database
 
 #### filter_whitehead
-*create table containing records from the Whitehead Lab database overlapping with studyArea
+* create table containing records from the Whitehead Lab database overlapping with studyArea
 
 [_example use_](#filter_whitehead)
 
@@ -283,7 +282,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **whitehead** |  
 
 #### intersect_points_whitehead  
-*find overlap between the Whitehead Lab database and studyArea
+* find overlap between the Whitehead Lab database and studyArea
 
 [_example use_](#intersect_points_whitehead)
 
@@ -293,7 +292,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** |  
 
 #### table_whitehead
-*creat table of overlapping data from Whitehead Lab database  
+* create table of overlapping data from Whitehead Lab database  
 
 [_example use_](#table_whitehead)
 
@@ -305,7 +304,7 @@ __Fig 1.__ **Directories** *set up of directories*
 ##North Atlantic Right Whale Consortium (NARWC) database  
 
 #### filter_narwc
-*create table containing records from the NARWC database overlapping with studyArea
+* create table containing records from the NARWC database overlapping with studyArea
 
 [_example use_](#filter_narwc)
 
@@ -314,7 +313,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **narwc** |  
 
 #### intersect_points_narwc  
-*find overlap between the NARWC database and studyArea
+* find overlap between the NARWC database and studyArea
 
 [_example use_](#intersect_points_narwc)
 
@@ -324,7 +323,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** |  
 
 #### table_narwc
-*creat table of overlapping data from NARWC database  
+* create table of overlapping data from NARWC database  
 
 [_example use_](#table_narwc)
 
@@ -337,7 +336,7 @@ __Fig 1.__ **Directories** *set up of directories*
 ##Ocean Biodiversity Information System
 
 #### filter_obis
-*create table containing records from the OBIS database overlapping with studyArea
+* create table containing records from the OBIS database overlapping with studyArea
 
 [_example use_](#filter_obis)
 
@@ -346,7 +345,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **obis** |  
 
 #### intersect_points_obis  
-*find overlap between the OBIS database and studyArea
+* find overlap between the OBIS database and studyArea
 
 [_example use_](#intersect_points_obis)
 
@@ -356,7 +355,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** |  
 
 #### table_obis
-*creat table of overlapping data from OBIS database  
+* creat table of overlapping data from OBIS database  
 
 [_example use_](#table_obis)
 
@@ -366,7 +365,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** |  
 
 #### sdm_table
-*creat table of overlapping data from Priority Areas to Enhance Monitoring of Cetaceans  
+* creat table of overlapping data from Priority Areas to Enhance Monitoring of Cetaceans  
 
 [_example use_](#sdm_table)
 
@@ -379,7 +378,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** | 
 
 #### blue_whale_habitat_overlap
-*creat table of overlapping data from Important Blue Whale Habitat  
+*create table of overlapping data from Important Blue Whale Habitat  
 
 [_example use_](#blue_whale_habitat_overlap)
 
@@ -389,7 +388,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** | 
 
 #### EBSA_overlap
-*creat table of overlapping data from Ecologically and Biologically Significant Areas (EBSA)
+* creat table of overlapping data from Ecologically and Biologically Significant Areas (EBSA)
 
 [_example use_](#EBSA_overlap)
 
@@ -399,7 +398,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** | 
 
 #### EBSA_report
-*determine whether studyArea overlaps with EBSA
+* determine whether studyArea overlaps with EBSA
 
 [_example use_](#EBSA_report)
 
@@ -409,7 +408,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** | 
 
 #### EBSA_reporturl
-*print url of report corresponding to EBSA that overlaps with studyArea
+* print url of report corresponding to EBSA that overlaps with studyArea
 
 [_example use_](#EBSA_reporturl)
 
@@ -419,7 +418,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** | 
 
 #### EBSA_location
-*print name of EBSA that overlaps with studyArea
+* print name of EBSA that overlaps with studyArea
 
 [_example use_](#EBSA_location)
 
@@ -429,7 +428,7 @@ __Fig 1.__ **Directories** *set up of directories*
 **studyArea** | 
 
 #### EBSA_bioregion 
-*determine if an EBSA overlaps with studyArea
+* determine if an EBSA overlaps with studyArea
 
 [_example use_](#EBSA_bioregion )
 
