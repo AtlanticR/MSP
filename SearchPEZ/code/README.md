@@ -25,39 +25,48 @@ Comprehensive reports are divided into the following sections:
 * Fish and Invertebrates,
 * Cetaceans. 	
 
-Search results for additional species and information (optional):
-* Species not listed by the Species at Risk Act (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild -species,
+**Search results for additional species and information (optional):**
+* Species not listed by the <i>Species at Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) or included in the Wild species listing,
 * Habitat information,
 * Designated areas.
 
 **Required packages**
 
-*data.table (v.1.13.6) [link](https://cran.r-project.org/web/packages/data.table/index.html)  
-*dplyr (v.1.0.2) [link](https://cran.r-project.org/web/packages/dplyr/index.html)  
-*ggplot2 (v.3.3.2) [link](https://cran.r-project.org/web/packages/ggplot2/index.html)  
-*ggspatial (v.1.1.5) [link](https://cran.r-project.org/web/packages/ggspatial/index.html)  
-*gridExtra (v.2.3) [link](https://cran.r-project.org/web/packages/gridExtra/index.html)  
-*kableExtra (v.1.3.1) [link](https://cran.r-project.org/web/packages/kableExtra/index.html)  
-*knitr (v.1.30) [link](https://cran.r-project.org/web/packages/knitr/index.html)  
-*lubridate (v.1.7.9.2) [link](https://cloud.r-project.org/web/packages/lubridate/index.html)  
-*maps (v.3.3.0) [link](https://cran.r-project.org/web/packages/maps/)  
-*raster (v.3.4-5) [link](https://cran.r-project.org/web/packages/raster/)  
-*RCurl (v.1.98-1.2) [link](https://cran.r-project.org/web/packages/RCurl/index.html)  
-*rgdal (v.1.5-23) [link](https://cran.r-project.org/web/packages/rgdal/index.html)  
-*sf (v.0.9-7) [link](https://cran.r-project.org/web/packages/sf/index.html)  
-*stars (v.0.4-3) [link](https://cran.r-project.org/web/packages/stars/index.html)  
-*stringr (v.1.4.0) [link](https://cran.r-project.org/web/packages/stringr/)  
-*tidyverse (v.1.3.0) [link](https://cran.r-project.org/web/packages/tidyverse/index.html)  
+* data.table (v.1.13.6) [link](https://cran.r-project.org/web/packages/data.table/index.html)  
+* dplyr (v.1.0.2) [link](https://cran.r-project.org/web/packages/dplyr/index.html)  
+* ggplot2 (v.3.3.2) [link](https://cran.r-project.org/web/packages/ggplot2/index.html)  
+* ggspatial (v.1.1.5) [link](https://cran.r-project.org/web/packages/ggspatial/index.html)  
+* gridExtra (v.2.3) [link](https://cran.r-project.org/web/packages/gridExtra/index.html)  
+* kableExtra (v.1.3.1) [link](https://cran.r-project.org/web/packages/kableExtra/index.html)  
+* knitr (v.1.30) [link](https://cran.r-project.org/web/packages/knitr/index.html)  
+* lubridate (v.1.7.9.2) [link](https://cloud.r-project.org/web/packages/lubridate/index.html)  
+* maps (v.3.3.0) [link](https://cran.r-project.org/web/packages/maps/)  
+* raster (v.3.4-5) [link](https://cran.r-project.org/web/packages/raster/)  
+* RCurl (v.1.98-1.2) [link](https://cran.r-project.org/web/packages/RCurl/index.html)  
+* rgdal (v.1.5-23) [link](https://cran.r-project.org/web/packages/rgdal/index.html)  
+* sf (v.0.9-7) [link](https://cran.r-project.org/web/packages/sf/index.html)  
+* stars (v.0.4-3) [link](https://cran.r-project.org/web/packages/stars/index.html)  
+* stringr (v.1.4.0) [link](https://cran.r-project.org/web/packages/stringr/)  
+* tidyverse (v.1.3.0) [link](https://cran.r-project.org/web/packages/tidyverse/index.html)  
 
-Mar.datawrangling   2021.02.05  GitHub
-standardPrintOutput 0.0.0.9000  GitHub
+* Mar.datawrangling (v.2021.02.05) [link](https://github.com/Maritimes/Mar.datawrangling)  
+* standardPrintOutput (v.0.0.0.9000) [link](https://github.com/terminological/standard-print-output/)
 
+***
+
+![directory-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Workflow.jpg)
+
+__Fig 1.__ **Workflow**
+
+***
+
+*Note for restricted access databases** 
 
 ***
 
 ![directory-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/directory_structure.jpg)
 
-__Fig 1.__ **Directories** *set up of directories*
+__Fig 2.__ **Directories** *set up of directories*
 
 ***
                 
