@@ -52,7 +52,7 @@ List_table[3,1]<-"Wild Species"
 kable(
   List_table,
   align="l", 
-  caption = "\\label{tab:List_table}Definitions relevant for species listed by <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listings.",
+  caption = "Definitions relevant for species listed by <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listings.",
 booktabs = T,
 escape = F,
 linesep="")%>%
