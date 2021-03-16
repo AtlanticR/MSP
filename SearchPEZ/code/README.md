@@ -54,7 +54,7 @@ Comprehensive reports are divided into the following sections:
 
 ***
 
-![directory-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Workflow.jpg)
+![workflow-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Workflow.jpg)
 
 __Fig 1.__ **Workflow**
 
