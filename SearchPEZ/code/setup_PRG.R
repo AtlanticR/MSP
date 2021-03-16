@@ -45,20 +45,14 @@ pl <- pl[-grep("xml",pl)] # remove xml files from list
 site_sf <- st_read(file.path(polyPath,pl[grep(paste0("Site_",AquaSiteName),pl)]))
 studyArea <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
 
-# load different land base objects
-landfile10m <- file.path(RDataPath,"Land10M.rds")
-
-# landfile50k <-  file.path(RDataPath,"land50k.rds")
-
-#land50k_sf <- readRDS(landfile50k)
-land10m_sf <- readRDS(landfile10m)
-# remove State and Province column from land10m
-land10m_sf <- land10m_sf[-c(2)]
 
 #### Arguments for RV survey data #################-
 # for SelectRV_fn
 SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
 File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
+
+load(file.path(RDataPath,"OpenData.RData"))
+load(file.path(RDataPath,"SecureData.RData"))
 
 
 

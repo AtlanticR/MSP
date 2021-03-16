@@ -1,78 +1,14 @@
 
 ########## - Select RV data and intersect with the study area #########################-
 
-SelectRV_fn <- function(SurveyPrefix, File, studyArea, minYear) {
+SelectRV_fn <- function(studyArea, minYear) {
   
   # RVdataPath = "../Data/mar.wrangling/RVSurvey_FGP"
-  
-  
-  # Create single GSCAT table, rename the SPEC field to CODE
-  f = File[1]
-  tablelist <- list()
-  for(i in 1:length(SurveyPrefix)) {
-    #RVdataPath
-    #df <- read.csv(file.path(RVdata.dir, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
-    df <- read.csv(file.path(RVdataPath, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
-    df <- df %>% tidyr::unite("MISSION_SET", MISSION:SETNO, remove = TRUE)
-    # Keep only the columns necessary
-    # ("MISSION_SET" "SPEC", "TOTNO")
-    df <- dplyr::select(df,1:2,4)
-    #Change column name
-    df <- df %>% 
-      rename(
-        CODE = SPEC)
-    tablelist[[i]] <- df
-  }
-  
-  # combine all four RV survey catch tables together
-  GSCAT <- rbind(tablelist[[1]],tablelist[[2]],tablelist[[3]],tablelist[[4]])
-  
-  # Create single GSINF table
-  f = File[2]
-  tablelist <- list()
-  for(i in 1:length(SurveyPrefix)) {
-    df <- read.csv(file.path(RVdataPath, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
-    df <- df %>% tidyr::unite("MISSION_SET", MISSION:SETNO, remove = FALSE)
-    # Keep only the columns necessary
-    # ("MISSION_SET", "MISSION", "SETNO", "SDATE", "SLAT", "SLONG", "ELAT", "ELONG")
-    df <- dplyr::select(df,1:4,7:10)
-    # Add YEAR and SEASON to the table
-    df$YEAR <- lubridate::year(df$SDATE)
-    df$SEASON <- SurveyPrefix[i]
-    tablelist[[i]] <- df
-  }
-  # combine all four RV survey Information tables together
-  # Filter down by Minumum Year
-  GSINF <- rbind(tablelist[[1]],tablelist[[2]],tablelist[[3]],tablelist[[4]])
-  GSINF <- GSINF %>% dplyr::filter(YEAR >= minYear)
-  
-  # Create single GSSPECIES table
-  f = File[3]
-  tablelist <- list()
-  for(i in 1:length(SurveyPrefix)) {
-    df <- read.csv(file.path(RVdataPath, paste(SurveyPrefix[i], f, sep = "", collapse = NULL)))
-    # Remove TSN field
-    df <- dplyr::select(df,(1:3))
-    tablelist[[i]] <- df
-  }
-  
-  # combine all four RV SPECIES tables together
-  GSSPECIES <- rbind(tablelist[[1]],tablelist[[2]],tablelist[[3]],tablelist[[4]])
-  # remove duplicate records
-  GSSPECIES <- dplyr::distinct(GSSPECIES)
-  
-  # Convert GSINF to sf object
-  GSINF_sf = st_as_sf(GSINF, coords = c("SLONG", "SLAT"), crs = 4326) #WGS84
-  
+
   # Select all RV survey points within the Exposure Zone (studyArea) using st_intersect
-  RVintersect <- st_intersection(GSINF_sf,studyArea)
-  
-  # Join all GSCAT records that match those RV survey points AND join species
-  # names to those records
-  RVintersect <- left_join(RVintersect, GSCAT, by = "MISSION_SET")
-  RVintersect <- left_join(RVintersect, GSSPECIES, by = "CODE")
-  
-  return(RVintersect)
+  RVCatch_sf <- st_intersection(RVCatch_sf,studyArea)
+
+  return(RVCatch_sf)
 }
 
 ########## - Select MARFIS data and intersect with the study area #########################-
@@ -84,8 +20,10 @@ SelectMARFIS_fn <- function(studyArea, minYear) {
   #############################################-
   # to use this .RData file and convert to a SF object
   # load data file and species file
+  # NOTE: data file is already loaded as marfis1
   
-  filelist <- c(file.path(SurveyPath,"marfis.RData"), file.path(SurveyPath,"MARFIS.SPECIES.RData"))
+  # filelist <- c(file.path(SurveyPath,"marfis.RData"), file.path(SurveyPath,"MARFIS.SPECIES.RData"))
+  filelist <- c(file.path(SurveyPath,"MARFIS.SPECIES.RData"))
   lapply(filelist, load, envir=.GlobalEnv)
   
   # Reduce MARFIS species table down to only species code, common name
@@ -113,7 +51,9 @@ SelectMARFIS_fn <- function(studyArea, minYear) {
 SelectISDB_fn <- function(studyArea, minYear) {
   # SurveyPath = "../Data/mar.wrangling"
   
-  filelist <- c(file.path(SurveyPath,"isdb.RData"), file.path(SurveyPath,"ISDB.ISSPECIESCODES.RData"))
+  # NOTE: data file is already loaded as isdb1
+  # filelist <- c(file.path(SurveyPath,"isdb.RData"), file.path(SurveyPath,"ISDB.ISSPECIESCODES.RData"))
+  filelist <- c(file.path(SurveyPath,"ISDB.ISSPECIESCODES.RData"))
   lapply(filelist, load, envir=.GlobalEnv)
   
   # Reduce MARFIS species table down to only species code, common name
