@@ -107,8 +107,6 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**SurveyPrefix** | Prefix indicative of database (ISDB, RV, MARFIS)  
-**File** |  
 **studyArea** |  
 **minYear** |  
 
@@ -116,18 +114,18 @@ __Fig 2.__ **Directories** *set up of directories*
 * aggregate data from multiple MARFIS data files  
 * produce an sf object (MARFISCatch_sf) for polygon overlay analysis  
 
-[_example use_](#SelectMARFIS_fn)  
+[_example use_](#SelectMARFISfn)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
 **studyArea** |  
 **minYear** |  
 
-#### SelectMARFIS_fn  
+#### SelectISDB_fn  
 *aggregate data from multiple ISDB data files  
 *produce an sf object (ISDBCatch_sf) for polygon overlay analysis  
 
-[_example use_](#SelectISDB_fn)  
+[_example use_](#SelectISDBfn)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -135,12 +133,12 @@ __Fig 2.__ **Directories** *set up of directories*
 **minYear** |  
 
 
-# **Functions used to plot figures and contained in "fn_maps.r"**  
+# **Functions used to plot figures and contained in "fn_maps.r"** <a name="plotdata"/>  
 
 #### site_map  
 * plot of map of site and studyArea  
 
-[_example use_](#site_map)  
+[_example use_](#sitemap)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -152,7 +150,7 @@ __Fig 2.__ **Directories** *set up of directories*
 #### plot_crithab  
 * plot of map of studyArea relative to species at risk critical habitat  
 
-[_example use_](#plot_crithab)  
+[_example use_](#plotcrithab)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -161,10 +159,10 @@ __Fig 2.__ **Directories** *set up of directories*
 **land_layer** |  
 **buf** |  
 
-#### plot_crithab  
+#### plot_sardist  
 * plot of studyArea relative to species at risk distribution range  
 
-[_example use_](#plot_sardist)  
+[_example use_](#plotsardist)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -176,7 +174,7 @@ __Fig 2.__ **Directories** *set up of directories*
 #### plot_cetaceans_4grid  
 * plot of studyArea relative to priority areas to enhance monitoring of cetaceans  
 
-[_example use_](#plot_cetaceans_4grid)  
+[_example use_](#plotcetaceans4grid)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -191,7 +189,7 @@ __Fig 2.__ **Directories** *set up of directories*
 #### plot_bw_hab  
 * plot of studyArea with Blue Whale habitat wide angle  
 
-[_example use_](#plot_bw_hab)  
+[_example use_](#plotbwhab)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -202,7 +200,7 @@ __Fig 2.__ **Directories** *set up of directories*
 #### plot_bw_hab_zoom  
 * plot of studyArea with Blue Whale habitat zoomed  
 
-[_example use_](#plot_bw_hab_zoom)  
+[_example use_](#plotbwhabzoom)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -214,7 +212,7 @@ __Fig 2.__ **Directories** *set up of directories*
 #### plot_EBSA  
 * plot of studyArea with Ecologically and Biologically Significant Areas (EBSA)  
 
-[_example use_](#plot_EBSA)  
+[_example use_](#plotEBSA)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -223,14 +221,14 @@ __Fig 2.__ **Directories** *set up of directories*
 **land_layer** |  
 **buf** |  
 
-# Functions used to intersect data polygons and points with studyArea and contained in "fn_intersect_operations.R"
+# Functions used to intersect data polygons and points with studyArea and contained in "fn_intersect_operations.R" <a name="intersectdata"/> 
 
 ## Information from National aquatic ***Species at Risk*** Program   
 
 #### table_dist
 * create table of species at risk distribution range overlapping with studyArea
 
-[_example use_](#table_dist)
+[_example use_](#tabledist)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
@@ -240,7 +238,7 @@ __Fig 2.__ **Directories** *set up of directories*
 #### table_crit
 * create table of species at risk critical habitat overlapping with studyArea
 
-[_example use_](#table_crit)
+[_example use_](#tablecrit)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
@@ -253,7 +251,7 @@ __Fig 2.__ **Directories** *set up of directories*
 #### filter_wsdb
 * filter wsdb data
 
-[_example use_](#filter_wsdb)
+[_example use_](#filterwsdb)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
@@ -262,7 +260,7 @@ __Fig 2.__ **Directories** *set up of directories*
 #### intersect_points_wsdb  
 * find overlap between wsdb and studyArea
 
-[_example use_](#intersect_points_wsdb)
+[_example use_](#intersectpointswsdb)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
@@ -272,7 +270,7 @@ __Fig 2.__ **Directories** *set up of directories*
 #### table_wsdb
 * create table of overlapping data from WSDB  
 
-[_example use_](#table_wsdb)
+[_example use_](#tablewsdb)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
@@ -364,7 +362,7 @@ __Fig 2.__ **Directories** *set up of directories*
 **studyArea** |  
 
 #### table_obis
-* creat table of overlapping data from OBIS database  
+* create table of overlapping data from OBIS database  
 
 [_example use_](#table_obis)
 
@@ -374,7 +372,7 @@ __Fig 2.__ **Directories** *set up of directories*
 **studyArea** |  
 
 #### sdm_table
-* creat table of overlapping data from Priority Areas to Enhance Monitoring of Cetaceans  
+* create table of overlapping data from Priority Areas to Enhance Monitoring of Cetaceans  
 
 [_example use_](#sdm_table)
 
@@ -397,7 +395,7 @@ __Fig 2.__ **Directories** *set up of directories*
 **studyArea** | 
 
 #### EBSA_overlap
-* creat table of overlapping data from Ecologically and Biologically Significant Areas (EBSA)
+* create table of overlapping data from Ecologically and Biologically Significant Areas (EBSA)
 
 [_example use_](#EBSA_overlap)
 
@@ -451,17 +449,215 @@ __Fig 2.__ **Directories** *set up of directories*
 This function is required to aggregate RV data and manipulate it for reporting. [_Function description_](#dataharvest)
 
 ```r
-
-#convert RV survey data from OpenData (default: FALSE)
-  SelectRV_fn(SurveyPrefix, File, studyArea, minYear)
-
+  SelectRV_fn(studyArea, minYear)
 ```
 
+## SelectMARFIS\_fn <a name="SelectMARFISfn"/>
+This function is required to aggregate MARFIS data and manipulate it for reporting. [_Function description_](#dataharvest)
 
+```r
+  SelectMARFIS_fn(studyArea, minYear) 
+```
 
+## SelectISDB\_fn <a name="SelectISDBfn"/>
+This function is required to aggregate ISDB data and manipulate it for reporting. [_Function description_](#dataharvest)
 
+```r
+  SelectISDB_fn(studyArea, minYear) 
+```
 
+## site\_map <a name="sitemap"/>
+Plot of map of site and studyArea. [_Function description_](#plotdata)
 
+```r
+  site_map(studyArea,site_sf,land_layer,buf)
+```
 
+## plot\_crithab <a name="plotcrithab"/>
+Plot of map of studyArea relative to species at risk critical habitat. [_Function description_](#plotdata)
 
+```r
+  plot_crithab(ClippedCritHab_sf, studyArea, land_layer, buf)
+```
 
+## plot\_sardist <a name="plotsardist"/>
+Plot of studyArea relative to species at risk distribution range. [_Function description_](#plotdata)
+
+```r
+  plot_sardist(sardist_sf, studyArea, land_layer, buf)
+```
+
+## plot\_cetaceans\_4grid <a name="plotcetaceans4grid"/>
+Plot of studyArea relative to priority areas to enhance monitoring of cetaceans. [_Function description_](#plotdata)
+
+```r
+  plot_cetaceans_4grid(fin_whale_sf,harbour_porpoise_sf,humpback_whale_sf,sei_whale_sf,studyArea,land_layer,buf)
+```
+
+## plot\_bw\_hab <a name="plotbwhab"/>
+Plot of studyArea with Blue Whale habitat wide angle. [_Function description_](#plotdata)
+
+```r
+  plot_bw_hab(Blue_Whale_sf, studyArea, land_layer)
+```
+
+## plot\_bw\_hab\_zoom <a name="plotbwhabzoom"/>
+Plot of studyArea with Blue Whale habitat zoomed. [_Function description_](#plotdata)
+
+```r
+  plot_bw_hab_zoom(Blue_Whale_sf, studyArea, land_layer, buf)
+```  
+
+## plot\_EBSA <a name="plotEBSA"/>
+Plot of studyArea with Ecologically and Biologically Significant Areas (EBSA). [_Function description_](#plotdata)
+
+```r
+  plot_EBSA(EBSA_shp, studyArea, land_layer, buf)
+```    
+
+## table\_dist <a name="tabledist"/>
+Create table of species at risk distribution range overlapping with studyArea. [_Function description_](#intersectdata)
+
+```r
+  table_dist(sardist_sf,studyArea)
+```
+
+## table\_crit <a name="tablecrit"/>
+Create table of species at risk critical habitat overlapping with studyArea. [_Function description_](#intersectdata)
+
+```r
+  table_crit(ClippedCritHab_sf,studyArea, leatherback_sf)
+```
+
+## filter\_wsdb <a name="filterwsdb"/>
+Filter wsdb data. [_Function description_](#intersectdata)
+
+```r
+  filter_wsdb <- function(wsdb)
+```
+
+## intersect\_points\_wsdb <a name="intersectpointswsdb"/>
+Find overlap between wsdb and studyArea. [_Function description_](#intersectdata)
+
+```r
+  intersect_points_wsdb(wsdb_filter, studyArea)
+```
+
+## table\_wsdb <a name="tablewsdb"/>
+Create table of overlapping data from WSDB. [_Function description_](#intersectdata)
+
+```r
+  table_wsdb(wsdb_filter, studyArea)
+```
+
+## filter\_whitehead <a name="filterwhitehead"/>
+Create table containing records from the Whitehead Lab database overlapping with studyArea. [_Function description_](#intersectdata)
+
+```r
+  filter_whitehead(whitehead)
+```
+
+## intersect\_points\_whitehead <a name="intersectpointswhitehead"/>
+Find overlap between the Whitehead Lab database and studyArea. [_Function description_](#intersectdata)
+
+```r
+  intersect_points_whitehead(whitehead_filter, studyArea)
+```
+
+## table\_whitehead <a name="tablewhitehead"/>
+Create table of overlapping data from Whitehead Lab database. [_Function description_](#intersectdata)
+
+```r
+  table_whitehead(whitehead_filter, studyArea)
+```
+
+## filter\_narwc <a name="filternarwc"/>
+Create table containing records from the NARWC database overlapping with studyArea. [_Function description_](#intersectdata)
+
+```r
+  filter_narwc <- function(narwc)
+```
+
+## intersect\_points\_narwc <a name="intersectpointsnarwc"/>
+Find overlap between the NARWC database and studyArea. [_Function description_](#intersectdata)
+
+```r
+  intersect_points_narwc(narwc_filter, studyArea)
+```
+
+## table\_narwc <a name="tablenarwc"/>
+Create table of overlapping data from NARWC database. [_Function description_](#intersectdata)
+
+```r
+  table_narwc(narwc_filter, studyArea)
+```
+
+## filter\_obis <a name="filterobis"/>
+Create table containing records from the OBIS database overlapping with studyArea. [_Function description_](#intersectdata)
+
+```r
+  filter_obis(obis)
+```
+ 
+## intersec\t_points\_obis <a name="intersectpointsobis"/>
+Find overlap between the OBIS database and studyArea. [_Function description_](#intersectdata)
+
+```r
+  intersect_points_obis(obis_filter, studyArea)
+```
+ 
+## table\_obis <a name="tableobis"/>
+Create table of overlapping data from OBIS database. [_Function description_](#intersectdata)
+
+```r
+  table_obis(obis_filter, studyArea)
+```
+
+## sdm\_table <a name="sdmtable"/>
+Create table of overlapping data from Priority Areas to Enhance Monitoring of Cetaceans. [_Function description_](#intersectdata)
+
+```r
+  sdm_table(fin_whale_sf, harbour_porpoise_sf, humpback_whale_sf, sei_whale_sf, studyArea)
+```
+
+## blue\_whale\_habitat\_overlap <a name="bluewhalehabitatoverlap"/>
+Create table of overlapping data from Important Blue Whale Habitat. [_Function description_](#intersectdata)
+
+```r
+  blue_whale_habitat_overlap(Blue_Whale_sf, studyArea)
+``` 
+
+## EBSA\_overlap <a name="EBSAoverlap"/>
+Create table of overlapping data from Ecologically and Biologically Significant Areas (EBSA). [_Function description_](#intersectdata)
+
+```r
+  EBSA_overlap(EBSA_sf, studyArea)
+``` 
+
+## EBSA\_report <a name="EBSAreport"/>
+Determine whether studyArea overlaps with EBSA. [_Function description_](#intersectdata)
+
+```r
+  EBSA_report(EBSA_sf, studyArea)
+``` 
+ 
+## EBSA\_reporturl <a name="EBSAreporturl"/>
+Print url of report corresponding to EBSA that overlaps with studyArea. [_Function description_](#intersectdata)
+
+```r
+  EBSA_reporturl(EBSA_sf, studyArea) 
+``` 
+
+## EBSA\_location <a name="EBSAlocation"/>
+Print name of EBSA that overlaps with studyArea. [_Function description_](#intersectdata)
+
+```r
+  EBSA_location(EBSA_sf, studyArea) 
+``` 
+ 
+## EBSA\_bioregion <a name="EBSAbioregion"/>
+Determine if an EBSA overlaps with studyArea. [_Function description_](#intersectdata)
+
+```r
+  EBSA_bioregion(EBSA_sf, studyArea)
+```
