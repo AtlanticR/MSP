@@ -20,7 +20,7 @@ Once the search area has been defined, users are presented with several options,
 
 Comprehensive reports are divided into the following sections:
 
-**Search results for species listed by the Species At Risk Act, assessed by COSEWIC, and/or Wild Species:**
+**Search results for species listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) or included in the Wild species listing:**
 * Information from National Aquatic Species At Risk Program,
 * Fish and Invertebrates,
 * Cetaceans. 	
@@ -97,13 +97,13 @@ __Fig 2.__ **Directories** *set up of directories*
 **Warning: all coordinate reference systems must be CRS 4326 WGS84**
 
 
-# **Functions for selecting and intersecting RV, MARFIS, and ISDB data and contained in "fn_SurveyData.r" **
+# **Functions for selecting and intersecting RV, MARFIS, and ISDB data and contained in "fn_SurveyData.r" ** <a name="dataharvest"/>
 
 #### SelectRV_fn  
 * aggregate data from multiple RV survey data files  
 * produce an sf object (RVCatch_sf) for polygon overlay analysis  
 
-[_example use_](#SelectRV_fn)  
+[_example use_](#SelectRVfn)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -447,15 +447,15 @@ __Fig 2.__ **Directories** *set up of directories*
 **studyArea** | 
 
 
+## SelectRV\_fn <a name="SelectRVfn"/>
+This function is required to aggregate RV data and manipulate it for reporting. [_Function description_](#dataharvest)
 
+```r
 
+#convert RV survey data from OpenData (default: FALSE)
+  SelectRV_fn(SurveyPrefix, File, studyArea, minYear)
 
-
-
-
-
-
-
+```
 
 
 

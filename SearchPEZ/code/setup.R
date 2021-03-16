@@ -44,7 +44,7 @@ site_sf <- st_read(file.path(polyPath,pl[grep(paste0("Site_",AquaSiteName),pl)])
 studyArea <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZversion),pl)]))
 
 ####### Load datasets #######
-load("../../../Projects/SearchPEZ/code/OpenData.RData")
+load("../../../Data/RData/OpenData.RData")
 
 #listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 #ClippedCritHab_sf <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", quiet=TRUE)
@@ -78,7 +78,7 @@ listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(
 
 ####### Files used in multiple sections  #######
 
-obis<-subset(obis,year>minYear)
+obis_sf<-subset(obis_sf,year>minYear)
 
 ####### Files & Code for SAR distribution and critical habitat Section  #######
 
