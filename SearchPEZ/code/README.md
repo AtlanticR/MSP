@@ -60,7 +60,7 @@ __Fig 1.__ **Workflow**
 
 ***
 
-Restricted data from various databases (ISDB, NARWC, WSDB, MARFIS, Whitehead, Leatherback) require communication 
+*Note: Restricted data from various databases (ISDB, NARWC, WSDB, MARFIS, Whitehead, Leatherback) require communication 
 with several sources. Once permission has been granted to access the data, it can all be acquired using the
 <SecureData.RData> script.
 
