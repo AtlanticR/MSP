@@ -97,7 +97,7 @@ __Fig 2.__ **Directories** *set up of directories*
 **Warning: all coordinate reference systems must be CRS 4326 WGS84**
 
 
-# **Functions for selecting and intersecting RV, MARFIS, and ISDB data and contained in "fn_SurveyData.r" **
+# **Functions for selecting and intersecting RV, MARFIS, and ISDB data and contained in "fn_SurveyData.r" ** <a name="dataharvest"/>
 
 #### SelectRV_fn  
 * aggregate data from multiple RV survey data files  
@@ -448,7 +448,7 @@ __Fig 2.__ **Directories** *set up of directories*
 
 
 ## SelectRV\_fn <a name="SelectRVfn"/>
-This function is required to aggregate RV data and manipulate it for reporting. [_Function description_](#SelectRVfn)
+This function is required to aggregate RV data and manipulate it for reporting. [_Function description_](#dataharvest)
 
 ```r
 
