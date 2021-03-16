@@ -103,7 +103,7 @@ __Fig 2.__ **Directories** *set up of directories*
 * aggregate data from multiple RV survey data files  
 * produce an sf object (RVCatch_sf) for polygon overlay analysis  
 
-[_example use_](#SelectRV_fn)  
+[_example use_](#SelectRVfn)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
@@ -447,8 +447,8 @@ __Fig 2.__ **Directories** *set up of directories*
 **studyArea** | 
 
 
-## SelectRV\_fn <a name="SelectRV_fn"/>
-This function is required to aggregate RV data and manipulate it for reporting. [_Function description_](#SelectRV_fn)
+## SelectRV\_fn <a name="SelectRVfn"/>
+This function is required to aggregate RV data and manipulate it for reporting. [_Function description_](#SelectRVfn)
 
 ```r
 
@@ -456,10 +456,6 @@ This function is required to aggregate RV data and manipulate it for reporting. 
   SelectRV_fn(SurveyPrefix, File, studyArea, minYear)
 
 ```
-
-SelectRV_fn) 
-
-
 
 
 
