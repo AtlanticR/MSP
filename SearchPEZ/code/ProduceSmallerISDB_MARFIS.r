@@ -48,7 +48,7 @@ save(marfis1, file="marfis.RData", compress = TRUE)
 # ISDB
 # You may have to run the data_tweaks() function to fix a few
 # things in the tables
-data_tweaks2('isdb', data.dir = data.dir)
+# data_tweaks2('isdb', data.dir = data.dir)
 get_data('isdb', data.dir=data.dir)
 
 # select only those records later than 2009
@@ -71,7 +71,7 @@ file.remove(file)
 
 # Reduce data file down to only the columnns necessary
 isdb1 <- dplyr::select(isdb1, 
-                         one_of(c("SPECCD_ID","DATE_TIME1","EST_KEPT_WT","LATITUDE","LONGITUDE")))
+                         one_of(c("SPECCD_ID","YEAR","EST_KEPT_WT","LATITUDE","LONGITUDE")))
 # isdb1$DATE_TIME1 <- lubridate::parse_date_time(isdb1$DATE_TIME1, orders = "ymd")
 
 # save as .RData file
