@@ -13,42 +13,14 @@ Security level: none
 #### ***Area-specific Maritimes Research Vessel (RV) Survey search results***    
 
 ```{r, include=FALSE, cache=FALSE}
-temp <- "C:/Temp"
-SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
-File <- c("_2020_GSCAT.csv", "_2020_GSINF.csv", "_2020_GSSPECIES.csv")
-RVCatch <-  SelectRV_fn(SurveyPrefix, File, AquaSiteName, PEZversion, minYear)
-RVCatch$database<-"rv"
-rv_freq <- aggregate(
-      x = list(Records = RVCatch$COMM),
-      by = list(Scientific_Name = RVCatch$SPEC, Common_Name=RVCatch$COMM, Individuals=RVCatch$TOTNO, Set_No=RVCatch$SETNO),
-      length)
-rv_freq_SAR<-rv_freq %>% select(Scientific_Name, Common_Name, Individuals, Records, Set_No) %>% filter (Scientific_Name %in% listed_fish_invert_species$Scientific_Name_upper)
-
-rv_freq2<-aggregate(x=rv_freq[,sapply(rv_freq,is.numeric)],
-                   by=c(rv_freq["Scientific_Name"], rv_freq["Common_Name"]),
-                    sum)
-rv_freq_table<-select(rv_freq2, Scientific_Name, Common_Name, Individuals, Records)
-rv_freq_table<-arrange(rv_freq_table, Scientific_Name)
-rv_freq_table<-rv_freq_table %>% rename("Scientific Name"=Scientific_Name,
-                                        "Common Name"=Common_Name)
-rv_freq_SAR2<-aggregate(x=rv_freq_SAR[,sapply(rv_freq_SAR,is.numeric)],
-                   by=c(rv_freq_SAR["Scientific_Name"], rv_freq_SAR["Common_Name"]),
-                    sum)
-rv_freq_SAR2<-arrange(rv_freq_SAR2, Scientific_Name)
-
-#Table with scientific name, common name, individual counts and number of records
-Total_number_records_RV <- sum(rv_freq[[4]])
-Total_number_individuals_RV <- sum(rv_freq[[3]])
-Total_number_sets_RV<-length(unique(rv_freq$Set_No))
-Total_number_SAR_records_RV <- sum(rv_freq_SAR2[[4]])
-Total_number_SAR_individuals_RV <- sum(rv_freq_SAR2[[3]])
-Total_number_SAR_sets_RV<-length(unique(rv_freq_SAR$Set_No))
+RVCatch_sf<-SelectRV_fn(RVCatch_sf, minYear, studyArea)
+rv_SAR_table<-table_rv_SAR(RVCatch_sf)
+rv_table <- table_rv(RVCatch_sf)
 ```
-
 
 *
 ```{r, comment="", prompt=TRUE, echo=FALSE, results='asis'}
-Report_RV<-if(Total_number_SAR_records_RV < 1){
+Report_RV<-if(length(rv_SAR_table) < 1){
     "There are no relevant records in the Maritimes Research Vessel (RV) Survey for this search area."
   } else {
     "There are relevant records in the Maritimes Research Vessel (RV) Survey for this search area."
@@ -58,23 +30,10 @@ writeLines(Report_RV)
 ```
 
 ```{r}
-#Develop final RV SAR table
-rv_SAR_table<-as.data.frame(rv_freq_SAR2)
-rv_SAR_table<-rv_SAR_table %>% rename(Scientific_Name_upper=Scientific_Name)
-rv_SAR_table<-mutate(rv_SAR_table, Catch_Frequency=format(round((Records/Total_number_SAR_sets_RV)*100,1), nsmall=1))
-rv_SAR_table<-merge(rv_SAR_table, listed_fish_invert_species, by='Scientific_Name_upper')
-rv_SAR_table<-select(rv_SAR_table, Scientific_Name, Common_Name.y, Individuals, Records, Catch_Frequency,
-                             COSEWIC.status, Schedule.status,Wild_Species)
-colnames(rv_SAR_table)<-c("Scientific Name", "Common Name", "No. of Individuals", "Catch Events", 
-                          "Catch Frequency", "COSEWIC listing", "SARA status", "Wild Species")
-
-```
-
-```{r}
 #Convert geometry to latitude and longitude
-RVCatch <- RVCatch %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
-rv_start_sites<-data.frame(unique(cbind(longitude=RVCatch$lon, latitude=RVCatch$lat)))
-rv_end_sites<-data.frame(unique(cbind(longitude=RVCatch$ELONG, latitude=RVCatch$ELAT)))
+RVCatch_sf <- RVCatch_sf %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
+rv_start_sites<-data.frame(unique(cbind(longitude=RVCatch_sf$lon, latitude=RVCatch_sf$lat)))
+rv_end_sites<-data.frame(unique(cbind(longitude=RVCatch_sf$ELONG, latitude=RVCatch_sf$ELAT)))
 startx <- rv_start_sites$longitude
 starty <- rv_start_sites$latitude
 endx <- rv_end_sites$longitude
@@ -103,7 +62,7 @@ kable(rv_SAR_table, align="l", caption="\\label{tab:rv_SAR_table}Quality Tier: H
 <br><br>
 
 ```{r}
-kable(rv_freq_table, align="l", caption="\\label{tab:rv_freq_table}Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
+kable(rv_table, align="l", caption="\\label{tab:rv_freq_table}Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
@@ -138,65 +97,7 @@ Security level: Protected B
 
 #### ***Area-specific MARFIS & ISDB search results***    
 ```{r, include=FALSE, cache=FALSE}
-##skip all of these steps and create an isdb file for all of the MAR region.
-#df_to_shp(df= isdb, file = "isdb_shp", lat.field = "LATITUDE",lon.field = "LONGITUDE")
-#isdb_shp <- st_read("../../../Data/outputs/FarmersLedge4748m/isdb_20190927_1201.shp", quiet=TRUE)
-#ISDBCatch <-  SelectISDB_fn(AquaSiteName, PEZversion, minYear)
-data.dir = "../../../Data/mar.wrangling"  # location of ISDB datafiles
-get_data(db="isdb", data.dir=file.path(data.dir))
-wd <- getwd() # store main project directory
-
-#ISSETPROFILE_WIDE corrections 
-set2<-ISSETPROFILE_WIDE %>%
-  mutate(DATE_TIME1 = na_if(DATE_TIME1, "9999-01-01 AST"))
-set2<-set2 %>%
-  mutate(DATE_TIME2 = na_if(DATE_TIME2, "9999-01-01 AST"))
-set2<-set2 %>%
-  mutate(DATE_TIME3 = na_if(DATE_TIME3, "9999-01-01 AST"))
-set2<-set2 %>%
-  mutate(DATE_TIME4 = na_if(DATE_TIME4, "9999-01-01 AST"))
-set2$DATE_TIME1[is.na(set2$DATE_TIME1)] <- set2$DATE_TIME2[is.na(set2$DATE_TIME1)]         
-set2$DATE_TIME4[is.na(set2$DATE_TIME4)] <- set2$DATE_TIME3[is.na(set2$DATE_TIME4)]         
-
-set2$LAT1[is.na(set2$LAT1)] <- set2$LAT2[is.na(set2$LAT1)]  
-set2$LONG1[is.na(set2$LONG1)] <- set2$LONG2[is.na(set2$LONG1)]
-
-set2$LAT4[is.na(set2$LAT4)] <- set2$LAT3[is.na(set2$LAT4)]  
-set2$LONG4[is.na(set2$LONG4)] <- set2$LONG3[is.na(set2$LONG4)]
-
-set2$YEAR<-lubridate::year(set2$DATE_TIME1)
-set2<- set2 %>% rename(LATITUDE=LAT1)
-set2<- set2 %>% rename(LONGITUDE=LONG1)
-set3 <-  clip_by_poly(df = set2,
-                      lat.field = "LATITUDE",
-                      lon.field = "LONGITUDE",
-                      clip.poly = PEZ_poly)
-ISSETPROFILE_WIDE <- set3[set3$YEAR >= minYear,]
-
-# limit by year
-self_filter(keep_nullsets = FALSE,quiet = TRUE)
-setwd(temp)
-save_data(db='isdb')  # this creates both a csv and a shp
-# of the clipped data.  Import the shp as an sf object and 
-# pass back to main script as ISDB_INTERSECT
-
-  # read in the newly created ISDB shapefile
-# as an sf object.
-
-files <- list.files(temp,".shp")
-isdb_shp <- files[grep("isdb_",files)] # get shapefile name
-isdb_shp <- substr(isdb_shp,1,nchar(isdb_shp)-4) # remove '.shp' extension
-
-isdb_sf <- st_read(temp, layer = isdb_shp, quiet=TRUE)
-# remove all files created by save_data() (shapefile and CSV)
-fl <- list.files(temp,isdb_shp)
-for(i in 1:length(fl)) {
-  file.remove(fl[i])
-}  
-setwd(wd) #revert to original working directory
-
-isdb_intersect <- st_intersection(isdb_sf,studyArea)
-isdb_sites<-data.frame(longitude=isdb_intersect$LONGI, latitude=isdb_intersect$LATIT)
+isdb_intersect<-SelectISDB_fn(isdb1, studyArea, minYear)
 ```
 
 ```{r, include=FALSE, cache=FALSE}

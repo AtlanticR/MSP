@@ -24,8 +24,8 @@ library(standardPrintOutput) # required for watermarks on maps
 
 ####### Functions  #######
 source("fn_maps.r") #Functions used to plot figure
-source("fn_intersect_operations.R") #Functions used to intersect data polygons and points with studyArea 
 source("fn_SurveyData.r") # functions for selecting and intersecting RV, MARFIS, and ISDB data
+source("fn_intersect_operations.R") #Functions used to intersect data polygons and points with studyArea 
 
 ####### Search Area  #######
 AquaSiteName <- "AtlanticDestiny"
@@ -45,6 +45,8 @@ studyArea <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZve
 
 ####### Load datasets #######
 load("../../../Data/RData/OpenData.RData")
+load("../../../Data/RData/SecureData.RData")
+
 
 #listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 #ClippedCritHab_sf <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", quiet=TRUE)
@@ -65,7 +67,7 @@ load("../../../Data/RData/OpenData.RData")
 #landfile50k <-  file.path(RDataPath,"land50k.rds")
 #land50k_sf <- readRDS(landfile50k)
 # remove State and Province column from land10m
-land10m_sf <- land10m_sf[-c(2)]
+#land10m_sf <- land10m_sf[-c(2)]
 
 ####### Species List  #######
 # This section reads table that lists species listed by SARA, assessed by COSEWIC or assessed by Wildlife Species listings
@@ -76,13 +78,9 @@ listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
 listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
 listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
 
-####### Files used in multiple sections  #######
-
-obis_sf<-subset(obis_sf,year>minYear)
-
 ####### Files & Code for SAR distribution and critical habitat Section  #######
 
-leatherback_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
+#leatherback_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
 
 ####### Files & Code for Fish and Invertebrate Section  #######
 #cws<-read.csv("../../../Data/NaturalResources/Species/CWS_ECCC/CWS_ECCC_OBIS_records.csv")
@@ -95,17 +93,16 @@ leatherback_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/Le
 ####### Files & Code for Cetacean Section  #######
 
 #read wsdb file
-wsdb <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/WSDB/MarWSDBSightingsForCGomez_27Oct2020.csv")
-wsdb <- wsdb[which(wsdb$YEAR>=minYear),]
+#wsdb <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/WSDB/MarWSDBSightingsForCGomez_27Oct2020.csv")
+
 
 #read whitehead lab file
-whitehead <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/Whitehead_Lab/whitehead_lab.csv")
-whitehead$YEAR<-lubridate::year(whitehead$Date)
-whitehead <- whitehead[which(whitehead$YEAR>=minYear),]
+#whitehead <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/Whitehead_Lab/whitehead_lab.csv")
+
 
 #read narwc file - update 
-narwc <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv")
-narwc <- narwc[which(narwc$YEAR>=minYear),]
+#narwc <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv")
+
 
 #Read Priority Areas for cetacean monitoring
 # Convert rasters to sf object
@@ -132,6 +129,7 @@ Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/June to Augus
 Blue_Whale_sf$months[Blue_Whale_sf$months == "March to May/June to August"] <- "Mar-May/Jun-Aug"
 Blue_Whale_sf$Activity<-paste(Blue_Whale_sf$activity,"-",Blue_Whale_sf$months)
 
+
 #Define colour coding for all cetacean plots for consistency
 whale_col=values=c("Blue Whale"="darkgoldenrod1",
                    "Fin Whale"="chartreuse4",
@@ -147,3 +145,11 @@ whale_col=values=c("Blue Whale"="darkgoldenrod1",
 
 EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
 EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
+
+####### Filter files used in multiple sections by minYear  #######
+
+obis_sf <- obis_sf %>% dplyr::filter(year >= minYear)
+wsdb <- wsdb %>% dplyr::filter(YEAR >= minYear)
+whitehead$YEAR<-lubridate::year(whitehead$Date)
+whitehead <- whitehead %>% dplyr::filter(YEAR >= minYear)
+narwc <- narwc %>% dplyr::filter(YEAR >= minYear)

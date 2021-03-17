@@ -71,7 +71,7 @@ file.remove(file)
 
 # Reduce data file down to only the columnns necessary
 isdb1 <- dplyr::select(isdb1, 
-                         one_of(c("SPECCD_ID","YEAR","EST_KEPT_WT","LATITUDE","LONGITUDE")))
+                         one_of(c("SCIENTIFIC","COMMON","YEAR","EST_KEPT_WT","LATITUDE","LONGITUDE")))
 # isdb1$DATE_TIME1 <- lubridate::parse_date_time(isdb1$DATE_TIME1, orders = "ymd")
 
 # save as .RData file

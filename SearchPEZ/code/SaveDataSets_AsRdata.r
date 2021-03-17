@@ -73,24 +73,24 @@ save(Blue_Whale_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale,
 # save secure data as single .Rdata file
 
 #read wsdb file
-wsdb <- read.csv("../Data/NaturalResources/Species/Cetaceans/WSDB/MarWSDBSightingsForCGomez_27Oct2020.csv", stringsAsFactors = FALSE)
+wsdb <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/WSDB/MarWSDBSightingsForCGomez_27Oct2020.csv", stringsAsFactors = FALSE)
 
 #read whitehead lab file
-whitehead <- read.csv("../Data/NaturalResources/Species/Cetaceans/Whitehead_Lab/whitehead_lab.csv", stringsAsFactors = FALSE)
+whitehead <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/Whitehead_Lab/whitehead_lab.csv", stringsAsFactors = FALSE)
 whitehead$YEAR<-lubridate::year(whitehead$Date)
 
 #read narwc file - update 
-narwc <- read.csv("../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv", stringsAsFactors = FALSE)
+narwc <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv", stringsAsFactors = FALSE)
 
 # read in turtle habitat
-leatherback_sf <- st_read("../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", stringsAsFactors = FALSE)
+leatherback_sf <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", stringsAsFactors = FALSE)
 
 load("../Data/mar.wrangling/isdb.RData")
 load("../Data/mar.wrangling/marfis.RData")
 
 # Save all objects to a single .Rdata file
 save(isdb1,leatherback_sf,marfis1,narwc, whitehead, wsdb,
-     file = "../Data/Rdata/SecureData.Rdata")
+     file = "../../../Data/Rdata/SecureData.Rdata")
 
 ########################################################-
 # random code bits

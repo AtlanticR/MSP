@@ -1,10 +1,11 @@
 
 ########## - Select RV data and intersect with the study area #########################-
 
-SelectRV_fn <- function(studyArea, minYear) {
+SelectRV_fn <- function(RVCatch_sf, minYear, studyArea) {
   
   # RVdataPath = "../Data/mar.wrangling/RVSurvey_FGP"
-
+  # Filter by year minYear
+  RVCatch_sf <- RVCatch_sf %>% dplyr::filter(YEAR >= minYear)
   # Select all RV survey points within the Exposure Zone (studyArea) using st_intersect
   RVCatch_sf <- st_intersection(RVCatch_sf,studyArea)
 
@@ -48,23 +49,23 @@ SelectMARFIS_fn <- function(studyArea, minYear) {
 
 ########## - Select ISDB data and intersect with the study area #########################-
 
-SelectISDB_fn <- function(studyArea, minYear) {
+SelectISDB_fn <- function(isdb1, studyArea, minYear) {
   # SurveyPath = "../Data/mar.wrangling"
   
   # NOTE: data file is already loaded as isdb1
   # filelist <- c(file.path(SurveyPath,"isdb.RData"), file.path(SurveyPath,"ISDB.ISSPECIESCODES.RData"))
-  filelist <- c(file.path(SurveyPath,"ISDB.ISSPECIESCODES.RData"))
-  lapply(filelist, load, envir=.GlobalEnv)
+  #filelist <- c(file.path(SurveyPath,"ISDB.ISSPECIESCODES.RData"))
+  #lapply(filelist, load, envir=.GlobalEnv)
   
   # Reduce MARFIS species table down to only species code, common name
-  ISSPECIESCODES <- dplyr::select(ISSPECIESCODES,SPECCD_ID,COMMON, SCIENTIFIC)
+  #ISSPECIESCODES <- dplyr::select(ISSPECIESCODES,SPECCD_ID,COMMON, SCIENTIFIC)
   
   # add YEAR column and filter for records from minYear onwards
 
-  isdb1$DATA_TIME1 <- lubridate::parse_date_time(isdb1$DATE_TIME1, orders = "ymd")
+  #isdb1$DATA_TIME1 <- lubridate::parse_date_time(isdb1$DATE_TIME1, orders = "ymd")
   
-  isdb1$YEAR <- lubridate::year(isdb1$DATA_TIME1)
-  isdb1 <- isdb1 %>% dplyr::filter(YEAR >= minYear)
+  #isdb1$YEAR <- lubridate::year(isdb1$DATA_TIME1)
+  #isdb1 <- isdb1 %>% dplyr::filter(YEAR >= minYear)
   
   # Convert to SF object
   isdb1 <- st_as_sf(isdb1, coords = c("LONGITUDE", "LATITUDE"))
@@ -73,7 +74,7 @@ SelectISDB_fn <- function(studyArea, minYear) {
   # Select all MARFIS points within the Exposure Zone (PEZ) using st_intersect
   Catch <- st_intersection(isdb1,studyArea)
   # merge the data file with species names using common species codes
-  Catch <- merge(Catch,ISSPECIESCODES, by = 'SPECCD_ID')
+  #Catch <- merge(Catch,ISSPECIESCODES, by = 'SPECCD_ID')
   
   return(Catch)
 

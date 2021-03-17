@@ -40,6 +40,77 @@ crit_table<-bind_rows(crit_table,leatherback_table)
 
 }
 
+###Fish and Invertebrate section###
+
+#Create table of RV records of SAR species caught in studyArea
+
+table_rv_SAR <- function(RVCatch_sf) {
+  
+  Total_number_sets_RV<-length(unique(RVCatch_sf$SETNO))
+  
+  rv_freq_all_ind_sum <- aggregate(RVCatch_sf$TOTNO, by=list(Scientific_Name_upper = RVCatch_sf$SPEC), FUN=sum)
+  rv_freq_all_ind_sum<-rv_freq_all_ind_sum %>% rename(Individuals=x)
+  
+  rv_freq_all_set_sum <- aggregate(SETNO ~ SPEC, RVCatch_sf, function(x) length(unique(x)))
+  rv_freq_all_set_sum<-rv_freq_all_set_sum %>% rename(Sets=SETNO,
+                                                      Scientific_Name_upper=SPEC)
+  
+  rv_SAR_table<-merge(rv_freq_all_ind_sum, listed_fish_invert_species, by='Scientific_Name_upper')
+  rv_SAR_table<-merge(rv_SAR_table, rv_freq_all_set_sum, by='Scientific_Name_upper')
+  rv_SAR_table<-mutate(rv_SAR_table, Capture_Event_Frequency=format(round((Sets/Total_number_sets_RV)*100,1), nsmall=1))
+  rv_SAR_table<-select(rv_SAR_table, Scientific_Name, Common_Name, COSEWIC.status, Schedule.status, Wild_Species, Individuals, Capture_Event_Frequency)
+    rv_SAR_table<- rv_SAR_table %>% rename("SARA status"=Schedule.status,
+                                         "COSEWIC listing"=COSEWIC.status,
+                                         "Wild Species listing"=Wild_Species,
+                                         "Capture Event Frequency"=Capture_Event_Frequency,
+                                         "Scientific Name"=Scientific_Name,
+                                         "Common Name"=Common_Name)
+}
+
+#Create table of of RV records of all species caught in studyArea
+
+table_rv <- function(RVCatch_sf) {
+  
+  Total_number_sets_RV<-length(unique(RVCatch_sf$SETNO))
+  
+  rv_freq_all_ind_sum <- aggregate(RVCatch_sf$TOTNO, by=list(SPEC = RVCatch_sf$SPEC), FUN=sum)
+  rv_freq_all_ind_sum <- rv_freq_all_ind_sum %>% rename(Individuals=x)
+  
+  rv_freq_all_set_sum <- aggregate(SETNO ~ SPEC, RVCatch_sf, function(x) length(unique(x)))
+  rv_freq_all_set_sum <- rv_freq_all_set_sum %>% rename(Sets=SETNO)
+  
+  rv_table<-merge(rv_freq_all_ind_sum, rv_freq_all_set_sum, by='SPEC')
+  rv_table<-mutate(rv_table, Capture_Event_Frequency=format(round((Sets/Total_number_sets_RV)*100,1), nsmall=1))
+  names<-select(RVCatch_sf,SPEC,COMM)
+  st_geometry(names)<-NULL
+  names<-unique(names)
+  rv_table<-dplyr::left_join(rv_table, names, by="SPEC")
+  rv_table<-select(rv_table, SPEC, COMM, Individuals, Capture_Event_Frequency)
+  rv_table<- rv_table %>% rename("Capture Event Frequency"=Capture_Event_Frequency,
+                                 "Scientific Name"=SPEC,
+                                 "Common Name"=COMM)
+}
+
+#Create table of of ISDB records of all species caught in studyArea
+
+table_isdb <- function(isdb1) {
+
+  isdb <- isdb1 %>% dplyr::filter(YEAR >= minYear)
+  isdb_sf<-st_as_sf(isdb, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+  isdb_intersect <- st_intersection(isdb_sf,studyArea)
+
+
+}
+
+
+#Create table of isdb sampling locations
+
+points_isdb <- function(isdb_intersect) {
+  isdb_intersect <- isdb_intersect %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
+  isdb_sites<-data.frame(longitude=isdb_intersect$long, latitude=isdb_intersect$lat)
+
+}
+
 
 ###Cetacean section###
 
