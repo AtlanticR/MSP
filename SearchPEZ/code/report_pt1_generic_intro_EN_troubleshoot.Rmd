@@ -63,8 +63,8 @@ column_spec(1,width = "3cm")%>%
 ```{r child = 'report_pt2_SAR_dist_crithab_EN_troubleshoot.Rmd'}
 ```
 
-#```{r child = 'report_pt3_fish_inverts_EN_troubleshoot.Rmd'}
-#```
+```{r child = 'report_pt3_fish_inverts_EN_troubleshoot.Rmd'}
+```
 
 ```{r child = 'report_pt4_cetaceans_EN_troubleshoot.Rmd'}
 ```

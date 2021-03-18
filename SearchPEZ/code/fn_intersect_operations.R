@@ -4,22 +4,19 @@
 table_dist <- function(sardist_sf,studyArea) {
 
 intersect_dist <- st_intersection(sardist_sf,studyArea)
-intersect_dist$Common_Nam[intersect_dist$Common_Nam == "Sowerby`s Beaked Whale"] <- "Sowerby's Beaked Whale"
-Common_Name<-intersect_dist$Common_Nam
-Scientific_Name<-intersect_dist$Scientific
-Population<-intersect_dist$Population
-Area<-intersect_dist$Waterbody
-intersect_dist_df<-as.data.frame(cbind(Common_Name, Scientific_Name, Population, Area))
-dist_table<-merge(intersect_dist_df, listed_species, by='Scientific_Name')
+#intersect_dist$Common_Nam[intersect_dist$Common_Nam == "Sowerby`s Beaked Whale"] <- "Sowerby's Beaked Whale"
+dist_table<-intersect_dist %>% 
+  select(Scientific, Common_Nam, Population, Waterbody)
+dist_table<- dist_table %>% rename("Scientific_Name"=Scientific)
+dist_table<-merge(dist_table, listed_species, by='Scientific_Name')
 dist_table<-dist_table %>% 
-  transmute(Common_Name, Scientific_Name, Population, Area, Schedule.status, COSEWIC.status, Wild_Species)
+  select(Common_Name, Scientific_Name, Population, Waterbody, Schedule.status, COSEWIC.status, Wild_Species)
 dist_table<- dist_table %>% rename("SARA status"=Schedule.status,
                                    "COSEWIC listing"=COSEWIC.status,
                                    "Wild Species listing"=Wild_Species,
                                    "Common Name"=Common_Name,
                                    "Scientific Name"=Scientific_Name)
 }
-
 
 #SAR critical habitat
 table_crit <- function(ClippedCritHab_sf,studyArea, leatherback_sf) {
@@ -44,14 +41,14 @@ crit_table<-bind_rows(crit_table,leatherback_table)
 
 #Create table of RV records of SAR species caught in studyArea
 
-table_rv_SAR <- function(RVCatch_sf) {
+table_rv_SAR <- function(RVCatch_intersect) {
   
-  Total_number_sets_RV<-length(unique(RVCatch_sf$SETNO))
+  Total_number_sets_RV<-length(unique(RVCatch_intersect$SETNO))
   
-  rv_freq_all_ind_sum <- aggregate(RVCatch_sf$TOTNO, by=list(Scientific_Name_upper = RVCatch_sf$SPEC), FUN=sum)
+  rv_freq_all_ind_sum <- aggregate(RVCatch_intersect$TOTNO, by=list(Scientific_Name_upper = RVCatch_intersect$SPEC), FUN=sum)
   rv_freq_all_ind_sum<-rv_freq_all_ind_sum %>% rename(Individuals=x)
   
-  rv_freq_all_set_sum <- aggregate(SETNO ~ SPEC, RVCatch_sf, function(x) length(unique(x)))
+  rv_freq_all_set_sum <- aggregate(SETNO ~ SPEC, RVCatch_intersect, function(x) length(unique(x)))
   rv_freq_all_set_sum<-rv_freq_all_set_sum %>% rename(Sets=SETNO,
                                                       Scientific_Name_upper=SPEC)
   
@@ -69,47 +66,148 @@ table_rv_SAR <- function(RVCatch_sf) {
 
 #Create table of of RV records of all species caught in studyArea
 
-table_rv <- function(RVCatch_sf) {
+table_rv <- function(RVCatch_intersect) {
   
-  Total_number_sets_RV<-length(unique(RVCatch_sf$SETNO))
+  Total_number_sets_RV<-length(unique(RVCatch_intersect$SETNO))
   
-  rv_freq_all_ind_sum <- aggregate(RVCatch_sf$TOTNO, by=list(SPEC = RVCatch_sf$SPEC), FUN=sum)
+  rv_freq_all_ind_sum <- aggregate(RVCatch_intersect$TOTNO, by=list(SPEC = RVCatch_intersect$SPEC), FUN=sum)
   rv_freq_all_ind_sum <- rv_freq_all_ind_sum %>% rename(Individuals=x)
   
-  rv_freq_all_set_sum <- aggregate(SETNO ~ SPEC, RVCatch_sf, function(x) length(unique(x)))
+  rv_freq_all_set_sum <- aggregate(SETNO ~ SPEC, RVCatch_intersect, function(x) length(unique(x)))
   rv_freq_all_set_sum <- rv_freq_all_set_sum %>% rename(Sets=SETNO)
   
-  rv_table<-merge(rv_freq_all_ind_sum, rv_freq_all_set_sum, by='SPEC')
-  rv_table<-mutate(rv_table, Capture_Event_Frequency=format(round((Sets/Total_number_sets_RV)*100,1), nsmall=1))
-  names<-select(RVCatch_sf,SPEC,COMM)
+  rv_table <- merge(rv_freq_all_ind_sum, rv_freq_all_set_sum, by='SPEC')
+  rv_table <- mutate(rv_table, Capture_Event_Frequency=format(round((Sets/Total_number_sets_RV)*100,1), nsmall=1))
+  names <- select(RVCatch_intersect,SPEC,COMM)
   st_geometry(names)<-NULL
-  names<-unique(names)
-  rv_table<-dplyr::left_join(rv_table, names, by="SPEC")
-  rv_table<-select(rv_table, SPEC, COMM, Individuals, Capture_Event_Frequency)
-  rv_table<- rv_table %>% rename("Capture Event Frequency"=Capture_Event_Frequency,
-                                 "Scientific Name"=SPEC,
-                                 "Common Name"=COMM)
+  names <- unique(names)
+  rv_table <- dplyr::left_join(rv_table, names, by="SPEC")
+  rv_table <- rv_table %>% transmute(rv_table, Common_Name=str_to_sentence(COMM))
+  rv_table <- rv_table %>% transmute(rv_table, Scientific_Name=str_to_sentence(SPEC))
+  rv_table <- select(rv_table, Scientific_Name, Common_Name, Individuals, Capture_Event_Frequency)
+  rv_table <- rv_table %>% rename("Capture Event Frequency"=Capture_Event_Frequency,
+                                 "Scientific Name"=Scientific_Name,
+                                 "Common Name"=Common_Name)
+  
 }
 
 #Create table of of ISDB records of all species caught in studyArea
 
-table_isdb <- function(isdb1) {
+table_isdb <- function(isdb_intersect) {
 
-  isdb <- isdb1 %>% dplyr::filter(YEAR >= minYear)
-  isdb_sf<-st_as_sf(isdb, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
-  isdb_intersect <- st_intersection(isdb_sf,studyArea)
+  isdb_table <- aggregate(
+    x = list(Records = isdb_intersect$SCIENTIFIC),
+    by = list(SCIENTIFIC_NAME = isdb_intersect$SCIENTIFIC, COMMON_NAME = isdb_intersect$COMMON),
+    length)
+  isdb_table <- isdb_table %>% transmute(isdb_table, Scientific_Name=str_to_sentence(SCIENTIFIC_NAME))
+  isdb_table <- isdb_table %>% transmute(isdb_table, Common_Name=str_to_sentence(COMMON_NAME))
+  isdb_table <- isdb_table %>% select(Scientific_Name, Common_Name, Records)
+  isdb_table <- arrange(isdb_table, Scientific_Name)
+  isdb_table <- isdb_table %>% rename("Scientific Name"=Scientific_Name,
+                                      "Common Name"=Common_Name)
+}
 
+table_isdb_SAR <- function(isdb_intersect) {
+  
+  isdb_SAR_table <- aggregate(
+    x = list(Records = isdb_intersect$SCIENTIFIC),
+    by = list(Scientific_Name = isdb_intersect$SCIENTIFIC, Common_Name = isdb_intersect$COMMON),
+    length)
+  isdb_SAR_table <- isdb_SAR_table %>% rename("Scientific_Name_upper"=Scientific_Name)
+  isdb_SAR_table <-merge(isdb_SAR_table, listed_fish_invert_species, by='Scientific_Name_upper')
+  isdb_SAR_table <-isdb_SAR_table %>% 
+    select(Scientific_Name, Common_Name.y, Schedule.status, COSEWIC.status, Wild_Species, Records)
+  isdb_SAR_table<- isdb_SAR_table %>% rename("SARA status"=Schedule.status,
+                                             "COSEWIC listing"=COSEWIC.status,
+                                             "Wild Species listing"=Wild_Species,
+                                             "Scientific Name"=Scientific_Name,
+                                             "Common Name"=Common_Name.y)
+  isdb_SAR_table<-arrange(isdb_SAR_table, "Scientific Name")
+  
+}
 
+#Create table of of MARFIS records of all species caught in studyArea
+
+table_marfis <- function(marfis_intersect) {
+  marfis_table <- aggregate(
+    x = list(Records = marfis_intersect$SPECIES_CODE),
+    by = list(SPECIES_CODE = marfis_intersect$SPECIES_CODE),
+    length)
+  marfis_table <- merge(marfis_table,SPECIES, by = 'SPECIES_CODE')
+  marfis_table <- marfis_table %>% transmute(marfis_table, Common_Name=str_to_sentence(SPECIES_NAME))
+  marfis_table <- marfis_table %>% select(Common_Name, Records)
+  marfis_table <- arrange(marfis_table, Common_Name)
+  marfis_table <- marfis_table %>% rename("Common Name"=Common_Name)
+}
+
+table_marfis_SAR <- function(marfis_intersect) {
+  
+  marfis_SAR_table <- aggregate(
+    x = list(Records = marfis_intersect$SPECIES_CODE),
+    by = list(SPECIES_CODE = marfis_intersect$SPECIES_CODE),
+    length)
+  marfis_SAR_table <- merge(marfis_SAR_table,SPECIES, by = 'SPECIES_CODE')
+  marfis_SAR_table <- marfis_SAR_table %>% rename("Common_Name_MARFIS"=SPECIES_NAME)
+  marfis_SAR_table <-merge(marfis_SAR_table, listed_fish_invert_species, by='Common_Name_MARFIS')
+  marfis_SAR_table <-marfis_SAR_table %>% 
+    select(Scientific_Name, Common_Name, Schedule.status, COSEWIC.status, Wild_Species, Records)
+  marfis_SAR_record_table<- marfis_SAR_table %>% rename("SARA status"=Schedule.status,
+                                                       "COSEWIC listing"=COSEWIC.status,
+                                                       "Wild Species listing"=Wild_Species,
+                                                       "Scientific Name"=Scientific_Name,
+                                                       "Common Name"=Common_Name)
+  marfis_SAR_table<-arrange(marfis_SAR_table, "Scientific Name")
+  
+}
+
+#Ocean Biodiversity Information System - FISH
+
+filter_obis_fish <- function(obis_sf) {
+  obis_sf<-obis_sf %>%
+    filter(! collectionCode =="WHALESITINGS")
+  obis_sf_filter <- obis_sf %>% rename(Scientific_Name=scientificName)
 }
 
 
-#Create table of isdb sampling locations
-
-points_isdb <- function(isdb_intersect) {
-  isdb_intersect <- isdb_intersect %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
-  isdb_sites<-data.frame(longitude=isdb_intersect$long, latitude=isdb_intersect$lat)
-
+intersect_points_obis_fish <- function(obis_sf_filter, studyArea) {
+  intersect_obis <- st_intersection(obis_sf_filter,studyArea)
+  intersect_obis<-merge(intersect_obis, listed_fish_invert_species, by='Scientific_Name')
+  obis_intersect_points <- intersect_obis %>%
+    mutate(long = unlist(map(intersect_obis$geometry,1)),
+           lat = unlist(map(intersect_obis$geometry,2)))
 }
+
+table_obis_fish <- function(obis_sf_filter, studyArea) {
+  intersect_obis <- st_intersection(obis_sf_filter,studyArea)
+  obis_fish_table<-merge(intersect_obis, listed_fish_invert_species, by='Scientific_Name')
+  obis_fish_table<-obis_fish_table %>% 
+    select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+  obis_fish_table<- obis_fish_table %>% rename("SARA status"=Schedule.status,
+                                                 "COSEWIC listing"=COSEWIC.status,
+                                                 "Wild Species listing"=Wild_Species,
+                                                 "Scientific Name"=Scientific_Name,
+                                                 "Common Name"=Common_Name)
+  obis_fish_table$geometry<-NULL
+  obis_fish_table<-unique(obis_fish_table)
+}
+
+
+#Ocean Biodiversity Information System - CETACEANS
+
+table_obis_cet <- function(obis_sf_filter, studyArea) {
+  intersect_obis <- st_intersection(obis_sf_filter,studyArea)
+  obis_whale_table<-merge(intersect_obis, listed_cetacean_species, by='Scientific_Name')
+  obis_whale_table<-obis_whale_table %>% 
+    select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
+  obis_whale_table<- obis_whale_table %>% rename("SARA status"=Schedule.status,
+                                                 "COSEWIC listing"=COSEWIC.status,
+                                                 "Wild Species listing"=Wild_Species,
+                                                 "Scientific Name"=Scientific_Name,
+                                                 "Common Name"=Common_Name)
+  obis_whale_table$geometry<-NULL
+  obis_whale_table<-unique(obis_whale_table)
+}
+
 
 
 ###Cetacean section###
@@ -223,30 +321,24 @@ table_narwc <- function(narwc_filter, studyArea) {
                                        "Common Name"=Common_Name.x)
 }
 
-#Ocean Biodiversity Information System
+#Ocean Biodiversity Information System - CETACEANS
 
-filter_obis <- function(obis) {
-  obis_filter<-obis %>% 
-    transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID,
-              institutionCode, collectionCode, datasetID)
-  obis_filter<-obis_filter %>%
+filter_obis_cet <- function(obis_sf) {
+  obis_sf<-obis_sf %>%
     filter(! collectionCode =="WHALESITINGS")
-  obis_filter <- obis_filter %>% rename(Scientific_Name=scientificName)
+  obis_sf_filter <- obis_sf %>% rename(Scientific_Name=scientificName)
 }
 
-
-intersect_points_obis <- function(obis_filter, studyArea) {
-  obis_sf<-st_as_sf(obis_filter, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
-  intersect_obis <- st_intersection(obis_sf,studyArea)
-  intersect_obis<-merge(intersect_obis, listed_cetacean_species, by='Scientific_Name')
+intersect_points_obis_cet <- function(obis_sf_filter, studyArea) {
+  intersect_obis <- st_intersection(obis_sf_filter,studyArea)
+  intersect_obis <- merge(intersect_obis, listed_cetacean_species, by='Scientific_Name')
   obis_intersect_points <- intersect_obis %>%
     mutate(long = unlist(map(intersect_obis$geometry,1)),
            lat = unlist(map(intersect_obis$geometry,2)))
 }
 
-table_obis <- function(obis_filter, studyArea) {
-  obis_sf<-st_as_sf(obis_filter, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
-  intersect_obis <- st_intersection(obis_sf,studyArea)
+table_obis_cet <- function(obis_sf_filter, studyArea) {
+  intersect_obis <- st_intersection(obis_sf_filter,studyArea)
   obis_whale_table<-merge(intersect_obis, listed_cetacean_species, by='Scientific_Name')
   obis_whale_table<-obis_whale_table %>% 
     select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)

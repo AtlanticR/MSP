@@ -13,9 +13,10 @@ Security level: none
 #### ***Area-specific Maritimes Research Vessel (RV) Survey search results***    
 
 ```{r, include=FALSE, cache=FALSE}
-RVCatch_sf<-SelectRV_fn(RVCatch_sf, minYear, studyArea)
-rv_SAR_table<-table_rv_SAR(RVCatch_sf)
-rv_table <- table_rv(RVCatch_sf)
+RVCatch_sf <- RVCatch_sf %>% dplyr::filter(YEAR >= minYear)
+RVCatch_intersect <- st_intersection(RVCatch_sf,studyArea)
+rv_SAR_table<-table_rv_SAR(RVCatch_intersect)
+rv_table <- table_rv(RVCatch_intersect)
 ```
 
 *
@@ -31,9 +32,9 @@ writeLines(Report_RV)
 
 ```{r}
 #Convert geometry to latitude and longitude
-RVCatch_sf <- RVCatch_sf %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
-rv_start_sites<-data.frame(unique(cbind(longitude=RVCatch_sf$lon, latitude=RVCatch_sf$lat)))
-rv_end_sites<-data.frame(unique(cbind(longitude=RVCatch_sf$ELONG, latitude=RVCatch_sf$ELAT)))
+RVCatch_intersect <- RVCatch_intersect %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
+rv_start_sites<-data.frame(unique(cbind(longitude=RVCatch_intersect$lon, latitude=RVCatch_intersect$lat)))
+rv_end_sites<-data.frame(unique(cbind(longitude=RVCatch_intersect$ELONG, latitude=RVCatch_intersect$ELAT)))
 startx <- rv_start_sites$longitude
 starty <- rv_start_sites$latitude
 endx <- rv_end_sites$longitude
@@ -73,7 +74,6 @@ kable(rv_table, align="l", caption="\\label{tab:rv_freq_table}Quality Tier: High
 #### ***Industry Survey Database (ISDB)***    
 Contact: <Claire.Mussells@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
-wd <- getwd() # store main project directory
 info<-file.info("../../../Data/mar.wrangling/ISDB.ISSETTYPECODES.RData")
 LatestUpdate<-format(info[,"mtime"], format = "%B %d %Y")
 last_retrieved<-c("Last retrieved on: ",LatestUpdate)
@@ -86,7 +86,7 @@ Security level: Protected B
 #### ***The Maritime Fishery Information System (MARFIS)***    
 Contact: <XMARComData@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
-info<-file.info("../../../Data/mar.wrangling/MARFIS.PRO_SPC_INFO.RData")
+info<-file.info("../../../Data/mar.wrangling/MARFISSCI.PRO_SPC_INFO.RData")
 LatestUpdate<-format(info[,"mtime"], format = "%B %d %Y")
 last_retrieved<-c("Last retrieved on: ",LatestUpdate)
 writeLines(c("Last retrieved on:",LatestUpdate), sep = " ")
@@ -97,108 +97,44 @@ Security level: Protected B
 
 #### ***Area-specific MARFIS & ISDB search results***    
 ```{r, include=FALSE, cache=FALSE}
-isdb_intersect<-SelectISDB_fn(isdb1, studyArea, minYear)
-```
-
-```{r, include=FALSE, cache=FALSE}
-isdb_freq <- aggregate(
-      x = list(Records = isdb_intersect$SCIENTIFIC),
-      by = list(Scientific_Name = isdb_intersect$SCIENTIFIC, Common_Name = isdb_intersect$COMMON),
-      length)
-isdb_freq <- isdb_freq[order(-isdb_freq$Records),]
-rownames(isdb_freq) <- c()
-isdb_freq2<- isdb_freq %>% rename("Scientific_Name_upper"=Scientific_Name)
-isdb_freq<- isdb_freq %>% rename("Scientific Name"=Scientific_Name,
-                                 "Common Name"=Common_Name)
-isdb_freq_SAR<-merge(isdb_freq2, listed_fish_invert_species, by='Scientific_Name_upper')
-isdb_freq_SAR<-isdb_freq_SAR %>% 
-  transmute(Scientific_Name, Common_Name.y, Schedule.status, COSEWIC.status, Wild_Species, Records)
-isdb_SAR_record_table<- isdb_freq_SAR %>% rename("SARA status"=Schedule.status,
-                                     "COSEWIC listing"=COSEWIC.status,
-                                     "Wild Species listing"=Wild_Species,
-                                     "Scientific Name"=Scientific_Name,
-                                     "Common Name"=Common_Name.y)
-Total_number_records_isdb <- sum(isdb_freq$Records)
-Total_number_SAR_records_isdb<-sum(isdb_SAR_record_table$Records)
+isdb1 <- isdb1 %>% dplyr::filter(YEAR >= minYear)
+isdb_sf <- st_as_sf(isdb1, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+isdb_intersect <- st_intersection(isdb_sf,studyArea)
+isdb_intersect <- isdb_intersect %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
+isdb_sites<-data.frame(longitude=isdb_intersect$long, latitude=isdb_intersect$lat)
+isdb_table<-table_isdb(isdb_intersect)
+isdb_SAR_table<-table_isdb_SAR(isdb_intersect)
 ```
 
 ```{r}
-isdb_set_summary_table<-data.frame(Total_organisms_recorded_in_polygon="", LISTED_organisms_recorded_in_polygon="")
-isdb_set_summary_table[1,1]<-Total_number_records_isdb
-isdb_set_summary_table[1,2]<-Total_number_SAR_records_isdb
-isdb_set_summary_table<- isdb_set_summary_table %>% rename("Total organisms recorded in polygon"=Total_organisms_recorded_in_polygon,
-                                                           "Listed organisms recorded in polygon"=LISTED_organisms_recorded_in_polygon)
+Total_number_records_isdb <- sum(isdb_table$Records)
+Total_number_SAR_records_isdb<-sum(isdb_SAR_table$Records)
+isdb_summary_table<-data.frame(Total_organisms_recorded_in_polygon="", LISTED_organisms_recorded_in_polygon="")
+isdb_summary_table[1,1]<-Total_number_records_isdb
+isdb_summary_table[1,2]<-Total_number_SAR_records_isdb
+isdb_summary_table<- isdb_summary_table %>% rename("Total organisms recorded in polygon"=Total_organisms_recorded_in_polygon,
+                                                   "Listed organisms recorded in polygon"=LISTED_organisms_recorded_in_polygon)
 ```
 
-
 ```{r, include=FALSE, cache=FALSE}
-#source("fn_Search_MARFIS_Data.r")
-#MARFISCatch <-SelectMARFIS_fn(AquaSiteName, PEZversion, minYear)
-wd <- getwd() # store main project directory
-data.dir = "../../../Data/mar.wrangling"  # location of MARFIS datafiles
-
-#Import the MARFIS tables
-#This command did not work for me
-#get_data('marfis', data.dir=data.dir)
-#I developed these instead
-filenames <- list.files(data.dir, pattern="MARFIS*", full.names=TRUE)
-lapply(filenames,load,.GlobalEnv)
-  # limit data by MinYear and clip to PEZPoly
-db='marfis'
-PRO_SPC_INFO <-  clip_by_poly(df = PRO_SPC_INFO,
-                              lat.field = "LATITUDE",
-                              lon.field = "LONGITUDE",
-                              clip.poly = PEZ_poly)
-# limit by year
-PRO_SPC_INFO <- PRO_SPC_INFO[PRO_SPC_INFO$YEAR >= minYear,]
-self_filter(keep_nullsets = FALSE,quiet = TRUE)
-setwd(temp)
-save_data(db='marfis')  # this creates both a csv and a shp
-# of the clipped data.  Import the shp as an sf object and 
-# pass back to main script as MARFIS_INTERSECT
-  # read in the newly created MARFIS shapefile
-# as an sf object.
-files <- list.files(temp,".shp")
-marfis_shp <- files[grep("marfis_",files)] # get shapefile name
-marfis_shp <- substr(marfis_shp,1,nchar(marfis_shp)-4) # remove '.shp' extension
-marfis_sf <- st_read(temp, layer = marfis_shp, quiet=TRUE)
-# remove all files created by save_data() (shapefile and CSV)
-fl <- list.files(temp,marfis_shp)
-for(i in 1:length(fl)) {
-  file.remove(fl[i])
-}  
-setwd(wd)
+marfis1$YEAR <- lubridate::year(marfis1$DATE_FISHED)
+marfis1 <- marfis1 %>% dplyr::filter(YEAR >= minYear)
+marfis_sf <- st_as_sf(marfis1, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
 marfis_intersect <- st_intersection(marfis_sf,studyArea)
-marfis_sites<-data.frame(longitude=marfis_intersect$LONGITUDE, latitude=marfis_intersect$LATITUDE)
-```
-
-```{r, include=FALSE, cache=FALSE}
-marfis_freq <- aggregate(
-      x = list(Records = marfis_intersect$SPIES_N),
-      by = list(Species = marfis_intersect$SPIES_N),
-      length)
-marfis_freq <- marfis_freq[order(-marfis_freq$Records),]
-rownames(marfis_freq) <- c()
-marfis_freq_table<- marfis_freq %>% rename("Common Name"=Species)
-marfis_freq_table2<- marfis_freq %>% rename(Common_Name_upper=Species)
-marfis_freq_SAR<-merge(marfis_freq_table2, listed_fish_invert_species, by='Common_Name_upper')
-marfis_freq_SAR<-marfis_freq_SAR %>% 
-  transmute(Scientific_Name, Common_Name, Schedule.status, COSEWIC.status, Wild_Species, Records)
-marfis_SAR_record_table<- marfis_freq_SAR %>% rename("SARA status"=Schedule.status,
-                                                    "COSEWIC listing"=COSEWIC.status,
-                                                    "Wild Species listing"=Wild_Species,
-                                                    "Scientific Name"=Scientific_Name,
-                                                    "Common Name"=Common_Name)
-Total_number_records_marfis <- sum(marfis_freq_table$Records)
-Total_number_SAR_records_marfis<-sum(marfis_SAR_record_table$Records)
+marfis_intersect <- marfis_intersect %>% extract(geometry, c('long', 'lat'), '\\((.*), (.*)\\)', convert = TRUE)
+marfis_sites<-data.frame(longitude=marfis_intersect$long, latitude=marfis_intersect$lat)
+marfis_table<-table_marfis(marfis_intersect)
+marfis_SAR_table<-table_marfis_SAR(marfis_intersect)
 ```
 
 ```{r}
-marfis_record_summary_table<-data.frame(Total_organisms_recorded_in_polygon="", LISTED_organisms_recorded_in_polygon="")
-marfis_record_summary_table[1,1]<-Total_number_records_marfis
-marfis_record_summary_table[1,2]<-Total_number_SAR_records_marfis
-marfis_record_summary_table<- marfis_record_summary_table %>% rename("Total organisms recorded in polygon"=Total_organisms_recorded_in_polygon,
-                                                           "Listed organisms recorded in polygon"=LISTED_organisms_recorded_in_polygon)
+Total_number_records_marfis <- sum(marfis_table$Records)
+Total_number_SAR_records_marfis <- sum(marfis_SAR_table$Records)
+marfis_summary_table<-data.frame(Total_organisms_recorded_in_polygon="", LISTED_organisms_recorded_in_polygon="")
+marfis_summary_table[1,1] <- Total_number_records_marfis
+marfis_summary_table[1,2] <- Total_number_SAR_records_marfis
+marfis_summary_table <- marfis_summary_table %>% rename("Total organisms recorded in polygon"=Total_organisms_recorded_in_polygon,
+                                                        "Listed organisms recorded in polygon"=LISTED_organisms_recorded_in_polygon)
 ```
 
 *
@@ -236,28 +172,28 @@ site_map(studyArea,site_sf,land10m_sf,10)+
 <br><br>
 
 ```{r}
-kable(isdb_SAR_record_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings (B=Breeding, N=non-breeding, M=migratory). <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
+kable(isdb_SAR_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings (B=Breeding, N=non-breeding, M=migratory). <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left", fixed_thead=T)
 ```
 
 <br><br>
 
 ```{r}
-kable(isdb_freq, align="l", caption="Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
+kable(isdb_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Industry Survey Database (ISDB) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left", fixed_thead=T)
 ```
 
 <br><br>
 
 ```{r}
-kable(marfis_SAR_record_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings (B=Breeding, N=non-breeding, M=migratory). <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
+kable(marfis_SAR_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings (B=Breeding, N=non-breeding, M=migratory). <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```
 
 <br><br>
 
 ```{r}
-kable(marfis_freq_table, caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
+kable(marfis_table, caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
 column_spec(1, width="15cm") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left", fixed_thead = T)
 ```
@@ -273,62 +209,40 @@ Security level: none
 
 #### ***Area-specific OBIS fish and invertebrate search results***    
 ```{r, include=FALSE, cache=FALSE}
-#Select columns of interest from OBIS file
-obis_edit<-obis %>% 
-  transmute(scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID, institutionCode, collectionCode, datasetID)
- 
-#Delete WSDB and CWS/ECCC records
-#obis_edit2<-obis_edit %>% filter(! institutionCode =="Canadian Wildlife Service-Atlantic, Environment and Climate Change Canada")
-obis_edit2<-obis_edit %>%
-  filter(! collectionCode =="WHALESITINGS")
-obis_sf<-st_as_sf(obis_edit2, coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
-intersect_obis <- st_intersection(obis_sf,studyArea)
-
-#append columns from listed species
-intersect_obis<- intersect_obis %>% rename(Scientific_Name=scientificName)
-obis_fish_table<-merge(intersect_obis, listed_fish_invert_species, by='Scientific_Name')
-intersect_obis_fish_sep <- obis_fish_table %>%
-    mutate(long = unlist(map(obis_fish_table$geometry,1)),
-           lat = unlist(map(obis_fish_table$geometry,2)))
-Total_number_SAR_records_obis<-as.numeric(nrow(obis_fish_table))
-obis_fish_table<-obis_fish_table %>% select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
-obis_fish_table<- obis_fish_table %>% rename("SARA status"=Schedule.status,
-                                             "COSEWIC listing"=COSEWIC.status,
-                                             "Wild Species listing"=Wild_Species,
-                                             "Scientific Name"=Scientific_Name,
-                                             "Common Name"=Common_Name)
-obis_fish_table$geometry<-NULL
-obis_fish_table<-unique(obis_fish_table)
+obis_sf_filter <- filter_obis_fish(obis_sf)
+obis_intersect_points_fish <-intersect_points_obis_fish(obis_sf_filter, studyArea)
+obis_fish_table <- table_obis_fish(obis_sf_filter, studyArea)
+Total_number_fish_records_obis <- nrow(obis_fish_table)
 ```
 
 *
 ```{r, echo=FALSE, results='asis',}
-Report_obis<-if(Total_number_SAR_records_obis < 1){
+Report_obis<-if(Total_number_fish_records_obis < 1){
   "There are no relevant records in the Ocean Biodiversity Information System (OBIS) for this search area."
 } else {
   "There are relevant records in the Ocean Biodiversity Information System (OBIS) for this search area."
 }
-Report_obis2<-noquote(Report_obis)
-writeLines(c(Report_obis2), sep = "\n")
+Report_obis<-noquote(Report_obis)
+writeLines(c(Report_obis), sep = "\n")
 ```
 
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Buffer area was used to query information from Ocean Biodiversity Information System (OBIS) observation records, for species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), or assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) and Wild species. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore. The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 obis_plot<-site_map(studyArea,site_sf,land10m_sf,10)+
-  geom_point(data = intersect_obis_fish_sep, aes(x = long, y = lat), size = 3, 
+  geom_point(data = obis_intersect_points_fish, aes(x = long, y = lat), size = 3, 
         shape = 16, fill = "black") 
-if(Total_number_SAR_records_obis > 1){print(obis_plot)}
+if(Total_number_fish_records_obis > 1){print(obis_plot)}
 
 ```
 
 <br><br>
 
 ```{r echo=FALSE, results='asis', caption="Priority species with observations contained in the OBIS database within the search polygon area."}
-OBIS_query_output_table<-if(Total_number_SAR_records_obis < 1){
+OBIS_query_output_table<-if(Total_number_fish_records_obis < 1){
   ""
 } else {
   kable(obis_fish_table, align="l", row.names = F, caption="Quality Tier: Medium. Security level: none. Ocean Biodiversity Information System (OBIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listing (B=Breeding, N=non-breeding, M=migratory). <b>The absence of a species in this figure should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>",
         booktabs = T, escape = F, linesep="") %>%
     kable_styling(bootstrap_options = "striped", full_width = T, position = "left")}
-if(Total_number_SAR_records_obis > 1){OBIS_query_output_table}
+if(Total_number_fish_records_obis > 1){OBIS_query_output_table}
 ```

@@ -24,7 +24,7 @@ library(standardPrintOutput) # required for watermarks on maps
 
 ####### Functions  #######
 source("fn_maps.r") #Functions used to plot figure
-source("fn_SurveyData.r") # functions for selecting and intersecting RV, MARFIS, and ISDB data
+#source("fn_SurveyData.r") # functions for selecting and intersecting RV, MARFIS, and ISDB data
 source("fn_intersect_operations.R") #Functions used to intersect data polygons and points with studyArea 
 
 ####### Search Area  #######
@@ -71,13 +71,14 @@ load("../../../Data/RData/SecureData.RData")
 
 ####### Species List  #######
 # This section reads table that lists species listed by SARA, assessed by COSEWIC or assessed by Wildlife Species listings
+listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
                  "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
 other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
 listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
 listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
 listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
-
+load("../../../Data/mar.wrangling/MARFISSCI.SPECIES.RData")
 ####### Files & Code for SAR distribution and critical habitat Section  #######
 
 #leatherback_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)
@@ -119,7 +120,6 @@ sei_whale[sei_whale==0] <- NA
 sei_whale_sf<-st_as_stars(sei_whale)%>%st_as_sf()
 
 #Read Blue Whale Important Habitat shape file crs
-Blue_Whale_sf <- st_transform(Blue_32198, crs = 4326)
 Blue_Whale_sf<-setNames(Blue_Whale_sf, replace(names(Blue_Whale_sf), names(Blue_Whale_sf) == 'activité', 'activite'))
 Blue_Whale_sf$activity[Blue_Whale_sf$activity == "foraging/Feeding"] <- "Foraging/Feeding"
 Blue_Whale_sf$activity[Blue_Whale_sf$activity == "Migrant"] <- "Migration"

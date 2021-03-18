@@ -1,15 +1,15 @@
 
 ########## - Select RV data and intersect with the study area #########################-
 
-SelectRV_fn <- function(RVCatch_sf, minYear, studyArea) {
+#SelectRV_fn <- function(RVCatch_sf, minYear, studyArea) {
   
   # RVdataPath = "../Data/mar.wrangling/RVSurvey_FGP"
   # Filter by year minYear
-  RVCatch_sf <- RVCatch_sf %>% dplyr::filter(YEAR >= minYear)
+  #RVCatch_sf <- RVCatch_sf %>% dplyr::filter(YEAR >= minYear)
   # Select all RV survey points within the Exposure Zone (studyArea) using st_intersect
-  RVCatch_sf <- st_intersection(RVCatch_sf,studyArea)
+  #RVCatch_sf <- st_intersection(RVCatch_sf,studyArea)
 
-  return(RVCatch_sf)
+  #return(RVCatch_sf)
 }
 
 ########## - Select MARFIS data and intersect with the study area #########################-
@@ -49,7 +49,7 @@ SelectMARFIS_fn <- function(studyArea, minYear) {
 
 ########## - Select ISDB data and intersect with the study area #########################-
 
-SelectISDB_fn <- function(isdb1, studyArea, minYear) {
+#SelectISDB_fn <- function(isdb1, studyArea, minYear) {
   # SurveyPath = "../Data/mar.wrangling"
   
   # NOTE: data file is already loaded as isdb1
@@ -68,14 +68,14 @@ SelectISDB_fn <- function(isdb1, studyArea, minYear) {
   #isdb1 <- isdb1 %>% dplyr::filter(YEAR >= minYear)
   
   # Convert to SF object
-  isdb1 <- st_as_sf(isdb1, coords = c("LONGITUDE", "LATITUDE"))
-  st_crs(isdb1) <-  4326
+  #isdb1 <- st_as_sf(isdb1, coords = c("LONGITUDE", "LATITUDE"))
+  #st_crs(isdb1) <-  4326
   
   # Select all MARFIS points within the Exposure Zone (PEZ) using st_intersect
-  Catch <- st_intersection(isdb1,studyArea)
+  #Catch <- st_intersection(isdb1,studyArea)
   # merge the data file with species names using common species codes
   #Catch <- merge(Catch,ISSPECIESCODES, by = 'SPECCD_ID')
   
-  return(Catch)
+  #return(Catch)
 
-}
+#}
