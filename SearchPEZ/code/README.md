@@ -116,8 +116,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**studyArea** |  
-**minYear** |  
+**studyArea** |  a simple featuring representing a point location or track of a proposed project/activity/accident (site) surrounded by an exposure zone or user-defined buffer area.
+**minYear** |  a user-defined minimum year from which to search all databases used by the report. 
 
 #### SelectMARFIS_fn  
 * aggregate data from multiple MARFIS data files  
