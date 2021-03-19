@@ -45,10 +45,13 @@ studyArea <- st_read(file.path(polyPath,pl[grep(paste0("PEZ_",AquaSiteName,PEZve
 ####### Load datasets #######
 load("../../../Data/RData/OpenData.RData")
 load("../../../Data/RData/SecureData.RData")
+load("../../../Data/RData/MARFISSCI.SPECIES.RData")
+ISDB_info<-file.info("../../../Data/RData/ISDB.ISSETTYPECODES.RData")
+MARFIS_info<-file.info("../../../Data/RData/MARFISSCI.SPECIES.RData")
 
-####### Species List  #######
+####### Species Lists  #######
 # This section reads table that lists species listed by SARA, assessed by COSEWIC or assessed by Wildlife Species listings
-listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
+# listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
                  "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
 other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")

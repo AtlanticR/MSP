@@ -106,41 +106,6 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Warning: all coordinate reference systems must be CRS 4326 WGS84**
 
-# **Functions for selecting and intersecting RV, MARFIS, and ISDB data and contained in "fn_SurveyData.r"** <a name="dataharvest"/>
-
-#### SelectRV_fn  
-* aggregate data from multiple RV survey data files  
-* produce an sf object (RVCatch_sf) for polygon overlay analysis  
-
-[_example use_](#SelectRVfn)  
-
-**Variable name** | **Input**  
---------------|-----------------------------------  
-**studyArea** |  a simple featuring representing a point location or track of a proposed project/activity/accident (site) surrounded by an exposure zone or user-defined buffer area.
-**minYear** |  a user-defined minimum year from which to search all databases used by the report. 
-
-#### SelectMARFIS_fn  
-* aggregate data from multiple MARFIS data files  
-* produce an sf object (MARFISCatch_sf) for polygon overlay analysis  
-
-[_example use_](#SelectMARFISfn)  
-
-**Variable name** | **Input**  
---------------|-----------------------------------  
-**studyArea** |  
-**minYear** |  
-
-#### SelectISDB_fn  
-*aggregate data from multiple ISDB data files  
-*produce an sf object (ISDBCatch_sf) for polygon overlay analysis  
-
-[_example use_](#SelectISDBfn)  
-
-**Variable name** | **Input**  
---------------|-----------------------------------  
-**studyArea** |  
-**minYear** |  
-
 
 # **Functions used to plot figures and contained in "fn_maps.r"** <a name="plotdata"/>  
 
@@ -151,10 +116,10 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**studyArea** |  
-**site_sf** |  
-**land_layer** |  
-**buf** |  
+**studyArea** |   A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+**site_sf** |  A simple feature representing a point location or track of a proposed project/activity/accident.  
+**land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
+**buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.   
 
 #### plot_crithab  
 * plot of map of studyArea relative to species at risk critical habitat  
@@ -163,10 +128,10 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**studyArea** |  
-**ClippedCritHab_sf** |  
-**land_layer** |  
-**buf** |  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+**ClippedCritHab_sf** |  A simple feature containing polygons defining critical habitat of species at risk. The data set has been clipped to the Maritimes region.  
+**land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
+**buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.  
 
 #### plot_sardist  
 * plot of studyArea relative to species at risk distribution range  
@@ -175,10 +140,10 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**sardist_sf** |  
-**studyArea** |  
-**land_layer** |  
-**buf** |  
+**sardist_sf** |  A simple feature containing polygons defining the distribution range of species at risk. The data set has been clipped to the Maritimes region.
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+**land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
+**buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.  
 
 #### plot_cetaceans_4grid  
 * plot of studyArea relative to priority areas to enhance monitoring of cetaceans  
@@ -191,9 +156,9 @@ __Fig 2.__ **Directories** *set up of directories*
 **harbour_porpoise_sf** |  
 **humpback_whale_sf** |  
 **sei_whale_sf** |  
-**studyArea** |  
-**land_layer** |  
-**buf** |  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+**land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
+**buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.  
 
 #### plot_bw_hab  
 * plot of studyArea with Blue Whale habitat wide angle  
@@ -203,8 +168,8 @@ __Fig 2.__ **Directories** *set up of directories*
 **Variable name** | **Input**  
 --------------|-----------------------------------  
 **Blue_Whale_sf** |  
-**studyArea** |  
-**land_layer** |  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+**land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
 
 #### plot_bw_hab_zoom  
 * plot of studyArea with Blue Whale habitat zoomed  
@@ -453,27 +418,6 @@ __Fig 2.__ **Directories** *set up of directories*
 **EBSA_sf** |  
 **studyArea** | 
 
-
-## SelectRV\_fn <a name="SelectRVfn"/>
-This function is required to aggregate RV data and manipulate it for reporting. [_Function description_](#dataharvest)
-
-```r
-  SelectRV_fn(studyArea, minYear)
-```
-
-## SelectMARFIS\_fn <a name="SelectMARFISfn"/>
-This function is required to aggregate MARFIS data and manipulate it for reporting. [_Function description_](#dataharvest)
-
-```r
-  SelectMARFIS_fn(studyArea, minYear) 
-```
-
-## SelectISDB\_fn <a name="SelectISDBfn"/>
-This function is required to aggregate ISDB data and manipulate it for reporting. [_Function description_](#dataharvest)
-
-```r
-  SelectISDB_fn(studyArea, minYear) 
-```
 
 ## site\_map <a name="sitemap"/>
 Plot of map of site and studyArea. [_Function description_](#plotdata)

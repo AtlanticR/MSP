@@ -74,11 +74,11 @@ kable(rv_table, align="l", caption="\\label{tab:rv_freq_table}Quality Tier: High
 #### ***Industry Survey Database (ISDB)***    
 Contact: <Claire.Mussells@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
-info<-file.info("../../../Data/mar.wrangling/ISDB.ISSETTYPECODES.RData")
-LatestUpdate<-format(info[,"mtime"], format = "%B %d %Y")
+LatestUpdate<-format(ISDB_info[,"mtime"], format = "%B %d %Y")
 last_retrieved<-c("Last retrieved on: ",LatestUpdate)
 writeLines(c("Last retrieved on:",LatestUpdate), sep = " ") 
 ```
+
 Quality Tier: Medium  
 Search year: 2002-2019  
 Security level: Protected B  
@@ -86,11 +86,11 @@ Security level: Protected B
 #### ***The Maritime Fishery Information System (MARFIS)***    
 Contact: <XMARComData@dfo-mpo.gc.ca>  
 ```{r echo=FALSE, results='asis'}
-info<-file.info("../../../Data/mar.wrangling/MARFISSCI.PRO_SPC_INFO.RData")
-LatestUpdate<-format(info[,"mtime"], format = "%B %d %Y")
+LatestUpdate<-format(MARFIS_info[,"mtime"], format = "%B %d %Y")
 last_retrieved<-c("Last retrieved on: ",LatestUpdate)
 writeLines(c("Last retrieved on:",LatestUpdate), sep = " ")
 ```
+
 Quality Tier: Medium  
 Search year: 2002-2019  
 Security level: Protected B  
