@@ -220,6 +220,91 @@ __Fig 2.__ **Directories** *set up of directories*
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 **leatherback_sf** |
 
+#### table_rv_SAR  
+* create table of data from species at risk from the Research Vessel (RV) survey database overlapping with the studyArea polygon.
+
+[_example use_](#tablervSAR)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**RVCatch_intersect** |  Data from the Research Vessel (RV) survey database intersected with the studyArea polygon.  
+
+#### table_rv  
+* create table of data from the Research Vessel (RV) survey database overlapping with the studyArea polygon.
+
+[_example use_](#tablerv)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**RVCatch_intersect** |  Data from the Research Vessel (RV) survey intersected with the studyArea polygon.  
+
+#### table_isdb_SAR  
+* create table of data from species at risk from the Industry Survey Database (ISDB) overlapping with the studyArea polygon.
+
+[_example use_](#tableisdbSAR)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**isdb_intersect** |  Data from the Industry Survey Database (ISDB)intersected with the studyArea polygon.  
+
+#### table_isdb  
+* create table of data from the Industry Survey Database (ISDB) overlapping with the studyArea polygon.
+
+[_example use_](#tableisdb)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**isdb_intersect** |  Data from the Industry Survey Database (ISDB) intersected with the studyArea polygon.
+
+#### table_marfis_SAR  
+* create table of data from species at risk from the MARFIS database overlapping with the studyArea polygon.
+
+[_example use_](#tablemarfisSAR)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**marfis_intersect** |  Data from the MARFIS database intersected with the studyArea polygon.  
+
+#### table_marfis  
+* create table of data from the MARFIS database overlapping with the studyArea polygon.
+
+[_example use_](#tablemarfis)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**marfis_intersect** |  Data from the MARFIS database intersected with the studyArea polygon.
+
+##Ocean Biodiversity Information System - Fish and Invertebrates
+
+#### filter_obis_fish
+* create table containing records from the OBIS database overlapping with studyArea
+
+[_example use_](#filterobisfish)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**obis_sf** |  Dataframe containing records from the Ocean Biodiversity Infromation System (OBIS) database.  
+
+#### intersect_points_obis_fish    
+* find overlap between the OBIS database and studyArea
+
+[_example use_](#intersectpointsobisfish)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**obis_sf_filter** |  Data from the Ocean Biodiversity Infromation System (OBIS) database merged with fish and invertebrate species in the listed_species name conversion dataframe. Data from the Whale Sightings Database removed.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+
+#### table_obis_fish  
+* create table of overlapping data from OBIS database  
+
+[_example use_](#tableobisfish)
+
+**Variable name** | **Input**  
+--------------|-----------------------------------
+**obis_sf_filter** |  Data from the Ocean Biodiversity Infromation System (OBIS) database merged with cetacean species in the listed_species name conversion dataframe. Data from the Whale Sightings Database removed.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+
 ## Whale Sightings Database (WSDB)
 
 #### filter_wsdb
@@ -313,37 +398,38 @@ __Fig 2.__ **Directories** *set up of directories*
 **narwc_filter** |  Data from the North Atlantic Right Whale Consortium (NARWC) sightings database with species code names changed to scientific names and merged with listed_species name conversion dataframe.  
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
+##Ocean Biodiversity Information System - Cetaceans
 
-##Ocean Biodiversity Information System
-
-#### filter_obis
+#### filter_obis_cet
 * create table containing records from the OBIS database overlapping with studyArea
 
-[_example use_](#filter_obis)
+[_example use_](#filter_obis_cet)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**obis** |  Dataframe containing records from the Ocean Biodiversity Infromation System (OBIS) database.  
+**obis_sf** |  Dataframe containing records from the Ocean Biodiversity Infromation System (OBIS) database.  
 
-#### intersect_points_obis  
+#### intersect_points_obis_cet    
 * find overlap between the OBIS database and studyArea
 
-[_example use_](#intersect_points_obis)
+[_example use_](#intersect_points_obis_cet)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**obis_filter** |  Data from the Ocean Biodiversity Infromation System (OBIS) database merged with listed_species name conversion dataframe. Data from the Whale Sightings Database removed.  
+**obis_sf_filter** |  Data from the Ocean Biodiversity Infromation System (OBIS) database merged with cetacean species in the listed_species name conversion dataframe. Data from the Whale Sightings Database removed.  
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
-#### table_obis
+#### table_obis_cet  
 * create table of overlapping data from OBIS database  
 
-[_example use_](#table_obis)
+[_example use_](#table_obis_cet)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**obis_filter** |  Data from the Ocean Biodiversity Infromation System (OBIS) database merged with listed_species name conversion dataframe. Data from the Whale Sightings Database removed.  
+**obis_sf_filter** |  Data from the Ocean Biodiversity Infromation System (OBIS) database merged with cetacean species in the listed_species name conversion dataframe. Data from the Whale Sightings Database removed.  
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+
+##Priority Areas to Enhance Monitoring of Cetaceans
 
 #### sdm_table
 * create table of overlapping data from Priority Areas to Enhance Monitoring of Cetaceans  
@@ -358,6 +444,8 @@ __Fig 2.__ **Directories** *set up of directories*
 **sei_whale_sf** |  A simple feature (multipolygon) contianing data on pririty areas for enhanced monitoring of sei whales. Converted from a tif file.  
 **studyArea** | A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
+##Important areas of Blue Whale feeding, foraging and migration in eastern Canada
+
 #### blue_whale_habitat_overlap
 * create table of overlapping data from Important Blue Whale Habitat  
 
@@ -367,6 +455,8 @@ __Fig 2.__ **Directories** *set up of directories*
 --------------|-----------------------------------
 **Blue_Whale_sf** |  A simple feature (multi-polygon) containing data on Important areas of Blue Whale feeding, foraging and migration in eastern Canada.  
 **studyArea** | A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+
+##Ecologically and Biologically Significant Areas (EBSA)
 
 #### EBSA_overlap
 * create table of overlapping data from Ecologically and Biologically Significant Areas (EBSA)
@@ -481,6 +571,69 @@ Create table of species at risk critical habitat overlapping with studyArea. [_F
 ```r
   table_crit(ClippedCritHab_sf,studyArea, leatherback_sf)
 ```
+
+## table\_rv_\SAR <a name="tablervSAR"/>
+Create table of data from species at risk from the Research Vessel (RV) survey database overlapping with the studyArea polygon. [_Function description_](#intersectdata)
+
+```r
+  table_rv_SAR(RVCatch_intersect)
+```
+
+## table\_rv <a name="tablerv"/>
+Create table of data from the Research Vessel (RV) survey database overlapping with the studyArea polygon. [_Function description_](#intersectdata)  
+
+```r
+  table_rv(RVCatch_intersect)
+```  
+  
+## table\_isdb\_SAR <a name="tableisdbSAR"/>
+Create table of data from species at risk from the Industry Survey Database (ISDB) overlapping with the studyArea polygon. [_Function description_](#intersectdata)  
+
+```r
+  table_isdb_SAR(isdb_intersect)
+``` 
+
+## table\_isdb <a name="tableisdb"/>
+Create table of data from the Industry Survey Database (ISDB) overlapping with the studyArea polygon. [_Function description_](#intersectdata)  
+
+```r
+  table_isdb(isdb_intersect)
+``` 
+
+## table\_marfis\_SAR <a name="tablemarfisSAR"/>
+Create table of data from species at risk from the MARFIS database overlapping with the studyArea polygon. [_Function description_](#intersectdata)  
+
+```r
+  table_marfis_SAR(marfis_intersect)
+``` 
+
+## table\_marfis <a name="tablemarfis"/>
+Create table of data from the MARFIS database overlapping with the studyArea polygon. [_Function description_](#intersectdata)  
+
+```r
+  table_marfis(marfis_intersect)
+``` 
+
+## filter\_obis\_fish <a name="filterobisfish"/>
+Create table containing records from the OBIS database overlapping with studyArea. [_Function description_](#intersectdata)  
+
+```r
+  filter_obis_fish(obis_sf)
+``` 
+
+## intersect\_points\_obis\_fish <a name="intersectpointsobisfish"/>
+Find overlap between the OBIS database and studyArea. [_Function description_](#intersectdata)  
+
+```r
+  intersect_points_obis_fish(obis_sf_filter, studyArea)
+```
+
+## table\_obis\_fish <a name="tableobisfish"/>
+Create table of overlapping data from OBIS database. [_Function description_](#intersectdata)  
+
+```r
+  table_obis_fish(obis_sf_filter, studyArea)
+``` 
 
 ## filter\_wsdb <a name="filterwsdb"/>
 Filter wsdb data. [_Function description_](#intersectdata)
