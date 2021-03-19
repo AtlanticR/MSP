@@ -152,10 +152,10 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**fin_whale_sf** |  
-**harbour_porpoise_sf** |  
-**humpback_whale_sf** |  
-**sei_whale_sf** |  
+**fin_whale_sf** |  A simple feature (multipolygon) contianing data on pririty areas for enhanced monitoring of fin whales. Converted from a tif file. 
+**harbour_porpoise_sf** |  A simple feature (multipolygon) contianing data on pririty areas for enhanced monitoring of harbour porpoises. Converted from a tif file.
+**humpback_whale_sf** |  A simple feature (multipolygon) contianing data on pririty areas for enhanced monitoring of humpback whales. Converted from a tif file.
+**sei_whale_sf** |  A simple feature (multipolygon) contianing data on pririty areas for enhanced monitoring of sei whales. Converted from a tif file.
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 **land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
 **buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.  
@@ -167,7 +167,7 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**Blue_Whale_sf** |  
+**Blue_Whale_sf** |  A simple feature (multi-polygon) containing data on Important areas of Blue Whale feeding, foraging and migration in eastern Canada.
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 **land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
 
@@ -178,10 +178,10 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**Blue_Whale_sf** |  
-**studyArea** |  
-**land_layer** |  
-**buf** |  
+**Blue_Whale_sf** |  A simple feature (multi-polygon) containing data on Important areas of Blue Whale feeding, foraging and migration in eastern Canada.
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+**land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
+**buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.  
 
 #### plot_EBSA  
 * plot of studyArea with Ecologically and Biologically Significant Areas (EBSA)  
@@ -190,10 +190,10 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**EBSA_shp** |  
-**studyArea** |  
-**land_layer** |  
-**buf** |  
+**EBSA_sf** |  A simple feature (multi-polygon) containing data on Ecologically and Biologically Significant Areas. 
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+**land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
+**buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.  
 
 # Functions used to intersect data polygons and points with studyArea and contained in "fn_intersect_operations.R" <a name="intersectdata"/> 
 
@@ -206,8 +206,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**sardist_sf** |  
-**studyArea** |  
+**sardist_sf** |  A simple feature containing polygons defining the distribution range of species at risk. The data set has been clipped to the Maritimes region.
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### table_crit
 * create table of species at risk critical habitat overlapping with studyArea
@@ -217,7 +217,7 @@ __Fig 2.__ **Directories** *set up of directories*
 **Variable name** | **Input**  
 --------------|-----------------------------------
 **ClippedCritHab_sf** |  
-**studyArea** |  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 **leatherback_sf** |
 
 ## Whale Sightings Database (WSDB)
@@ -229,7 +229,7 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**wsdb** |  
+**wsdb** |  Dataframe containing records from the Whale Sightings Database.
 
 #### intersect_points_wsdb  
 * find overlap between wsdb and studyArea
@@ -238,8 +238,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**wsdb_filter** |  
-**studyArea** |  
+**wsdb_filter** |  Data from the Whale Sightings Database with common names changed and merged with listed_species name conversion dataframe.
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### table_wsdb
 * create table of overlapping data from WSDB  
@@ -248,29 +248,29 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**wsdb_filter** |  
-**studyArea** |  
+**wsdb_filter** |  Data from the Whale Sightings Database with common names changed and merged with listed_species name conversion dataframe.
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 ## Whitehead Lab database
 
 #### filter_whitehead
-* create table containing records from the Whitehead Lab database overlapping with studyArea
+* create table containing records from the Whitehead Lab database overlapping with studyArea.  
 
 [_example use_](#filter_whitehead)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**whitehead** |  
+**whitehead** |  Dataframe containing records from the Whitehead Lab Database.  
 
 #### intersect_points_whitehead  
-* find overlap between the Whitehead Lab database and studyArea
+* find overlap between the Whitehead Lab database and studyAre
 
 [_example use_](#intersect_points_whitehead)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**whitehead_filter** |  
-**studyArea** |  
+**whitehead_filter** |  Data from the Whitehead Lab Database merged with listed_species name conversion dataframe.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### table_whitehead
 * create table of overlapping data from Whitehead Lab database  
@@ -279,8 +279,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**whitehead_filter** |  
-**studyArea** |  
+**whitehead_filter** |  Data from the Whitehead Lab Database merged with listed_species name conversion dataframe.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 ## North Atlantic Right Whale Consortium (NARWC) database  
 
@@ -291,7 +291,7 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**narwc** |  
+**narwc** |  Dataframe containing records from the North Atlantic Right Whale Consortium (NARWC) sightings database.  
 
 #### intersect_points_narwc  
 * find overlap between the NARWC database and studyArea
@@ -300,8 +300,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**narwc_filter** |  
-**studyArea** |  
+**narwc_filter** |  Data from the North Atlantic Right Whale Consortium (NARWC) sightings database with species code names changed to scientific names and merged with listed_species name conversion dataframe.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### table_narwc
 * create table of overlapping data from NARWC database  
@@ -310,8 +310,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**narwc_filter** |  
-**studyArea** |  
+**narwc_filter** |  Data from the North Atlantic Right Whale Consortium (NARWC) sightings database with species code names changed to scientific names and merged with listed_species name conversion dataframe.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 
 ##Ocean Biodiversity Information System
@@ -323,7 +323,7 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**obis** |  
+**obis** |  Dataframe containing records from the Ocean Biodiversity Infromation System (OBIS) database.  
 
 #### intersect_points_obis  
 * find overlap between the OBIS database and studyArea
@@ -332,8 +332,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**obis_filter** |  
-**studyArea** |  
+**obis_filter** |  Data from the Ocean Biodiversity Infromation System (OBIS) database merged with listed_species name conversion dataframe. Data from the Whale Sightings Database removed.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### table_obis
 * create table of overlapping data from OBIS database  
@@ -342,8 +342,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**obis_filter** |  
-**studyArea** |  
+**obis_filter** |  Data from the Ocean Biodiversity Infromation System (OBIS) database merged with listed_species name conversion dataframe. Data from the Whale Sightings Database removed.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### sdm_table
 * create table of overlapping data from Priority Areas to Enhance Monitoring of Cetaceans  
@@ -352,11 +352,11 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**fin_whale_sf** |  
-**harbour_porpoise_sf** |  
-**humpback_whale_sf** |  
-**sei_whale_sf** |  
-**studyArea** | 
+**fin_whale_sf** |  A simple feature (multipolygon) contianing data on pririty areas for enhanced monitoring of fin whales. Converted from a tif file. 
+**harbour_porpoise_sf** |  A simple feature (multipolygon) contianing data on pririty areas for enhanced monitoring of harbour porpoises. Converted from a tif file.  
+**humpback_whale_sf** |  A simple feature (multipolygon) contianing data on pririty areas for enhanced monitoring of humpback whales. Converted from a tif file.  
+**sei_whale_sf** |  A simple feature (multipolygon) contianing data on pririty areas for enhanced monitoring of sei whales. Converted from a tif file.  
+**studyArea** | A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### blue_whale_habitat_overlap
 * create table of overlapping data from Important Blue Whale Habitat  
@@ -365,8 +365,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**Blue_Whale_sf** |  
-**studyArea** | 
+**Blue_Whale_sf** |  A simple feature (multi-polygon) containing data on Important areas of Blue Whale feeding, foraging and migration in eastern Canada.  
+**studyArea** | A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### EBSA_overlap
 * create table of overlapping data from Ecologically and Biologically Significant Areas (EBSA)
@@ -375,8 +375,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**EBSA_sf** |  
-**studyArea** | 
+**EBSA_sf** |  A simple feature (multi-polygon) containing data on Ecologically and Biologically Significant Areas.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### EBSA_report
 * determine whether studyArea overlaps with EBSA
@@ -385,8 +385,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**EBSA_sf** |  
-**studyArea** | 
+**EBSA_sf** |  A simple feature (multi-polygon) containing data on Ecologically and Biologically Significant Areas.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### EBSA_reporturl
 * print url of report corresponding to EBSA that overlaps with studyArea
@@ -395,8 +395,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**EBSA_sf** |  
-**studyArea** | 
+**EBSA_sf** |  A simple feature (multi-polygon) containing data on Ecologically and Biologically Significant Areas.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### EBSA_location
 * print name of EBSA that overlaps with studyArea
@@ -405,8 +405,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**EBSA_sf** |  
-**studyArea** | 
+**EBSA_sf** |  A simple feature (multi-polygon) containing data on Ecologically and Biologically Significant Areas.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 #### EBSA_bioregion 
 * determine if an EBSA overlaps with studyArea
@@ -415,8 +415,8 @@ __Fig 2.__ **Directories** *set up of directories*
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
-**EBSA_sf** |  
-**studyArea** | 
+**EBSA_sf** |  A simple feature (multi-polygon) containing data on Ecologically and Biologically Significant Areas.  
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 
 ## site\_map <a name="sitemap"/>
