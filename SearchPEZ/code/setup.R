@@ -51,14 +51,13 @@ MARFIS_info<-file.info("../../../Data/RData/MARFISSCI.SPECIES.RData")
 
 ####### Species Lists  #######
 # This section reads table that lists species listed by SARA, assessed by COSEWIC or assessed by Wildlife Species listings
-listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
+#listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
                  "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
 other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
 listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
 listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
 listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
-load("../../../Data/mar.wrangling/MARFISSCI.SPECIES.RData")
 
 ###### Modify file formats ######
 fin_whale[fin_whale==0] <- NA
@@ -82,8 +81,8 @@ Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/June to Augus
 Blue_Whale_sf$months[Blue_Whale_sf$months == "March to May/June to August"] <- "Mar-May/Jun-Aug"
 Blue_Whale_sf$Activity<-paste(Blue_Whale_sf$activity,"-",Blue_Whale_sf$months)
 
-EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
-EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
+#EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
+#EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
 
 ####### Filter files used in multiple sections by minYear  #######
 

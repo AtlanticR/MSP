@@ -11,11 +11,13 @@ dist_table<- dist_table %>% rename("Scientific_Name"=Scientific)
 dist_table<-merge(dist_table, listed_species, by='Scientific_Name')
 dist_table<-dist_table %>% 
   select(Common_Name, Scientific_Name, Population, Waterbody, Schedule.status, COSEWIC.status, Wild_Species)
+st_geometry(dist_table)<-NULL
 dist_table<- dist_table %>% rename("SARA status"=Schedule.status,
                                    "COSEWIC listing"=COSEWIC.status,
                                    "Wild Species listing"=Wild_Species,
                                    "Common Name"=Common_Name,
                                    "Scientific Name"=Scientific_Name)
+
 }
 
 #SAR critical habitat
@@ -62,6 +64,7 @@ table_rv_SAR <- function(RVCatch_intersect) {
                                          "Capture Event Frequency"=Capture_Event_Frequency,
                                          "Scientific Name"=Scientific_Name,
                                          "Common Name"=Common_Name)
+    
 }
 
 #Create table of of RV records of all species caught in studyArea
@@ -88,6 +91,7 @@ table_rv <- function(RVCatch_intersect) {
   rv_table <- rv_table %>% rename("Capture Event Frequency"=Capture_Event_Frequency,
                                  "Scientific Name"=Scientific_Name,
                                  "Common Name"=Common_Name)
+
   
 }
 
@@ -105,6 +109,7 @@ table_isdb <- function(isdb_intersect) {
   isdb_table <- arrange(isdb_table, Scientific_Name)
   isdb_table <- isdb_table %>% rename("Scientific Name"=Scientific_Name,
                                       "Common Name"=Common_Name)
+
 }
 
 table_isdb_SAR <- function(isdb_intersect) {
@@ -123,7 +128,7 @@ table_isdb_SAR <- function(isdb_intersect) {
                                              "Scientific Name"=Scientific_Name,
                                              "Common Name"=Common_Name.y)
   isdb_SAR_table<-arrange(isdb_SAR_table, "Scientific Name")
-  
+
 }
 
 #Create table of of MARFIS records of all species caught in studyArea
@@ -138,6 +143,7 @@ table_marfis <- function(marfis_intersect) {
   marfis_table <- marfis_table %>% select(Common_Name, Records)
   marfis_table <- arrange(marfis_table, Common_Name)
   marfis_table <- marfis_table %>% rename("Common Name"=Common_Name)
+
 }
 
 table_marfis_SAR <- function(marfis_intersect) {
@@ -157,7 +163,7 @@ table_marfis_SAR <- function(marfis_intersect) {
                                                        "Scientific Name"=Scientific_Name,
                                                        "Common Name"=Common_Name)
   marfis_SAR_table<-arrange(marfis_SAR_table, "Scientific Name")
-  
+
 }
 
 #Ocean Biodiversity Information System - FISH
@@ -189,6 +195,7 @@ table_obis_fish <- function(obis_sf_filter, studyArea) {
                                                  "Common Name"=Common_Name)
   obis_fish_table$geometry<-NULL
   obis_fish_table<-unique(obis_fish_table)
+
 }
 
 
@@ -206,6 +213,7 @@ table_obis_cet <- function(obis_sf_filter, studyArea) {
                                                  "Common Name"=Common_Name)
   obis_whale_table$geometry<-NULL
   obis_whale_table<-unique(obis_whale_table)
+
 }
 
 
