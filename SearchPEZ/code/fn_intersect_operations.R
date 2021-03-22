@@ -11,6 +11,7 @@ dist_table<- dist_table %>% rename("Scientific_Name"=Scientific)
 dist_table<-merge(dist_table, listed_species, by='Scientific_Name')
 dist_table<-dist_table %>% 
   select(Common_Name, Scientific_Name, Population, Waterbody, Schedule.status, COSEWIC.status, Wild_Species)
+st_geometry(dist_table)<-NULL
 dist_table<- dist_table %>% rename("SARA status"=Schedule.status,
                                    "COSEWIC listing"=COSEWIC.status,
                                    "Wild Species listing"=Wild_Species,
