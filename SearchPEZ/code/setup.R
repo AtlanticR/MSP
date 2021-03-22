@@ -58,10 +58,9 @@ other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal 
 listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
 listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
 listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
-<<<<<<< HEAD
-=======
+
 # load("../../../Data/mar.wrangling/MARFISSCI.SPECIES.RData")
->>>>>>> 29d284fa3b5ef655c9afa333edbd773d54b8a22d
+
 
 ###### Modify file formats ######
 fin_whale[fin_whale==0] <- NA
@@ -85,13 +84,9 @@ Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/June to Augus
 Blue_Whale_sf$months[Blue_Whale_sf$months == "March to May/June to August"] <- "Mar-May/Jun-Aug"
 Blue_Whale_sf$Activity<-paste(Blue_Whale_sf$activity,"-",Blue_Whale_sf$months)
 
-<<<<<<< HEAD
-#EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
-#EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
-=======
 # EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
 # EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
->>>>>>> 29d284fa3b5ef655c9afa333edbd773d54b8a22d
+
 
 ####### Filter files used in multiple sections by minYear  #######
 
