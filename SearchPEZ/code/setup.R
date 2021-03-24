@@ -27,8 +27,8 @@ source("fn_maps.r") #Functions used to plot figure
 source("fn_intersect_operations.R") #Functions used to intersect data polygons and points with studyArea 
 
 ####### Search Area  #######
-AquaSiteName <- "AtlanticDestiny"
-PEZversion <- "60km"
+AquaSiteName <- "FarmersLedge"
+PEZversion <- "4748m"
 minYear <- 2002
 
 ####### Paths  #######
@@ -48,6 +48,8 @@ load("../../../Data/RData/SecureData.RData")
 load("../../../Data/RData/MARFISSCI.SPECIES.RData")
 ISDB_info<-file.info("../../../Data/RData/ISDB.ISSETTYPECODES.RData")
 MARFIS_info<-file.info("../../../Data/RData/MARFISSCI.SPECIES.RData")
+rockweed_sf<-st_read("../../../Data/NaturalResources/Species/Rockweed/MAR_rockweed_presence_validated.shp")
+rockweed_sf<-st_transform(rockweed_sf, 4326)
 
 ####### Species Lists  #######
 # This section reads table that lists species listed by SARA, assessed by COSEWIC or assessed by Wildlife Species listings

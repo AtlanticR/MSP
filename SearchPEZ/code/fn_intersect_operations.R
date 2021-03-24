@@ -24,6 +24,9 @@ dist_table<- dist_table %>% rename("SARA status"=Schedule.status,
 table_crit <- function(ClippedCritHab_sf,studyArea, leatherback_sf) {
   
 intersect_crit <- st_intersection(ClippedCritHab_sf,studyArea)
+intersect_crit_result<-nrow(intersect_crit)
+if(intersect_crit_result >= 1){
+
 crit_table<-data.frame(CommonName=intersect_crit$Common_Nam,
                        Population=intersect_crit$Population, 
                        Area=intersect_crit$Waterbody,
@@ -36,6 +39,7 @@ leatherback_table[1,2]<-NA
 leatherback_table[1,3]<-intersect_leatherback$AreaName
 leatherback_table[1,4]<-"Endangered"
 crit_table<-bind_rows(crit_table,leatherback_table)
+}
 
 }
 
@@ -512,4 +516,23 @@ EBSA_bioregion <- function(EBSA_sf, studyArea) {
   
   
 }
+
+#Rockweed
+
+rockweed_overlap <- function(rockweed_sf, studyArea) {
+  
+  rockweed_intersect <- st_intersection(studyArea,st_make_valid(rockweed_sf))
+  rockweed_result<-as.numeric(nrow(rockweed_intersect))
+  Query_output_rockweed<-if(rockweed_result < 1){
+    "There are no relevant records of predicted intertidal vegetation for this search area."
+  } else {
+    "There are relevant records of predicted intertidal vegetation for this search area."
+  }
+  
+  Query_output_rockweed<-noquote(Query_output_rockweed)
+  
+  writeLines(Query_output_rockweed)
+  
+}
+
 

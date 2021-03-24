@@ -230,7 +230,7 @@ plot_bw_hab_zoom <- function(Blue_Whale_sf, studyArea, land_layer, buf) {
 
 #EBSA
 
-plot_EBSA<-function(EBSA_shp, studyArea, land_layer, buf) {
+plot_EBSA<-function(EBSA_sf, studyArea, land_layer, buf) {
   
   # buf is in km, and now converted to degrees
   buf=buf/100
@@ -247,7 +247,7 @@ plot_EBSA<-function(EBSA_shp, studyArea, land_layer, buf) {
   latmax<-bbox$ymax+buf_lat
   
   ggplot()+
-    geom_sf(data=EBSA_shp, fill="plum",col="black")+
+    geom_sf(data=EBSA_sf, fill="plum",col="black")+
     geom_sf(data=studyArea, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
     annotation_scale(location="br")+
@@ -259,6 +259,41 @@ plot_EBSA<-function(EBSA_shp, studyArea, land_layer, buf) {
     watermark(show = TRUE, lab = "DFO Internal Use Only")
   
 }
+
+#Rockweed
+
+plot_rockweed<-function(rockweed_sf, studyArea, land_layer, buf) {
+  
+  # buf is in km, and now converted to degrees
+  buf=buf/100
+  buf_lat=buf*0.72
+  #png("pez_and_site.png", width=1616, height=1410)
+  
+  # bounding box
+  bbox=st_bbox(studyArea)
+  
+  # longitude and latitude limits for the map
+  longmin<-(bbox$xmin)-buf
+  longmax<-bbox$xmax+buf
+  latmin<-bbox$ymin-buf_lat
+  latmax<-bbox$ymax+buf_lat
+  
+  ggplot()+
+    geom_sf(data=rockweed_sf, fill="purple", col="purple")+
+    geom_sf(data=studyArea, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    annotation_scale(location="br")+
+    theme_bw()+
+    coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
+    labs(x=expression(paste("Longitude ",degree,"W",sep="")),
+         y=expression(paste("Latitude ",degree,"N",sep="")),
+         col="")+
+    watermark(show = TRUE, lab = "DFO Internal Use Only")
+  
+}
+
+
+
 
 
 ####The following functions are not currently integrated into the Reproducible Report but may be in the future.####
