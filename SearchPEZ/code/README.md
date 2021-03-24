@@ -59,6 +59,9 @@ Comprehensive reports are divided into the following sections:
 __Fig 1.__ **Workflow**
 
 ***
+There are two scripts necessary for preparing the data for these reports, ProduceSmallerISDB_MARFIS.r and SaveDataSets_AsRdata.r.  The first of these gathers all the data from the requisite database tables (ISDB, MARFIS) and produces a smaller flat file of just the fields necessary for this application (Species code, date, amount, location (latitude and longitude).
+
+The second script gathers all necessary data files (survey data, land, species at risk occurences, etc.) and saves the datasets into two .Rdata files: OpenData.Rdata, and SecureData.Rdata.  These two files with multiple datasets are loaded when the app is run.
 
 *Note: Restricted data from various databases (ISDB, NARWC, WSDB, MARFIS, Whitehead, Leatherback) require communication 
 with several sources. Once permission has been granted to access the data, it can all be acquired using the
