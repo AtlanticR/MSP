@@ -5,5 +5,5 @@ The aquaculture Science group led by Fred Page works with the Aquaculture site i
 
 Output of this code can be visulized here: http://rpubs.com/MaritimesMSP/SearchPEZ
 
-If you have any questions contact Gordana.Lazin@dfo-mpo.gc.ca or Catalina.Gomez@dfo-mpo.gc.ca 
+If you have any questions contact gregory.puncher@dfo-mpo.gc.ca, Catalina.Gomez@dfo-mpo.gc.ca or Gordana.Lazin@dfo-mpo.gc.ca.
 
