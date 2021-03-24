@@ -7,7 +7,7 @@ This package was developed to streamline the process of generating science infor
 
 Each query of the reproducible report tool begins with the submission of a search polygon which consists of a central location (or path) representing the spatial dimensions of a proposed project/activity surrounded by an exposure zone or buffer area. Each of the maps produced in the report show wildlife information relative to the search polygon (highlighted in yellow and surrounded by a buffer area in blue). 
 
-The resulting search results are separated into the sections defined above. Within these sections, the data sources are defined along with dates of access, URLs and contact information. For each data source, the report also provides caveats and sources of uncertainty as well as a ranking in the Tiers of Data Quality (defined below). Where applicable summary tables and figures are provided. Reports should be circulated to appropriate staff listed in the contact information provided for each data source to verify and supplement the information generated to support science advice processes. Users can request additional information, and access to data and metadata directly to each contact. 
+If you have any questions contact gregory.puncher@dfo-mpo.gc.ca, Catalina.Gomez@dfo-mpo.gc.ca or Gordana.Lazin@dfo-mpo.gc.ca.
 
 **Important Disclaimers**
 This report is for internal DFO use only. No maps, layers, or data that violate the rule of 5 will be shared outside of the department. 
@@ -29,6 +29,8 @@ Comprehensive reports are divided into the following sections:
 * Species not listed by the <i>Species at Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC) or included in the Wild species listing,
 * Habitat information,
 * Designated areas.
+
+Within these sections, the data sources are defined along with dates of access, URLs and contact information. For each data source, the report also provides caveats and sources of uncertainty as well as a ranking in the Tiers of Data Quality (defined below). Where applicable summary tables and figures are provided. Reports should be circulated to appropriate staff listed in the contact information provided for each data source to verify and supplement the information generated to support science advice processes. Users can request additional information, and access to data and metadata directly to each contact.
 
 **Required packages**
 
@@ -59,6 +61,9 @@ Comprehensive reports are divided into the following sections:
 __Fig 1.__ **Workflow**
 
 ***
+There are two scripts necessary for preparing the data for these reports, ProduceSmallerISDB_MARFIS.r and SaveDataSets_AsRdata.r. The first of these gathers all the data from the requisite database tables (ISDB, MARFIS) and produces a smaller flat file of just the fields necessary for this application (Species code, date, amount, location (latitude and longitude).
+
+The second script gathers all necessary data files (survey data, land, species at risk occurences, etc.) and saves the datasets into two .Rdata files: OpenData.Rdata, and SecureData.Rdata. These two files with multiple datasets are loaded when the app is run.
 
 *Note: Restricted data from various databases (ISDB, NARWC, WSDB, MARFIS, Whitehead, Leatherback) require communication 
 with several sources. Once permission has been granted to access the data, it can all be acquired using the
