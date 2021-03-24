@@ -520,6 +520,8 @@ __Fig 2.__ **Directories** *set up of directories*
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
 
+# **Example use of functions**
+
 ## site\_map <a name="sitemap"/>
 Plot of map of site and studyArea. [_Function description_](#plotdata)
 
