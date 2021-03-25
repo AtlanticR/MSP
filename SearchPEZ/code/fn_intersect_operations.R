@@ -61,6 +61,7 @@ table_rv_SAR <- function(RVCatch_intersect) {
   rv_SAR_table<-merge(rv_freq_all_ind_sum, listed_fish_invert_species, by='Scientific_Name_upper')
   rv_SAR_table<-merge(rv_SAR_table, rv_freq_all_set_sum, by='Scientific_Name_upper')
   rv_SAR_table<-mutate(rv_SAR_table, Capture_Event_Frequency=format(round((Sets/Total_number_sets_RV)*100,1), nsmall=1))
+  rv_SAR_table<-mutate(rv_SAR_table, Capture_Event_Frequency=paste(Sets, "/",Total_number_sets_RV, " trawls"))
   rv_SAR_table<-select(rv_SAR_table, Scientific_Name, Common_Name, COSEWIC.status, Schedule.status, Wild_Species, Individuals, Capture_Event_Frequency)
     rv_SAR_table<- rv_SAR_table %>% rename("SARA status"=Schedule.status,
                                          "COSEWIC listing"=COSEWIC.status,
@@ -84,7 +85,10 @@ table_rv <- function(RVCatch_intersect) {
   rv_freq_all_set_sum <- rv_freq_all_set_sum %>% rename(Sets=SETNO)
   
   rv_table <- merge(rv_freq_all_ind_sum, rv_freq_all_set_sum, by='SPEC')
-  rv_table <- mutate(rv_table, Capture_Event_Frequency=format(round((Sets/Total_number_sets_RV)*100,1), nsmall=1))
+  
+  #rv_table <- mutate(rv_table, Capture_Event_Frequency=format(round((Sets/Total_number_sets_RV)*100,1), nsmall=1))
+  rv_table <- mutate(rv_table, Capture_Event_Frequency=paste(Sets, "/",Total_number_sets_RV, " trawls"))
+  
   names <- select(RVCatch_intersect,SPEC,COMM)
   st_geometry(names)<-NULL
   names <- unique(names)
@@ -161,7 +165,7 @@ table_marfis_SAR <- function(marfis_intersect) {
   marfis_SAR_table <-merge(marfis_SAR_table, listed_fish_invert_species, by='Common_Name_MARFIS')
   marfis_SAR_table <-marfis_SAR_table %>% 
     select(Scientific_Name, Common_Name, Schedule.status, COSEWIC.status, Wild_Species, Records)
-  marfis_SAR_record_table<- marfis_SAR_table %>% rename("SARA status"=Schedule.status,
+  marfis_SAR_table<- marfis_SAR_table %>% rename("SARA status"=Schedule.status,
                                                        "COSEWIC listing"=COSEWIC.status,
                                                        "Wild Species listing"=Wild_Species,
                                                        "Scientific Name"=Scientific_Name,
