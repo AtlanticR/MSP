@@ -556,7 +556,7 @@ Plot of studyArea relative to species at risk distribution range. [_Function des
 ```
 
 ## plot\_cetaceans\_4grid <a name="plotcetaceans4grid"/>
-Plot of studyArea relative to priority areas to enhance monitoring of cetaceans. [_Function description_](#plotdata)
+Plot of studyArea relative to priority areas to enhance monitoring of cetaceans. [_Function description_](#plot_cetaceans_4grid)
 
 ```r
   plot_cetaceans_4grid(fin_whale_sf,harbour_porpoise_sf,humpback_whale_sf,sei_whale_sf,studyArea,land_layer,buf)
