@@ -56,7 +56,7 @@ Within these sections, the data sources are defined along with dates of access, 
 
 ***
 
-![workflow-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Workflow.png)
+![workflow-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/Workflow.png)
 
 __Fig 1.__ **Workflow**
 
@@ -72,7 +72,7 @@ with several sources. Once permission has been granted to access the data, it ca
 
 ***
 
-![directory-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/directory_structure.jpg)
+![directory-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/directory_structure.jpg)
 
 __Fig 2.__ **Directories** *set up of directories*
 
