@@ -56,9 +56,9 @@ Within these sections, the data sources are defined along with dates of access, 
 
 ***
 
-![workflow-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/Workflow.png)
+![workflow-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/Workflow.jpg)
 
-__Fig 1.__ **Workflow**
+__Fig 1.__ **Reproducible Reports Workflow**
 
 ***
 There are two scripts necessary for preparing the data for these reports, ProduceSmallerISDB_MARFIS.r and SaveDataSets_AsRdata.r. The first of these gathers all the data from the requisite database tables (ISDB, MARFIS) and produces a smaller flat file of just the fields necessary for this application (Species code, date, amount, location (latitude and longitude).
@@ -74,7 +74,7 @@ with several sources. Once permission has been granted to access the data, it ca
 
 ![directory-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/directory_structure.jpg)
 
-__Fig 2.__ **Directories** *set up of directories*
+__Fig 2.__ **Required set up of directories**
 
 ***
                 
