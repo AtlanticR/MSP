@@ -72,7 +72,7 @@ with several sources. Once permission has been granted to access the data, it ca
 
 ***
 
-<img src="https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/directory_structure.jpg" width="400">
+<img src="https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/directory_structure.jpg" width="500">
 
 __Fig 2.__ **Required set up of directories**
 

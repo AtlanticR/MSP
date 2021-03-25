@@ -5,7 +5,7 @@ This section describes output derived from the following data sources: Maritimes
 ### **Maritimes Research Vessel (RV) Survey**    
 
 Contact: <DFO.MAR-PED-Data-Request-Demande-de-donnes-DEP-MAR.MPO@dfo-mpo.gc.ca>  
-Last retrieved on: January 21, 2021 from Open Data <https://open.canada.ca/data/en/dataset/8ddcaeea-b806-4958-a79f-ba9ab645f53b)>  
+Last retrieved on: January 21, 2021 from Open Data <https://open.canada.ca/data/en/dataset/8ddcaeea-b806-4958-a79f-ba9ab645f53b>  
 Quality Tier: High  
 Search year: 1970-2020  
 Security level: none  
