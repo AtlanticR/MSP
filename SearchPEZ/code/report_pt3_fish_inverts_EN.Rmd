@@ -210,7 +210,8 @@ kable(isdb_table, align="l", caption="Quality Tier: Medium. Security level: Prot
 
 ```{r}
 kable(marfis_SAR_table, align="l", caption="Quality Tier: Medium. Security level: Protected B. Maritimes Fishery Information System (MARFIS) observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listings (B=Breeding, N=non-breeding, M=migratory). <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")%>% 
+  row_spec(0 ,  bold = F, extra_css = 'vertical-align: top !important;')
 ```
 
 <br><br>

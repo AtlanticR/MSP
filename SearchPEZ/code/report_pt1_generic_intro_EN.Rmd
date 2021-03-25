@@ -3,13 +3,13 @@ title: "Reproducible Report for Species in Maritimes Region - for Internal DFO u
 author: Synthesis prepared by the Reproducible Reporting Team, steering committee and advisors.
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
-  pdf_document:
-    toc: true
   bookdown::html_document2:
     number_sections: FALSE
     toc: true
     toc_depth: 5
     theme: journal
+  pdf_document:
+    toc: true
   word_document:
     toc: true
 link-citations: yes
