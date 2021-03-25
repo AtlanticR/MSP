@@ -50,6 +50,7 @@ ISDB_info<-file.info("../../../Data/RData/ISDB.ISSETTYPECODES.RData")
 MARFIS_info<-file.info("../../../Data/RData/MARFISSCI.SPECIES.RData")
 rockweed_sf<-st_read("../../../Data/NaturalResources/Species/Rockweed/MAR_rockweed_presence_validated.shp")
 rockweed_sf<-st_transform(rockweed_sf, 4326)
+land50k_sf <- st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp")
 
 ####### Species Lists  #######
 # This section reads table that lists species listed by SARA, assessed by COSEWIC or assessed by Wildlife Species listings
@@ -86,10 +87,6 @@ Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/June to Augus
 Blue_Whale_sf$months[Blue_Whale_sf$months == "March to May/June to August"] <- "Mar-May/Jun-Aug"
 Blue_Whale_sf$Activity<-paste(Blue_Whale_sf$activity,"-",Blue_Whale_sf$months)
 
-# EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
-# EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
-
-
 ####### Filter files used in multiple sections by minYear  #######
 
 obis_sf <- obis_sf %>% dplyr::filter(year >= minYear)
@@ -125,6 +122,8 @@ whale_col=values=c("Blue Whale"="darkgoldenrod1",
 #whitehead <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/Whitehead_Lab/whitehead_lab.csv")
 #narwc <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv")
 #EBSA_sf <- st_read("../../../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp", quiet=TRUE)
+# EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
+# EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
 #landfile10m <- file.path(RDataPath,"Land10M.rds")
 #land10m_sf <- readRDS(landfile10m)
 #SurveyPrefix <- c("4VSW", "FALL", "SPRING", "SUMMER")
