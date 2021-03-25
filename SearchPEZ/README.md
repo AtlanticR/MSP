@@ -56,7 +56,7 @@ Within these sections, the data sources are defined along with dates of access, 
 
 ***
 
-![workflow-diagram](https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/Workflow.jpg)
+<img src="https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/Workflow.jpg" width="400">
 
 __Fig 1.__ **Reproducible Reports Workflow**
 
