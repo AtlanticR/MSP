@@ -56,7 +56,7 @@ Within these sections, the data sources are defined along with dates of access, 
 
 ***
 
-<img src="https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/Workflow.jpg" width="400">
+<img src="https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/Workflow.jpg" width="500">
 
 __Fig 1.__ **Reproducible Reports Workflow**
 
@@ -72,7 +72,7 @@ with several sources. Once permission has been granted to access the data, it ca
 
 ***
 
-<img src="https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/directory_structure.jpg" width="500">
+<img src="https://github.com/AtlanticR/MSP/blob/master/SearchPEZ/code/Graphics/directory_structure.jpg" width="400">
 
 __Fig 2.__ **Required set up of directories**
 
@@ -187,6 +187,18 @@ __Fig 2.__ **Required set up of directories**
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 **land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
 **buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.  
+
+#### plot_rockweed<-function(rockweed_sf, studyArea, land_layer, buf)  
+* plot of studyArea with Ecologically and Biologically Significant Areas (EBSA)  
+
+[_example use_](#plotEBSA)  
+
+**Variable name** | **Input**  
+--------------|-----------------------------------  
+**EBSA_sf** |  A simple feature (multi-polygon) containing data on Ecologically and Biologically Significant Areas. 
+**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
+**land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
+**buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.
 
 #### plot_EBSA  
 * plot of studyArea with Ecologically and Biologically Significant Areas (EBSA)  
