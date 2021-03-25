@@ -588,7 +588,7 @@ Plot of studyArea with Blue Whale habitat zoomed. [_Function description_](#plot
   plot_bw_hab_zoom(Blue_Whale_sf, studyArea, land_layer, buf)
 ```  
 
-#### plot\_rockweed  
+## plot\_rockweed  
 * plot of studyArea with intertidal rockweed presence data.   [_Function description_](#plot_rockweed) 
 
 ```r
@@ -777,7 +777,7 @@ Create table of overlapping data from Important Blue Whale Habitat. [_Function d
   blue_whale_habitat_overlap(Blue_Whale_sf, studyArea)
 ``` 
 
-#### rockweed\_overlap  <a name="rockweedoverlap"/>
+## rockweed\_overlap  <a name="rockweedoverlap"/>
 Create table of overlapping data on intertidal rockweed presence. [_Function description_](#rockweed_overlap)
 
 ```r
