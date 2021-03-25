@@ -34,7 +34,6 @@ Please note the following important disclaimers and caveats associated with sigh
 - Sightings that could not be identified to species are listed to the lowest taxonomic group possible.  
 
 #### ***Area-specific WSDB search results***    
-<br><br>
 
 ```{r wsdb, include=FALSE, cache=FALSE}
 wsdb_filter <- filter_wsdb(wsdb)
@@ -56,7 +55,8 @@ writeLines(Query_output_wsdb)
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 wsdb_plot<-site_map(studyArea,site_sf,land10m_sf,5)+
   geom_point(data = wsdb_intersect_points, aes(x = long, y = lat, color=Common_Name), 
-             size = 3.5)
+             size = 3.5)+
+  theme(legend.text=element_text(size=rel(1.2)))
 if(Total_number_records_WSDB > 1){print(wsdb_plot + scale_colour_manual(values=whale_col))}
 ```
 
@@ -95,7 +95,8 @@ writeLines(Query_output_whitehead)
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 whitehead_plot<-site_map(studyArea,site_sf,land10m_sf,5)+
   geom_point(data = whitehead_intersect_points, aes(x = long, y = lat, color=Common_Name), 
-             size = 3.5)
+             size = 3.5)+
+  theme(legend.text=element_text(size=rel(1.2)))
 if(Total_number_records_whitehead > 1){print(whitehead_plot + scale_colour_manual(values=whale_col))}
 ```
 
@@ -134,7 +135,8 @@ writeLines(Query_output_narwc)
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 narwc_plot<-site_map(studyArea,site_sf,land10m_sf,5)+
   geom_point(data = narwc_intersect_points, aes(x = long, y = lat, color=Common_Name), 
-             size = 3.5)
+             size = 3.5)+
+  theme(legend.text=element_text(size=rel(1.2)))
 if(Total_number_records_narwc > 1){print(narwc_plot + scale_colour_manual(values=whale_col))}
 ```
 
@@ -172,7 +174,8 @@ writeLines(Query_output_obis)
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 obis_plot<-site_map(studyArea,site_sf,land10m_sf,5)+
   geom_point(data = obis_intersect_points_cet, aes(x = long, y = lat, color=Common_Name), 
-             size = 3.5)
+             size = 3.5)+
+  theme(legend.text=element_text(size=rel(1.2)))
 if(Total_number_cet_records_obis > 1){print(obis_plot + scale_colour_manual(values=whale_col))}
 ```
 
