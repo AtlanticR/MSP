@@ -228,7 +228,6 @@ plot_bw_hab_zoom <- function(Blue_Whale_sf, studyArea, land_layer, buf) {
   
 }
 
-
 #Rockweed
 
 plot_rockweed<-function(rockweed_sf, studyArea, land_layer, buf) {

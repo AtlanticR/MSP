@@ -23,22 +23,22 @@ dist_table<- dist_table %>% rename("SARA status"=Schedule.status,
 #SAR critical habitat
 table_crit <- function(ClippedCritHab_sf,studyArea, leatherback_sf) {
   
-intersect_crit <- st_intersection(ClippedCritHab_sf,studyArea)
-intersect_crit_result<-nrow(intersect_crit)
-if(intersect_crit_result >= 1){
-
-crit_table<-data.frame(CommonName=intersect_crit$Common_Nam,
-                       Population=intersect_crit$Population, 
-                       Area=intersect_crit$Waterbody,
-                       SARA_status=intersect_crit$SARA_Statu)
-intersect_leatherback <- st_intersection(leatherback_sf,studyArea)
-leatherback_result<-as.numeric(nrow(intersect_leatherback))
-leatherback_table<-data.frame(CommonName="",Population="", Area="", SARA_status="")
-leatherback_table[1,1]<-"Leatherback Sea Turtle"
-leatherback_table[1,2]<-NA
-leatherback_table[1,3]<-intersect_leatherback$AreaName
-leatherback_table[1,4]<-"Endangered"
-crit_table<-bind_rows(crit_table,leatherback_table)
+  intersect_crit <- st_intersection(ClippedCritHab_sf,studyArea)
+  intersect_crit_result<-nrow(intersect_crit)
+  if(intersect_crit_result >= 1){
+  
+  crit_table<-data.frame(CommonName=intersect_crit$Common_Nam,
+                         Population=intersect_crit$Population, 
+                         Area=intersect_crit$Waterbody,
+                         SARA_status=intersect_crit$SARA_Statu)
+  intersect_leatherback <- st_intersection(leatherback_sf,studyArea)
+  leatherback_result<-as.numeric(nrow(intersect_leatherback))
+  leatherback_table<-data.frame(CommonName="",Population="", Area="", SARA_status="")
+  leatherback_table[1,1]<-"Leatherback Sea Turtle"
+  leatherback_table[1,2]<-NA
+  leatherback_table[1,3]<-intersect_leatherback$AreaName
+  leatherback_table[1,4]<-"Endangered"
+  crit_table<-bind_rows(crit_table,leatherback_table)
 }
 
 }
@@ -50,6 +50,8 @@ crit_table<-bind_rows(crit_table,leatherback_table)
 table_rv_SAR <- function(RVCatch_intersect) {
   
   Total_number_sets_RV<-length(unique(RVCatch_intersect$SETNO))
+  
+  if(Total_number_sets_RV >= 1){
   
   rv_freq_all_ind_sum <- aggregate(RVCatch_intersect$TOTNO, by=list(Scientific_Name_upper = RVCatch_intersect$SPEC), FUN=sum)
   rv_freq_all_ind_sum<-rv_freq_all_ind_sum %>% rename(Individuals=x)
@@ -69,7 +71,7 @@ table_rv_SAR <- function(RVCatch_intersect) {
                                          "Capture Event Frequency"=Capture_Event_Frequency,
                                          "Scientific Name"=Scientific_Name,
                                          "Common Name"=Common_Name)
-    
+  }  
 }
 
 #Create table of of RV records of all species caught in studyArea
@@ -77,6 +79,8 @@ table_rv_SAR <- function(RVCatch_intersect) {
 table_rv <- function(RVCatch_intersect) {
   
   Total_number_sets_RV<-length(unique(RVCatch_intersect$SETNO))
+  
+  if(Total_number_sets_RV >= 1){
   
   rv_freq_all_ind_sum <- aggregate(RVCatch_intersect$TOTNO, by=list(SPEC = RVCatch_intersect$SPEC), FUN=sum)
   rv_freq_all_ind_sum <- rv_freq_all_ind_sum %>% rename(Individuals=x)
@@ -100,7 +104,7 @@ table_rv <- function(RVCatch_intersect) {
                                  "Scientific Name"=Scientific_Name,
                                  "Common Name"=Common_Name)
 
-  
+  }  
 }
 
 #Create table of of ISDB records of all species caught in studyArea
@@ -429,6 +433,25 @@ blue_whale_habitat_overlap <- function(Blue_Whale_sf, studyArea) {
 
 }
 
+#Intertidal Rockweed
+
+rockweed_overlap <- function(rockweed_sf, studyArea) {
+  
+  rockweed_intersect <- st_intersection(studyArea,st_make_valid(rockweed_sf))
+  rockweed_result<-as.numeric(nrow(rockweed_intersect))
+  Query_output_rockweed<-if(rockweed_result < 1){
+    "There are no relevant records of predicted intertidal vegetation for this search area."
+  } else {
+    "There are relevant records of predicted intertidal vegetation for this search area."
+  }
+  
+  Query_output_rockweed<-noquote(Query_output_rockweed)
+  
+  writeLines(Query_output_rockweed)
+  
+}
+
+
 #Ecologically and Biologically Significant Areas (EBSA)
 
 EBSA_overlap <- function(EBSA_sf, studyArea) {
@@ -520,23 +543,4 @@ EBSA_bioregion <- function(EBSA_sf, studyArea) {
   
   
 }
-
-#Rockweed
-
-rockweed_overlap <- function(rockweed_sf, studyArea) {
-  
-  rockweed_intersect <- st_intersection(studyArea,st_make_valid(rockweed_sf))
-  rockweed_result<-as.numeric(nrow(rockweed_intersect))
-  Query_output_rockweed<-if(rockweed_result < 1){
-    "There are no relevant records of predicted intertidal vegetation for this search area."
-  } else {
-    "There are relevant records of predicted intertidal vegetation for this search area."
-  }
-  
-  Query_output_rockweed<-noquote(Query_output_rockweed)
-  
-  writeLines(Query_output_rockweed)
-  
-}
-
 

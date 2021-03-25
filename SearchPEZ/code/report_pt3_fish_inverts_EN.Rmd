@@ -29,6 +29,7 @@ kable(table_RV, align="l",
 ```{r, include=FALSE, cache=FALSE}
 RVCatch_sf <- RVCatch_sf %>% dplyr::filter(YEAR >= minYear)
 RVCatch_intersect <- st_intersection(RVCatch_sf,studyArea)
+Total_number_sets_RV<-length(unique(RVCatch_intersect$SETNO))
 rv_SAR_table<-table_rv_SAR(RVCatch_intersect)
 rv_table <- table_rv(RVCatch_intersect)
 ```
@@ -65,22 +66,25 @@ site_map(studyArea,site_sf,land50k_sf,10)+
         shape = 16, colour = "firebrick4")+
   geom_segment(aes(x = startx, y = starty, xend = endx, yend = endy),arrow=arrow(length = unit(0.2,"cm")), size = 1)
 ```
-
+Total_number_sets_RV=1
 <br><br>
 
 ```{r}
+if( Total_number_sets_RV>= 1){
 kable(rv_SAR_table, align="l", caption="\\label{tab:rv_SAR_table}Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing (B=Breeding, N=non-breeding, M=migratory). <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = T, position = "left", fixed_thead=T)%>% 
   row_spec(0 ,  bold = F, extra_css = 'vertical-align: top !important;')
-
+}
 ```
 
 <br><br>
 
 ```{r}
+if( Total_number_sets_RV>= 1){
 kable(rv_table, align="l", caption="\\label{tab:rv_freq_table}Quality Tier: High. Security level: none. Maritimes Research Vessel (RV) Survey observation records of <u>all species</u> contained within the search area, summarized by species or species group. <b>The absence of a species in this table should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b>", booktabs = T, escape = F, linesep="") %>%
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")%>% 
   row_spec(0 ,  bold = F, extra_css = 'vertical-align: top !important;')
+}
 ```
 
 <br><br>
