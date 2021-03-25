@@ -33,12 +33,12 @@ Comprehensive reports are divided into the following sections:
 Within these sections, the data sources are defined along with dates of access, URLs and contact information. For each data source, the report also provides caveats and sources of uncertainty as well as a ranking in the Tiers of Data Quality (defined below). Where applicable summary tables and figures are provided. Reports should be circulated to appropriate staff listed in the contact information provided for each data source to verify and supplement the information generated to support science advice processes. Users can request additional information, and access to data and metadata directly to each contact.
 
 
-**Preliminary data preparation**
-There are two scripts necessary for preparing the data for these reports, ProduceSmallerISDB_MARFIS.r and SaveDataSets_AsRdata.r. The first of these gathers all the data from the requisite database tables (*ISDB*, _MARFIS_) and produces a smaller flat file of just the fields necessary for this application (Species code, date, amount, location (latitude and longitude).
+**Preliminary data preparation**  
+There are two scripts necessary for preparing the data for these reports, _ProduceSmallerISDB_MARFIS.r_ and _SaveDataSets_AsRdata.r_. The first of these gathers all the data from the requisite database tables (**ISDB**, __MARFIS__) and produces a smaller flat file of just the fields necessary for this application (Species code, date, amount, location (latitude and longitude).
 
 The second script gathers all necessary data files (survey data, land, species at risk occurences, etc.) and saves the datasets into two .Rdata files: _OpenData.Rdata_ and _SecureData.Rdata_. These two files with multiple datasets are loaded when the app is run.
 
-*Note: Restricted data from various databases (_ISDB_, *NARWC*, *WSDB*, _MARFIS_, _Whitehead_, _Leatherback_) require communication 
+*Note: Restricted data from various databases (__ISDB__, **NARWC**, **WSDB**, __MARFIS__, **Whitehead Lab**, **Leatherback Sea Turtle**) require communication 
 with several sources. Once permission has been granted to access the data, it can all be acquired using the
 _SecureData.RData_ script.
 
