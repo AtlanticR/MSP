@@ -114,7 +114,7 @@ __Fig 2.__ **Required set up of directories**
 
 # **Functions used to plot figures and contained in "fn_maps.r"** <a name="plotdata"/>  
 
-#### site_map  
+#### site_map  <a name="site_map"/> 
 * plot of map of site and studyArea  
 
 [_example use_](#sitemap)  
@@ -126,7 +126,7 @@ __Fig 2.__ **Required set up of directories**
 **land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
 **buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.   
 
-#### plot_crithab  
+#### plot_crithab  <a name="plot_crithab"/>
 * plot of map of studyArea relative to species at risk critical habitat  
 
 [_example use_](#plotcrithab)  
@@ -150,7 +150,7 @@ __Fig 2.__ **Required set up of directories**
 **land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
 **buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.  
 
-#### plot_cetaceans_4grid  
+#### plot_cetaceans_4grid  <a name="plot_cetaceans_4grid"/>
 * plot of studyArea relative to priority areas to enhance monitoring of cetaceans  
 
 [_example use_](#plotcetaceans4grid)  
@@ -188,14 +188,14 @@ __Fig 2.__ **Required set up of directories**
 **land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
 **buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.  
 
-#### plot_rockweed<-function(rockweed_sf, studyArea, land_layer, buf)  
+#### plot_rockweed 
 * plot of studyArea with Ecologically and Biologically Significant Areas (EBSA)  
 
-[_example use_](#plotEBSA)  
+[_example use_](#plotrockweed)  
 
 **Variable name** | **Input**  
 --------------|-----------------------------------  
-**EBSA_sf** |  A simple feature (multi-polygon) containing data on Ecologically and Biologically Significant Areas. 
+**rockweed_sf** |  A simple feature (multi-polygon) containing data on intertidal rockweed presence. 
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 **land_layer** |  A simple feature used by plotting functions to illustrate terrestrial boundaries.  
 **buf** |  An integer used to define the distance (km) between the margins of the studyArea and the figure margins.
@@ -576,11 +576,18 @@ Plot of studyArea with Blue Whale habitat zoomed. [_Function description_](#plot
   plot_bw_hab_zoom(Blue_Whale_sf, studyArea, land_layer, buf)
 ```  
 
+#### plot\_rockweed  
+* plot of studyArea with intertidal rockweed presence data.   [_Function description_](#plotdata) 
+
+```r
+  plot_rockweed(rockweed_sf, studyArea, land_layer, buf)
+``` 
+
 ## plot\_EBSA <a name="plotEBSA"/>
 Plot of studyArea with Ecologically and Biologically Significant Areas (EBSA). [_Function description_](#plotdata)
 
 ```r
-  plot_EBSA(EBSA_shp, studyArea, land_layer, buf)
+  plot_EBSA(EBSA_sf, studyArea, land_layer, buf)
 ```    
 
 ## table\_dist <a name="tabledist"/>
