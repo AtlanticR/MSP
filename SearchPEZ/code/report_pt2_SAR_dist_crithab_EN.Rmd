@@ -1,6 +1,6 @@
 ## **INFORMATION FROM NATIONAL AQUATIC SPECIES AT RISK PROGRAM**    
-**Contact:** Carolyn Bakelaar  
-**Internal GIS Tool URL:** <http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US#>  
+Contact: Carolyn Bakelaar  
+Internal GIS Tool URL: <http://dfonl7swvgip001.ent.dfo-mpo.ca/Html5Viewer/index.html?viewer=NationalSARMap_EN&LayerTheme=0&locale=en-US#>  
 
 This section describes Species At Risk distribution/range and critical habitat maps. The official source of information for Species At Risk is the Species At Risk Public Registry www.sararegistry.gc.ca.  
 
@@ -54,9 +54,8 @@ crit_table<-table_crit(ClippedCritHab_sf,studyArea, leatherback_sf)
 ```
 *
 ```{r crit result, comment="", prompt=TRUE, echo=FALSE, results='asis'}
-intersect_crit <- st_intersection(ClippedCritHab_sf,studyArea)
-intersect_crit_result<-nrow(intersect_crit)
-Query_output_crit<-if(intersect_crit_result <= 1){
+crit_result<-as.numeric(nrow(crit_table))
+Query_output_crit<-if(crit_result < 1){
   "The search area does not overlap with defined Species at Risk Critical Habitat."
 } else {
   "The search area overlaps with defined Species at Risk Critical Habitat."

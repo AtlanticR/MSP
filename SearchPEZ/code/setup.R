@@ -27,8 +27,8 @@ source("fn_maps.r") #Functions used to plot figure
 source("fn_intersect_operations.R") #Functions used to intersect data polygons and points with studyArea 
 
 ####### Search Area  #######
-AquaSiteName <- "BrierIsland"
-PEZversion <- "25km"
+AquaSiteName <- "FarmersLedge"
+PEZversion <- "4748m"
 minYear <- 2002
 
 ####### Paths  #######

@@ -83,8 +83,8 @@ The following are definitions relevant for species listed by the _Species At Ris
 
 - **Wild species** - Every five years, the National General Status Working Group (NGSWG), which includes representatives from federal, provincial and territorial governments, publishes a general report on the status of wildlife species in Canada. These reports are meant to inform Canadians about the status of species in the country, to help prevent species in Canada from becoming extinct as a consequence of human activity, and to identify species that should be considered for evaluation by COSEWIC. For more information about Wild Species reports visit <https://www.wildspecies.ca/home>
 
-```{r child = 'report_pt2_SAR_dist_crithab_EN.Rmd'}
-```
+#```{r child = 'report_pt2_SAR_dist_crithab_EN.Rmd'}
+#```
 
 ```{r child = 'report_pt3_fish_inverts_EN.Rmd'}
 ```
