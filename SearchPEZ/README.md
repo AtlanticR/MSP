@@ -84,7 +84,7 @@ __Fig 2.__ **Required set up of directories**
 # **Required data files**
 **Note:** All shapefiles (.shp) also require associated files (.cpg, .dbf, .prj, .shx)
 
-**Objects provided by loading OpendData.RData**  
+**Objects provided by loading OpenData.RData**  
 
 **Object** | **Description**  
 --------------|-----------------------------------  

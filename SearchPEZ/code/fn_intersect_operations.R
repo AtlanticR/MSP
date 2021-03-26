@@ -4,9 +4,10 @@
 table_dist <- function(sardist_sf,studyArea) {
   
   intersect_dist <- st_intersection(sardist_sf,studyArea)
-  #intersect_dist$Common_Nam[intersect_dist$Common_Nam == "Sowerby`s Beaked Whale"] <- "Sowerby's Beaked Whale"
+  intersect_dist$Common_Nam[intersect_dist$Common_Nam == "Sowerby`s Beaked Whale"] <- "Sowerby's Beaked Whale"
   dist_table<-intersect_dist %>% 
     select(Scientific, Common_Nam, Population, Waterbody)
+  st_geometry(dist_table)<-NULL
   dist_table<- dist_table %>% rename("Scientific_Name"=Scientific)
   dist_table<-merge(dist_table, listed_species, by='Scientific_Name')
   dist_table<-dist_table %>% 
@@ -23,22 +24,24 @@ table_crit <- function(ClippedCritHab_sf,studyArea, leatherback_sf) {
   
   intersect_crit <- st_intersection(ClippedCritHab_sf,studyArea)
   intersect_crit_result<-nrow(intersect_crit)
-  if(intersect_crit_result >= 1){
-    
-    crit_table<-data.frame(CommonName=intersect_crit$Common_Nam,
-                           Population=intersect_crit$Population, 
-                           Area=intersect_crit$Waterbody,
-                           SARA_status=intersect_crit$SARA_Statu)
-    intersect_leatherback <- st_intersection(leatherback_sf,studyArea)
-    leatherback_result<-as.numeric(nrow(intersect_leatherback))
-    leatherback_table<-data.frame(CommonName="",Population="", Area="", SARA_status="")
-    leatherback_table[1,1]<-"Leatherback Sea Turtle"
-    leatherback_table[1,2]<-NA
-    leatherback_table[1,3]<-intersect_leatherback$AreaName
-    leatherback_table[1,4]<-"Endangered"
-    crit_table<-bind_rows(crit_table,leatherback_table)
-  }
+  crit_table<-data.frame(CommonName=intersect_crit$Common_Nam,
+                        Population=intersect_crit$Population, 
+                        Area=intersect_crit$Waterbody,
+                        SARA_status=intersect_crit$SARA_Statu)
   
+  leatherback_table<-data.frame(CommonName="",Population="", Area="", SARA_status="")
+  intersect_leatherback <- st_intersection(leatherback_sf,studyArea)
+  leatherback_result<-nrow(intersect_leatherback)
+  leatherback_table[1,1]<-"Leatherback Sea Turtle"
+  leatherback_table[1,2]<-NA
+  if(leatherback_result>=1){
+  leatherback_table[1,3]<-intersect_leatherback$AreaName
+  }else{
+  leatherback_table[1,3]<-NA  
+  }
+  leatherback_table[1,4]<-"Endangered"
+  crit_table<-bind_rows(crit_table,leatherback_table)
+  crit_table<-crit_table[!is.na(crit_table$Area), ]
 }
 
 ###Fish and Invertebrate section###
@@ -411,7 +414,7 @@ table_sdm[1,2]<-harbour_area
 table_sdm[1,3]<-humpback_area
 table_sdm[1,4]<-sei_area
 table_sdm<- table_sdm %>% rename("Fin Whale"=Fin_Whale,
-                                 "Habour Porpoise"=Habour_Porpoise,
+                                 "Harbour Porpoise"=Habour_Porpoise,
                                  "Humpback Whale"=Humpback_Whale,
                                  "Sei Whale"=Sei_Whale)
 

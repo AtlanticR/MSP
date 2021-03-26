@@ -16,7 +16,13 @@ link-citations: yes
 bibliography: mybiblio.bib
 ---
 <style>
-table {background-color: white !important;color: black !important;}
+table {background-color: white !important;color: black !important; width: auto; border-spacing: 20px 20px;}
+thead th {padding-right: 20px;}
+thead {background-color: white;color: black;font-weight: bold; text-align:left; 
+  vertical-align: top; font-size: 12px;}
+td{padding-right: 20px}
+tbody {vertical-align: top;text-align: left; font-size: 12px}
+tbody tr:nth-child(odd) {background: #eee;}
 caption {color: black !important;}
 a:link {color: #002080;}
 a:visited {color: #008040;}
@@ -67,8 +73,7 @@ This report incorporates information from a variety of sources with differing le
 table_tier <- read.csv("../../../Data/Documents/table_tiers_EN.csv")
 ```
 ```{r}
-kable(table_tier, align="l", caption = "Quality Tiers defined to describe sources of information queried and summarized in this report.", booktabs = T, escape = F, linesep="")%>%
-    kable_styling(bootstrap_options = "striped", full_width = T, position = "left")
+kable(table_tier, align="l", caption = "Quality Tiers defined to describe sources of information queried and summarized in this report.", booktabs = T, escape = F, linesep="")
 ```
 
 # **SEARCH RESULTS**  
@@ -86,17 +91,17 @@ The following are definitions relevant for species listed by the _Species At Ris
 #```{r child = 'report_pt2_SAR_dist_crithab_EN.Rmd'}
 #```
 
-```{r child = 'report_pt3_fish_inverts_EN.Rmd'}
-```
+#```{r child = 'report_pt3_fish_inverts_EN.Rmd'}
+#```
 
-```{r child = 'report_pt4_cetaceans_EN.Rmd'}
-```
+#```{r child = 'report_pt4_cetaceans_EN.Rmd'}
+#```
 
-```{r child = 'report_pt5_Habitat_Information_EN.Rmd'}
-```
+#```{r child = 'report_pt5_Habitat_Information_EN.Rmd'}
+#```
 
-```{r child = 'report_pt6_EBSA_EN.Rmd'}
-```
+#```{r child = 'report_pt6_EBSA_EN.Rmd'}
+#```
 
 # **CONTRIBUTORS**
 ```{r read contributors, echo=FALSE, cache=FALSE, include = FALSE}
