@@ -107,6 +107,18 @@ whale_col=values=c("Blue Whale"="darkgoldenrod1",
                    "Sowerby's Beaked Whale"="#F5A4E7",
                    "Humpback Whale"="red")
 
+whale_col2=values=c("Blue Whale: Endangered (SARA & COSEWIC)"="darkgoldenrod1",
+                   "Fin Whale: Special Concern (SARA & COSEWIC)"="chartreuse4",
+                   "Harbour Porpoise: Threatened (SARA) Special Concern (COSEWIC)"="black",
+                   "Killer Whale: No Status (SARA) & Special Concern (COSEWIC)"="#00AFBB",
+                   "North Atlantic Right Whale: Endangered (SARA & COSEWIC)"="darkorchid4",
+                   "Northern Bottlenose Whale: Endangered (SARA & COSEWIC)"="#0827EF",
+                   "Sei Whale: No Status (SARA) & Endangered (COSEWIC)"="#EF6408",
+                   "Sowerby's Beaked Whale: Special Concern (SARA & COSEWIC)"="#F5A4E7",
+                   "Humpback Whale"="red")
+
+unique(wsdb$COMMONNAME)
+
 ####### Data sets that have been replaced with OpenData.RData and SecureData.RData files ######
 #listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 #ClippedCritHab_sf <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", quiet=TRUE)

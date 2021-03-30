@@ -352,16 +352,6 @@ __Fig 2.__ **Required set up of directories**
 **wsdb_filter** |  Data from the Whale Sightings Database with common names changed and merged with listed_species name conversion dataframe.
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
-#### table_wsdb  <a name="table_wsdb"/>
-* create table of overlapping data from WSDB  
-
-[_example use_](#tablewsdb)
-
-**Variable name** | **Input**  
---------------|-----------------------------------
-**wsdb_filter** |  Data from the Whale Sightings Database with common names changed and merged with listed_species name conversion dataframe.
-**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
-
 ## Whitehead Lab database
 
 #### filter_whitehead  <a name="filter_whitehead"/>
@@ -377,16 +367,6 @@ __Fig 2.__ **Required set up of directories**
 * find overlap between the Whitehead Lab database and studyAre
 
 [_example use_](#intersectpointswhitehead)
-
-**Variable name** | **Input**  
---------------|-----------------------------------
-**whitehead_filter** |  Data from the Whitehead Lab Database merged with listed_species name conversion dataframe.  
-**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
-
-#### table_whitehead  <a name="table_whitehead"/>
-* create table of overlapping data from Whitehead Lab database  
-
-[_example use_](#tablewhitehead)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
@@ -414,16 +394,6 @@ __Fig 2.__ **Required set up of directories**
 **narwc_filter** |  Data from the North Atlantic Right Whale Consortium (NARWC) sightings database with species code names changed to scientific names and merged with listed_species name conversion dataframe.  
 **studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
-#### table_narwc  <a name="table_narwc"/>
-* create table of overlapping data from NARWC database  
-
-[_example use_](#tablenarwc)
-
-**Variable name** | **Input**  
---------------|-----------------------------------
-**narwc_filter** |  Data from the North Atlantic Right Whale Consortium (NARWC) sightings database with species code names changed to scientific names and merged with listed_species name conversion dataframe.  
-**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
-
 ## Ocean Biodiversity Information System - Cetaceans
 
 #### filter_obis_cet  <a name="filter_obis_cet"/>
@@ -439,16 +409,6 @@ __Fig 2.__ **Required set up of directories**
 * find overlap between the OBIS database and studyArea
 
 [_example use_](#intersectpointsobiscet)
-
-**Variable name** | **Input**  
---------------|-----------------------------------
-**obis_sf_filter** |  Data from the Ocean Biodiversity Infromation System (OBIS) database merged with cetacean species in the listed_species name conversion dataframe. Data from the Whale Sightings Database removed.  
-**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
-
-#### table_obis_cet  <a name="table_obis_cet"/>
-* create table of overlapping data from OBIS database  
-
-[_example use_](#tableobiscet)
 
 **Variable name** | **Input**  
 --------------|-----------------------------------
@@ -696,13 +656,6 @@ Find overlap between wsdb and studyArea. [_Function description_](#intersect_poi
   intersect_points_wsdb(wsdb_filter, studyArea)
 ```
 
-## table\_wsdb <a name="tablewsdb"/>
-Create table of overlapping data from WSDB. [_Function description_](#table_wsdb)
-
-```r
-  table_wsdb(wsdb_filter, studyArea)
-```
-
 ## filter\_whitehead <a name="filterwhitehead"/>
 Create table containing records from the Whitehead Lab database overlapping with studyArea. [_Function description_](#filter_whitehead)
 
@@ -715,13 +668,6 @@ Find overlap between the Whitehead Lab database and studyArea. [_Function descri
 
 ```r
   intersect_points_whitehead(whitehead_filter, studyArea)
-```
-
-## table\_whitehead <a name="tablewhitehead"/>
-Create table of overlapping data from Whitehead Lab database. [_Function description_](#table_whitehead)
-
-```r
-  table_whitehead(whitehead_filter, studyArea)
 ```
 
 ## filter\_narwc <a name="filternarwc"/>
@@ -738,13 +684,6 @@ Find overlap between the NARWC database and studyArea. [_Function description_](
   intersect_points_narwc(narwc_filter, studyArea)
 ```
 
-## table\_narwc <a name="tablenarwc"/>
-Create table of overlapping data from NARWC database. [_Function description_](#table_narwc)
-
-```r
-  table_narwc(narwc_filter, studyArea)
-```
-
 ## filter\_obis <a name="filterobis"/>
 Create table containing records from the OBIS database overlapping with studyArea. [_Function description_](#filter_obis)
 
@@ -759,13 +698,6 @@ Find overlap between the OBIS database and studyArea. [_Function description_](#
   intersect_points_obis(obis_filter, studyArea)
 ```
  
-## table\_obis <a name="tableobis"/>
-Create table of overlapping data from OBIS database. [_Function description_](#table_obis)
-
-```r
-  table_obis(obis_filter, studyArea)
-```
-
 ## sdm\_table <a name="sdmtable"/>
 Create table of overlapping data from Priority Areas to Enhance Monitoring of Cetaceans. [_Function description_](#sdm_table)
 

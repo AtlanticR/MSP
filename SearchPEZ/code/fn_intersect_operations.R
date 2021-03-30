@@ -263,19 +263,6 @@ intersect_points_wsdb <- function(wsdb_filter, studyArea) {
            lat = unlist(map(intersect_wsdb$geometry,2)))
 }
 
-table_wsdb <- function(wsdb_filter, studyArea) {
-  wsdb_sf<-st_as_sf(wsdb_filter, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
-  intersect_wsdb <- st_intersection(wsdb_sf,studyArea)
-  wsdb_table<-merge(intersect_wsdb, listed_cetacean_species, by='Scientific_Name')
-  wsdb_table<-wsdb_table %>% 
-    transmute(Common_Name.x, Scientific_Name, Schedule.status.x, COSEWIC.status.x, Wild_Species.x)
-  wsdb_table<- wsdb_table %>% rename("SARA status"=Schedule.status.x,
-                                   "COSEWIC listing"=COSEWIC.status.x,
-                                   "Wild Species listing"=Wild_Species.x,
-                                   "Scientific Name"=Scientific_Name,
-                                   "Common Name"=Common_Name.x)
-}
-
 #Whitehead Lab database
 
 filter_whitehead <- function(whitehead) {
@@ -290,20 +277,6 @@ intersect_points_whitehead <- function(whitehead_filter, studyArea) {
     mutate(long = unlist(map(intersect_whitehead$geometry,1)),
            lat = unlist(map(intersect_whitehead$geometry,2)))
 }
-
-table_whitehead <- function(whitehead_filter, studyArea) {
-  whitehead_sf<-st_as_sf(whitehead_filter, coords = c("Long", "Lat"), crs = 4326)
-  intersect_whitehead <- st_intersection(whitehead_sf,studyArea)
-  whitehead_table<-merge(intersect_whitehead, listed_species, by='Scientific_Name')
-  whitehead_table<-whitehead_table %>% 
-    transmute(Common_Name.x, Scientific_Name, Schedule.status.x, COSEWIC.status.x, Wild_Species.x)
-  whitehead_table<- whitehead_table %>% rename("SARA status"=Schedule.status.x,
-                                               "COSEWIC listing"=COSEWIC.status.x,
-                                               "Wild Species listing"=Wild_Species.x,
-                                               "Scientific Name"=Scientific_Name,
-                                               "Common Name"=Common_Name.x)
-}
-
 
 #North Atlantic Right Whale Consortium (NARWC) database
 
@@ -329,19 +302,6 @@ intersect_points_narwc <- function(narwc_filter, studyArea) {
            lat = unlist(map(intersect_narwc$geometry,2)))
 }
 
-table_narwc <- function(narwc_filter, studyArea) {
-  narwc_sf<-st_as_sf(narwc_filter, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
-  intersect_narwc <- st_intersection(narwc_sf,studyArea)
-  narwc_table<-merge(intersect_narwc, listed_species, by='Scientific_Name')
-  narwc_table<-narwc_table %>% 
-    transmute(Common_Name.x, Scientific_Name, Schedule.status.x, COSEWIC.status.x, Wild_Species.x)
-  narwc_table<- narwc_table %>% rename("SARA status"=Schedule.status.x,
-                                       "COSEWIC listing"=COSEWIC.status.x,
-                                       "Wild Species listing"=Wild_Species.x,
-                                       "Scientific Name"=Scientific_Name,
-                                       "Common Name"=Common_Name.x)
-}
-
 #Ocean Biodiversity Information System - CETACEANS
 
 filter_obis_cet <- function(obis_sf) {
@@ -356,20 +316,6 @@ intersect_points_obis_cet <- function(obis_sf_filter, studyArea) {
   obis_intersect_points <- intersect_obis %>%
     mutate(long = unlist(map(intersect_obis$geometry,1)),
            lat = unlist(map(intersect_obis$geometry,2)))
-}
-
-table_obis_cet <- function(obis_sf_filter, studyArea) {
-  intersect_obis <- st_intersection(obis_sf_filter,studyArea)
-  obis_whale_table<-merge(intersect_obis, listed_cetacean_species, by='Scientific_Name')
-  obis_whale_table<-obis_whale_table %>% 
-    select(Common_Name, Scientific_Name, Schedule.status, COSEWIC.status, Wild_Species)
-  obis_whale_table<- obis_whale_table %>% rename("SARA status"=Schedule.status,
-                                               "COSEWIC listing"=COSEWIC.status,
-                                               "Wild Species listing"=Wild_Species,
-                                               "Scientific Name"=Scientific_Name,
-                                               "Common Name"=Common_Name)
-  obis_whale_table$geometry<-NULL
-  obis_whale_table<-unique(obis_whale_table)
 }
 
 #Species Distribution Models (SDM): Priority Areas to Enhance Monitoring of Cetaceans
