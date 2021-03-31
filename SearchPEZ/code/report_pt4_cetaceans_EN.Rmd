@@ -53,10 +53,10 @@ writeLines(Query_output_wsdb)
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Low. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the Whale Sightings Database (WSDB) (including sightings of groups of animals), for cetacean species in the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild Species listings. <b>The absence of a species in this map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. This map also does not include acoustic detections. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore.'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 wsdb_plot<-site_map(studyArea,site_sf,land50k_sf,5)+
-  geom_point(data = wsdb_intersect_points, aes(x = long, y = lat, color=COMMONNAME), 
+  geom_point(data = wsdb_intersect_points, aes(x = long, y = lat, color=CommonName_status), 
              size = 3.5)+
   theme(legend.text=element_text(size=rel(0.9)))
-if(Total_number_records_WSDB > 1){print(wsdb_plot + scale_colour_manual(values=whale_col2))}
+if(Total_number_records_WSDB > 1){print(wsdb_plot + scale_colour_manual(values=whale_col))}
 ```
 
 <br><br>
@@ -92,7 +92,7 @@ writeLines(Query_output_whitehead)
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the Whitehead Lab, for cetacean species in the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. Field efforts were primarily conducted in the Gully Marine Protected Area, and adjacent canyons along the edge of the eastern Scotian Shelf, during good weather conditions (for example, see Whitehead 2013 for a map of effort between 1988-2011), though some data from surveys along the shelf edge off Nova Scotia, Newfoundland and Labrador are included. <b>The absence of a species in this map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. This map also does not include acoustic detections. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. For more information, please visit: <https://whiteheadlab.weebly.com/contact.html>'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 whitehead_plot<-site_map(studyArea,site_sf,land50k_sf,5)+
-  geom_point(data = whitehead_intersect_points, aes(x = long, y = lat, color=Common_Name), 
+  geom_point(data = whitehead_intersect_points, aes(x = long, y = lat, color=CommonName_status), 
              size = 3.5)+
   theme(legend.text=element_text(size=rel(1.2)))
 if(Total_number_records_whitehead > 1){print(whitehead_plot + scale_colour_manual(values=whale_col))}
@@ -131,9 +131,9 @@ writeLines(Query_output_narwc)
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: High. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the North Atlantic Right Whale Consortium (NARWC) Sightings Database, for cetacean species in the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. <b>Absence of a species in the map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area</b> since survey effort is biased towards the Northeast US, and data on species presence from acoustic detections is not included. For more information, please visit: <https://www.narwc.org/sightings-database.html>'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 narwc_plot<-site_map(studyArea,site_sf,land50k_sf,5)+
-  geom_point(data = narwc_intersect_points, aes(x = long, y = lat, color=Common_Name), 
+  geom_point(data = narwc_intersect_points, aes(x = long, y = lat, color=CommonName_status), 
              size = 3.5)+
-  theme(legend.text=element_text(size=rel(1.2)))
+  theme(legend.text=element_text(size=rel(0.9)))
 if(Total_number_records_narwc > 1){print(narwc_plot + scale_colour_manual(values=whale_col))}
 ```
 
@@ -169,9 +169,9 @@ writeLines(Query_output_obis)
 ```{r, fig.height=8, fig.width=11, fig.cap='Quality Tier: Medium. Security level: none. Map showing the search area defined by the user: location of the proposed project/activity is highlighted in yellow (input polygon), surrounded by an exposure zone or user-defined buffer area in blue. Map displays information from the Ocean Biodiversity Information System (OBIS), for cetacean species contained within the search area and listed by the <i>Species At Risk Act</i> (SARA), assessed by the Committee on the Status of Endangered Wildlife in Canada (COSEWIC), or included in the Wild species listing. <b>The absence of a species in this map should be interpreted as an absence of reporting, not necessarily as an absence of the species in the area.</b> Absence may be related to low or no survey effort. Sightings information is known to underrepresent the presence of cetaceans, particularly deep diving species (e.g., beaked whales) that spend little time at the surface. This map also does not include acoustic detections. Sightings on land are an indicator that the sighting data have not yet been completely error-checked or that animals were sighted from shore.'}
 par(mfrow = c(1,2), mar=c(0, 0, 5.5, 0) + 2)#it goes c(bottom, left, top, right)
 obis_plot<-site_map(studyArea,site_sf,land50k_sf,5)+
-  geom_point(data = obis_intersect_points_cet, aes(x = long, y = lat, color=Common_Name), 
+  geom_point(data = obis_intersect_points_cet, aes(x = long, y = lat, color=CommonName_status), 
              size = 3.5)+
-  theme(legend.text=element_text(size=rel(1.2)))
+  theme(legend.text=element_text(size=rel(0.9)))
 if(Total_number_cet_records_obis > 1){print(obis_plot + scale_colour_manual(values=whale_col))}
 ```
 

@@ -142,6 +142,7 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
     geom_sf(data=humpback_whale_sf,fill="#F3E73B",col="#F3E73B")+
     geom_sf(data=studyArea, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    geom_sf(data=site_sf,fill="yellow",col="black", size=0.6)+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Humpback Whale")+
@@ -157,6 +158,7 @@ plot_cetaceans_4grid<-function(fin_whale_sf, harbour_porpoise_sf,
     geom_sf(data=sei_whale_sf,fill="#F3E73B",col="#F3E73B")+
     geom_sf(data=studyArea, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    geom_sf(data=site_sf,fill="yellow",col="black", size=0.6)+
     annotation_scale(location="br")+
     theme_bw()+
     ggtitle("Sei Whale")+
@@ -184,6 +186,7 @@ plot_bw_hab <- function(Blue_Whale_sf, studyArea, land_layer) {
     scale_fill_manual(values=c("#195B01","#1EA31E","chartreuse2","#C5FDC5","blue1"))+
     geom_sf(data=studyArea, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    geom_sf(data=site_sf,fill="yellow",col="black", size=0.6)+
     annotation_scale(location="br")+
     theme_bw()+
     theme(legend.position = "none")+
@@ -218,6 +221,7 @@ plot_bw_hab_zoom <- function(Blue_Whale_sf, studyArea, land_layer, buf) {
     scale_fill_manual(values=c("#195B01","#1EA31E","chartreuse2","#C5FDC5","blue1"))+
     geom_sf(data=studyArea, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    geom_sf(data=site_sf,fill="yellow",col="black", size=0.6)+
     annotation_scale(location="br")+
     theme_bw()+
     coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
@@ -228,7 +232,7 @@ plot_bw_hab_zoom <- function(Blue_Whale_sf, studyArea, land_layer, buf) {
   
 }
 
-#Rockweed
+#Rockweed presence
 
 plot_rockweed<-function(rockweed_sf, studyArea, land_layer, buf) {
   
@@ -247,11 +251,14 @@ plot_rockweed<-function(rockweed_sf, studyArea, land_layer, buf) {
   latmax<-bbox$ymax+buf_lat
   
   ggplot()+
-    geom_sf(data=rockweed_sf, fill="purple", col="purple")+
     geom_sf(data=studyArea, fill="#74ECFB", col="black", size=0.6)+
+    geom_sf(data=rockweed_sf, aes(fill=RWP), lwd=0)+
+    scale_fill_manual(values=c("lightgreen","darkgreen","red"))+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    geom_sf(data=site_sf,fill="yellow",col="black", size=0.6)+
     annotation_scale(location="br")+
     theme_bw()+
+    theme(legend.title = element_blank())+
     coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
     labs(x=expression(paste("Longitude ",degree,"W",sep="")),
          y=expression(paste("Latitude ",degree,"N",sep="")),
@@ -259,7 +266,6 @@ plot_rockweed<-function(rockweed_sf, studyArea, land_layer, buf) {
     watermark(show = TRUE, lab = "DFO Internal Use Only")
   
 }
-
 
 #EBSA
 
@@ -283,6 +289,7 @@ plot_EBSA<-function(EBSA_sf, studyArea, land_layer, buf) {
     geom_sf(data=EBSA_sf, fill="plum",col="black")+
     geom_sf(data=studyArea, fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("grey90"), col="black")+
+    geom_sf(data=site_sf,fill="yellow",col="black", size=0.6)+
     annotation_scale(location="br")+
     theme_bw()+
     coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
@@ -318,10 +325,10 @@ plot_inat<-function(studyArea,studyArea_st,site,land_layer,intersect_inat,buf) {
   latmax<-bb$max[2]+buf
   
   ggplot()+
-    geom_sf(data=site,fill="yellow",col="black", size=0.6)+
     geom_sf(data=studyArea_st,fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("lightgrey"), col="black", size=0.7)+
     geom_sf(data=intersect_inat, size = 3, shape = 16, fill = "black")+
+    geom_sf(data=site,fill="yellow",col="black", size=0.6)+
     annotation_scale(location="bl")+
     theme_bw()+
     coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
@@ -354,10 +361,10 @@ plot_gbif<-function(studyArea,studyArea_st,site,land_layer,intersect_gbif,buf) {
   latmax<-bb$max[2]+buf
   
   ggplot()+
-    geom_sf(data=site,fill="yellow",col="black", size=0.6)+
     geom_sf(data=studyArea_st,fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("lightgrey"), col="black", size=0.7)+
     geom_sf(data=intersect_gbif, size = 3, shape = 16, fill = "black")+
+    geom_sf(data=site,fill="yellow",col="black", size=0.6)+
     annotation_scale(location="bl")+
     theme_bw()+
     coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
@@ -391,10 +398,10 @@ plot_cws<-function(studyArea,studyArea_st,site,land_layer,intersect_cws,buf) {
   latmax<-bb$max[2]+buf
   
   ggplot()+
-    geom_sf(data=site,fill="yellow",col="black", size=0.6)+
     geom_sf(data=studyArea_st,fill="#74ECFB", col="black", size=0.6)+
     geom_sf(data=land_layer,fill=c("lightgrey"), col="black", size=0.7)+
     geom_sf(data=intersect_cws, size = 3, shape = 16, fill = "black")+
+    geom_sf(data=site,fill="yellow",col="black", size=0.6)+
     annotation_scale(location="bl")+
     theme_bw()+
     coord_sf(xlim = c(longmin, longmax), ylim = c(latmin, latmax))+
