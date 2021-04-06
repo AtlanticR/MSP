@@ -54,8 +54,8 @@ land50k_sf <- st_read("../../../Data/Boundaries/Coast50K/Coastline50k_SHP/Land_A
 
 ####### Species Lists  #######
 # This section reads table that lists species listed by SARA, assessed by COSEWIC or assessed by Wildlife Species listings
-#listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
-cetacean_list<-c("Beluga Whale", "Humpback Whale" , "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
+listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
+cetacean_list<-c("Beluga Whale", "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
                  "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
 other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
 listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
@@ -97,30 +97,23 @@ narwc <- narwc %>% dplyr::filter(YEAR >= minYear)
 
 
 ####### Define colour coding for all cetacean plots for consistency
-whale_col=values=c("Blue Whale"="darkgoldenrod1",
-                   "Fin Whale"="chartreuse4",
-                   "Harbour Porpoise"="black",
-                   "Killer Whale"="#00AFBB",
-                   "North Atlantic Right Whale"="darkorchid4",
-                   "Northern Bottlenose Whale"="#0827EF",
-                   "Sei Whale"="#EF6408",
-                   "Sowerby's Beaked Whale"="#F5A4E7",
-                   "Humpback Whale"="red")
-
-whale_col2=values=c("Blue Whale: Endangered (SARA & COSEWIC)"="darkgoldenrod1",
+whale_col=values=c("Blue Whale: Endangered (SARA & COSEWIC)"="darkgoldenrod1",
                    "Fin Whale: Special Concern (SARA & COSEWIC)"="chartreuse4",
                    "Harbour Porpoise: Threatened (SARA) Special Concern (COSEWIC)"="black",
                    "Killer Whale: No Status (SARA) & Special Concern (COSEWIC)"="#00AFBB",
                    "North Atlantic Right Whale: Endangered (SARA & COSEWIC)"="darkorchid4",
                    "Northern Bottlenose Whale: Endangered (SARA & COSEWIC)"="#0827EF",
                    "Sei Whale: No Status (SARA) & Endangered (COSEWIC)"="#EF6408",
-                   "Sowerby's Beaked Whale: Special Concern (SARA & COSEWIC)"="#F5A4E7",
-                   "Humpback Whale"="red")
+                   "Sowerby's Beaked Whale: Special Concern (SARA & COSEWIC)"="#F5A4E7"
+                   )
 
-unique(wsdb$COMMONNAME)
+######## Habitat Information########
+
+rockweed_sf$RWP[which(rockweed_sf$RWP=="1")]= "Present"
+rockweed_sf$RWP[which(rockweed_sf$RWP=="2")]= "Likely Present"
+rockweed_sf$RWP[which(rockweed_sf$RWP=="5")]= "Unknown"
 
 ####### Data sets that have been replaced with OpenData.RData and SecureData.RData files ######
-#listed_species<-read.csv("../../../Data/NaturalResources/Species/MAR_listed_species.csv")
 #ClippedCritHab_sf <- st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", quiet=TRUE)
 #sardist_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/sardist_4326.shp", quiet=TRUE)
 #leatherback_sf<-st_read("../../../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", quiet=TRUE)

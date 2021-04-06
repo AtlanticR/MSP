@@ -442,18 +442,6 @@ __Fig 2.__ **Required set up of directories**
 **Blue_Whale_sf** |  A simple feature (multi-polygon) containing data on Important areas of Blue Whale feeding, foraging and migration in eastern Canada.  
 **studyArea** | A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
 
-## Intertidal rockweed
-
-#### rockweed_overlap  <a name="rockweed_overlap"/>
-* create table of overlapping data on intertidal rockweed
-
-[_example use_](#rockweedoverlap)
-
-**Variable name** | **Input**  
---------------|-----------------------------------
-**rockweed_sf** |  A simple feature (multi-polygon) containing data on the presence of intertidal rockweed.  
-**studyArea** |  A simple feature (polygon) representing an exposure zone or user-defined buffer area surrounding a site (site_sf). This polygon is used to search for overlapping data points contained in the various datasets used by the reporting tool.  
-
 ## Ecologically and Biologically Significant Areas (EBSA)
 
 #### EBSA_overlap  <a name="EBSA_overlap"/>
@@ -710,13 +698,6 @@ Create table of overlapping data from Important Blue Whale Habitat. [_Function d
 
 ```r
   blue_whale_habitat_overlap(Blue_Whale_sf, studyArea)
-``` 
-
-## rockweed\_overlap  <a name="rockweedoverlap"/>
-Create table of overlapping data on intertidal rockweed presence. [_Function description_](#rockweed_overlap)
-
-```r
-  rockweed_overlap(rockweed_sf, studyArea)
 ``` 
 
 ## EBSA\_overlap <a name="EBSAoverlap"/>

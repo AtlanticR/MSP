@@ -380,25 +380,6 @@ blue_whale_habitat_overlap <- function(Blue_Whale_sf, studyArea) {
 
 }
 
-#Intertidal Rockweed
-
-rockweed_overlap <- function(rockweed_sf, studyArea) {
-  
-  rockweed_intersect <- st_intersection(studyArea,st_make_valid(rockweed_sf))
-  rockweed_result<-as.numeric(nrow(rockweed_intersect))
-  Query_output_rockweed<-if(rockweed_result < 1){
-    "There are no relevant records of predicted intertidal vegetation for this search area."
-  } else {
-    "There are relevant records of predicted intertidal vegetation for this search area."
-  }
-  
-  Query_output_rockweed<-noquote(Query_output_rockweed)
-  
-  writeLines(Query_output_rockweed)
-  
-}
-
-
 #Ecologically and Biologically Significant Areas (EBSA)
 
 EBSA_overlap <- function(EBSA_sf, studyArea) {
