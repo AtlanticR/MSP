@@ -16,14 +16,32 @@ minYear <- 1970
 ########################################################################-
 # save open data as single .Rdata file
 
+# landmass at two scales (1:10,000,000 and 1:50,000)
+
 land10m_sf <- st_read("../Data/Boundaries/Landmass/ne_10m_land_Clip.shp", stringsAsFactors = FALSE)
+#remove State and Province column from land10m
 land10m_sf <- land10m_sf[-c(2)]
+
+land50k_sf <- st_read("../Data/Boundaries/Coast50k/Coastline50k_SHP/Land_AtlCanada_ESeaboardUS.shp",  stringsAsFactors = FALSE)
 
 # ADD IN boundary files
 bounds_sf <- st_read("../Data/Boundaries/AdminBoundaries/AdminBounds_SHP/Boundaries_Line.shp", stringsAsFactors = FALSE)
 bounds_sf <- dplyr::select(bounds_sf,SRC_DESC, geometry)
 
+# Rockweed
+rockweed_sf<-st_read("../Data/NaturalResources/Species/Rockweed/MAR_rockweed_presence_validated.shp", stringsAsFactors = FALSE)
+rockweed_sf<-st_transform(rockweed_sf, 4326) # Project to WGS84
+
+
 listed_species <- read.csv("../Data/NaturalResources/Species/MAR_listed_species.csv", stringsAsFactors = FALSE)
+
+####### Species Lists  #######
+cetacean_list<-c("Beluga Whale", "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
+                 "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
+other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
+listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
+listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
+listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
 
 obis <- read.csv("../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/OBIS_MAR_priority_records.csv", stringsAsFactors = FALSE)
 obis <- dplyr::select(obis,scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID,
