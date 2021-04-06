@@ -1,1 +1,3 @@
-#Git Study Group! we can update this code as required to better understand how Git works
+#Git Study Group! we can update this code as required. 
+
+#Example with Phil and Gordana
