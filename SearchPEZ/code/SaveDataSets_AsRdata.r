@@ -87,6 +87,30 @@ save(Blue_Whale_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale,
      obis_sf, RVCatch_sf, sardist_sf, sei_whale,
      file = "../Data/Rdata/OpenData.RData")
 
+
+# save each object as a single .RData file to check size on disk
+save(Blue_Whale_sf,file = "../Data/Rdata/Blue_Whale_sf.RData")
+save(bounds_sf,file = "../Data/Rdata/bounds_sf.RData")
+save(ClippedCritHab_sf,file = "../Data/Rdata/ClippedCritHab_sf.RData")
+save(EBSA_sf,file = "../Data/Rdata/EBSA_sf.RData")
+save(fin_whale,file = "../Data/Rdata/fin_whale.RData")
+save(harbour_porpoise,file = "../Data/Rdata/harbour_porpoise.RData")
+save(humpback_whale,file = "../Data/Rdata/humpback_whale.RData")
+save(land10m_sf,file = "../Data/Rdata/land10m_sf.RData")
+save(land50k_sf,file = "../Data/Rdata/land50k_sf.RData")
+save(listed_cetacean_species,file = "../Data/Rdata/listed_cetacean_species.RData")
+save(listed_fish_invert_species,file = "../Data/Rdata/listed_fish_invert_species.RData")
+save(listed_other_species,file = "../Data/Rdata/listed_other_species.RData")
+save(listed_species,file = "../Data/Rdata/listed_species.RData")
+save(obis_sf,file = "../Data/Rdata/obis_sf.RData")
+save(other_species_list,file = "../Data/Rdata/other_species_list.RData")
+save(rockweed_sf,file = "../Data/Rdata/rockweed_sf.RData")
+save(RVCatch_sf,file = "../Data/Rdata/RVCatch_sf.RData")
+save(sardist_sf,file = "../Data/Rdata/sardist_sf.RData")
+save(sei_whale,file = "../Data/Rdata/sei_whale.RData")
+
+
+
 ########################################################################-
 # save secure data as single .Rdata file
 
