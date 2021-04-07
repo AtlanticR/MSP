@@ -81,11 +81,20 @@ EBSA_sf <- st_read("../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp")
 EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
 EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
 
-# Save all objects to a single .Rdata file
+# Save all objects to a single .Rdata file (originally 1 file)
+# save(Blue_Whale_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale, 
+#      harbour_porpoise, humpback_whale, land10m_sf, listed_species, 
+#      obis_sf, RVCatch_sf, sardist_sf, sei_whale,
+#      file = "../Data/Rdata/OpenData.RData")
+
+# Multiple files
 save(Blue_Whale_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale, 
-     harbour_porpoise, humpback_whale, land10m_sf, listed_species, 
-     obis_sf, RVCatch_sf, sardist_sf, sei_whale,
+     harbour_porpoise, humpback_whale, land10m_sf, land50k_sf, 
+     listed_cetacean_species, listed_fish_invert_species, listed_other_species, 
+     listed_species, obis_sf, other_species_list, rockweed_sf, RVCatch_sf, sei_whale, 
      file = "../Data/Rdata/OpenData.RData")
+
+save(sardist_sf, file = "../Data/Rdata/OpenData_sardist.RData")
 
 
 # save each object as a single .RData file to check size on disk
