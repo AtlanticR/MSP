@@ -48,10 +48,15 @@ obis <- dplyr::select(obis,scientificName, decimalLatitude, decimalLongitude, ye
                       institutionCode, collectionCode, datasetID)
 obis_sf <- st_as_sf(obis, coords = c("decimalLongitude","decimalLatitude"), crs = 4326)
 
-sardist_sf <- st_read("../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/sardist_4326.shp", stringsAsFactors = FALSE)
+
 RVCatch_sf <-  SelectRV_fn(SurveyPrefix, File, minYear)
 ClippedCritHab_sf <- st_read("../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", stringsAsFactors = FALSE)
+#Northern Bottlenose Whale Critical Habitat
+NBNW_CritHab_sf <- st_read("../Data/NaturalResources/Species/Cetaceans/NorthernBottlenoseWhale/NorthernBottlenoseWhale_InterCanyonHabitat.shp", stringsAsFactors = FALSE)
+NBNW_CritHab_sf <- st_transform(NBNW_CritHab_sf, crs = 4326)
 
+
+# SDMs
 fin_whale <- raster("../Data/NaturalResources/Species/Cetaceans/PriorityAreas_FGP/Fin_Whale.tif")
 fin_whale[fin_whale==0] <- NA
 
@@ -91,8 +96,11 @@ EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
 save(Blue_Whale_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale, 
      harbour_porpoise, humpback_whale, land10m_sf, land50k_sf, 
      listed_cetacean_species, listed_fish_invert_species, listed_other_species, 
-     listed_species, obis_sf, other_species_list, rockweed_sf, RVCatch_sf, sei_whale, 
+     listed_species, NBNW_CritHab_sf, obis_sf, other_species_list, rockweed_sf, RVCatch_sf, sei_whale, 
      file = "../Data/Rdata/OpenData.RData")
+
+# Species at Risk distribution
+sardist_sf <- st_read("../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/sardist_4326.shp", stringsAsFactors = FALSE)
 
 save(sardist_sf, file = "../Data/Rdata/OpenData_sardist.RData")
 

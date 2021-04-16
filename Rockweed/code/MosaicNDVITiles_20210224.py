@@ -67,7 +67,6 @@ arcpy.MosaicToNewRaster_management(rasters,gdbWorkspace, newRast, "#","32_BIT_FL
 print(str(time.ctime(int(time.time()))))
 
 # Set workspace to the Geodatabase
-
 arcpy.env.workspace = gdbWorkspace
 
 # Set processing extent environments
@@ -80,9 +79,16 @@ print("Erasing all vegs patches in open ocean using mask")
 outCon = arcpy.sa.Con(arcpy.sa.IsNull(outMask),newRast,0) #trying to add sa to the Con Command
 outName = "NDVI_Final"
 outCon.save(outName)
+
+## using the extent of the Maritimes Bioregion, clip the final mosaic raster
+mask = "N:/MSP/Data/Boundaries/MaritimesRegionBound/MaritimesRegionPolygon_UpdatedSept2015.shp"
+outExtractByMask = sa.ExtractByMask(outName, mask)
+outFinal = "NDVI_FinalClip"
+outExtractByMask.save(outFinal)
+
 print(str(time.ctime(int(time.time()))))
 # set all values >= 0.4 to 1, everything else to NULL
-outCon2 = arcpy.sa.SetNull(outCon <0.4, 1)
+outCon2 = arcpy.sa.SetNull(outFinal <0.4, 1)
 
 Poly1 = "NDVI_Poly"
 # #---------------------------------------------------------------------------------#
@@ -163,7 +169,7 @@ ReSample = "BILINEAR"
 
 # Define the output cell size (defaults to that of the input raster)
 CellSize = "0.00011 0.00011"
-outRas = "NDVI_FinalWGS"
+outRas = "NDVI_FinalWGS_Clip"
 
 # Project Raster doesn't seem to use the Compression environment.  It would be better to
 # project a new raster into the Geodatabase and then export it (CopyRaster_management) from there.
@@ -172,7 +178,7 @@ print(str(time.ctime(int(time.time()))))
 arcpy.ProjectRaster_management(newRas, outRas, OutCoordSystem, ReSample, CellSize, "", "", InCoordSystem)
 
 # Export WGS84 version of the NDVI mosaic as .tif
-outTIF = "N:/MSP/Projects/Rockweed/Outputs/NDVI_WGS84.TIF"
+outTIF = "N:/MSP/Projects/Rockweed/Outputs/NDVI_WGS84_Clip.TIF"
 print("Exporting WGS version as tif")
 print(str(time.ctime(int(time.time()))))
 arcpy.CopyRaster_management(outRas,outTIF)
