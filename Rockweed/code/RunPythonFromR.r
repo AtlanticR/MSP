@@ -10,7 +10,7 @@ reticulate::py_run_file("Rockweed/code/Py_ImportModules.py")
 startTime <- Sys.time()
 print(Sys.time())
 
-reticulate::py_run_file("Rockweed/code/MosaicNDVITiles_20210224.py")
+reticulate::py_run_file("Rockweed/code/MosaicNDVITiles.py")
 
 # Stop the clock
 ElapsedTime <- Sys.time() - startTime
