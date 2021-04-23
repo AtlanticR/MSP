@@ -27,21 +27,26 @@ land50k_sf <- st_read("../Data/Boundaries/Coast50k/Coastline50k_SHP/Land_AtlCana
 # ADD IN boundary files
 bounds_sf <- st_read("../Data/Boundaries/AdminBoundaries/AdminBounds_SHP/Boundaries_Line.shp", stringsAsFactors = FALSE)
 bounds_sf <- dplyr::select(bounds_sf,SRC_DESC, geometry)
+bounds_sf <- st_transform(bounds_sf, 4326) # Project to WGS84
 
 # Rockweed
-rockweed_sf<-st_read("../Data/NaturalResources/Species/Rockweed/MAR_rockweed_presence_validated.shp", stringsAsFactors = FALSE)
-rockweed_sf<-st_transform(rockweed_sf, 4326) # Project to WGS84
+rockweed_sf <- st_read("../Data/NaturalResources/Species/Rockweed/MAR_rockweed_presence_validated.shp", stringsAsFactors = FALSE)
+rockweed_sf <- st_transform(rockweed_sf, 4326) # Project to WGS84
+######## Habitat Information########
+rockweed_sf$RWP[which(rockweed_sf$RWP=="1")]= "Present"
+rockweed_sf$RWP[which(rockweed_sf$RWP=="2")]= "Likely Present"
+rockweed_sf$RWP[which(rockweed_sf$RWP=="5")]= "Unknown"
 
 
 listed_species <- read.csv("../Data/NaturalResources/Species/MAR_listed_species.csv", stringsAsFactors = FALSE)
 
 ####### Species Lists  #######
-cetacean_list<-c("Beluga Whale", "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
+cetacean_list <- c("Beluga Whale", "North Atlantic Right Whale", "Fin Whale", "Northern Bottlenose Whale", 
                  "Harbour Porpoise", "Killer Whale", "Blue Whale", "Sei Whale", "Sowerby's Beaked Whale")
-other_species_list<-c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
-listed_cetacean_species<-subset(listed_species, Common_Name %in% cetacean_list)
-listed_other_species<-subset(listed_species, Common_Name %in% other_species_list)
-listed_fish_invert_species<-listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
+other_species_list <- c("Loggerhead Sea Turtle", "Atlantic Walrus", "Harbour Seal Lacs des Loups Marins subspecies", "Leatherback Sea Turtle")
+listed_cetacean_species <- subset(listed_species, Common_Name %in% cetacean_list)
+listed_other_species <- subset(listed_species, Common_Name %in% other_species_list)
+listed_fish_invert_species <- listed_species[ ! listed_species$Common_Name %in% c(other_species_list,cetacean_list), ]
 
 obis <- read.csv("../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/OBIS_MAR_priority_records.csv", stringsAsFactors = FALSE)
 obis <- dplyr::select(obis,scientificName, decimalLatitude, decimalLongitude, year,individualCount, rightsHolder, institutionID,
@@ -72,19 +77,19 @@ sei_whale[sei_whale==0] <- NA
 #Read Blue Whale Important Habitat shapefile and Project to WGS84
 Blue_32198 <- st_read("../Data/NaturalResources/Species/Cetaceans/BlueWhaleHabitat_FGP/BlueWhaleHabitat_HabitatBaleineBleue.shp", quiet=TRUE, stringsAsFactors = FALSE)
 Blue_Whale_sf <- st_transform(Blue_32198, crs = 4326)
-Blue_Whale_sf<-setNames(Blue_Whale_sf, replace(names(Blue_Whale_sf), names(Blue_Whale_sf) == 'activité', 'activite'))
+Blue_Whale_sf <- setNames(Blue_Whale_sf, replace(names(Blue_Whale_sf), names(Blue_Whale_sf) == 'activité', 'activite'))
 Blue_Whale_sf$activity[Blue_Whale_sf$activity == "foraging/Feeding"] <- "Foraging/Feeding"
 Blue_Whale_sf$activity[Blue_Whale_sf$activity == "Migrant"] <- "Migration"
 Blue_Whale_sf$months[Blue_Whale_sf$months == "all year"] <- "All year"
 Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/March to May"] <- "Dec-Feb/Mar-May"
 Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/June to August"] <- "Dec-Feb/Jun-Aug"
 Blue_Whale_sf$months[Blue_Whale_sf$months == "March to May/June to August"] <- "Mar-May/Jun-Aug"
-Blue_Whale_sf$Activity<-paste(Blue_Whale_sf$activity,"-",Blue_Whale_sf$months)
+Blue_Whale_sf$Activity <- paste(Blue_Whale_sf$activity,"-",Blue_Whale_sf$months)
 
 
 EBSA_sf <- st_read("../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp")
 EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
-EBSA_sf$Report_URL<-str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
+EBSA_sf$Report_URL <- str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
 
 # Save all objects to a single .Rdata file (originally 1 file)
 # save(Blue_Whale_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale, 
@@ -98,9 +103,13 @@ save(Blue_Whale_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale,
      listed_cetacean_species, listed_fish_invert_species, listed_other_species, 
      listed_species, NBNW_CritHab_sf, obis_sf, other_species_list, rockweed_sf, RVCatch_sf, sei_whale, 
      file = "../Data/Rdata/OpenData.RData")
+	 
+saveRDS(mylist, file = "MYLIST.Rds")
+read.all <- readRDS("MYLIST.Rds")
 
 # Species at Risk distribution
 sardist_sf <- st_read("../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/sardist_4326.shp", stringsAsFactors = FALSE)
+sardist_sf <- dplyr::select(sardist_sf,Common_Nam, Population, Scientific)
 
 save(sardist_sf, file = "../Data/Rdata/OpenData_sardist.RData")
 
@@ -136,7 +145,7 @@ wsdb <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/WSDB/MarWSDBS
 
 #read whitehead lab file
 whitehead <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/Whitehead_Lab/whitehead_lab.csv", stringsAsFactors = FALSE)
-whitehead$YEAR<-lubridate::year(whitehead$Date)
+whitehead$YEAR <- lubridate::year(whitehead$Date)
 
 #read narwc file - update 
 narwc <- read.csv("../../../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv", stringsAsFactors = FALSE)

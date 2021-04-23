@@ -1,6 +1,7 @@
 ######################################################################################################################
 # 
 # This script mosaics together multiple NDVI tiles into a single raster for the Maritime region
+# The NDVI tiles were produced from Sentinel-2 images at low tide (10 m horizontal resolution)
 # 
 #  - Clip final mosaic to the nearshore (to eliminate the offshore algal blooms)
 #		- nearshore in this case is within 1000 m of the coast

@@ -23,7 +23,7 @@ PRO_SPC_INFO <- PRO_SPC_INFO %>% filter(!is.na(LONGITUDE))
 self_filter(db= 'marfis',keep_nullsets = FALSE,quiet = TRUE)
 # save database as a csv file.  This command produces a file with more 
 # columnns than are needed.
-save_data(db='marfis', formats = 'csv')  # this creates a  timestamped csv 
+save_data(db='marfis', formats = 'csv')  # this creates a timestamped csv 
 # of the clipped data.  Import the csv and delete unnecessary columns 
 # this produces a 5GB file
 
@@ -37,8 +37,14 @@ marfis1 <- read.csv(file.path(data.dir, file))
 file.remove(file)
 
 # Reduce the columnns down to only those needed
+# marfis1 <- dplyr::select(marfis1, 
+#               one_of(c("SPECIES_CODE","DATE_FISHED","RND_WEIGHT_KGS","LATITUDE","LONGITUDE")))
+
+marfis1$YEAR <- lubridate::year(marfis1$DATE_FISHED)
 marfis1 <- dplyr::select(marfis1, 
-              one_of(c("SPECIES_CODE","DATE_FISHED","RND_WEIGHT_KGS","LATITUDE","LONGITUDE")))
+                         one_of(c("SPECIES_CODE","YEAR","LATITUDE","LONGITUDE")))
+marfis_sf <- sf::st_as_sf(marfis1, coords = c("LONGITUDE","LATITUDE"), crs = 4326)
+
 
 # save as .RData file
 save(marfis1, file="marfis.RData", compress = TRUE)
@@ -71,8 +77,9 @@ file.remove(file)
 
 # Reduce data file down to only the columnns necessary
 isdb1 <- dplyr::select(isdb1, 
-                         one_of(c("SCIENTIFIC","COMMON","YEAR","EST_KEPT_WT","LATITUDE","LONGITUDE")))
+                         one_of(c("SPECCD_ID","YEAR","LATITUDE","LONGITUDE")))
+isdb_sf <- sf::st_as_sf(isdb1, coords = c("LONGITUDE","LATITUDE"), crs = 4326)
 # isdb1$DATE_TIME1 <- lubridate::parse_date_time(isdb1$DATE_TIME1, orders = "ymd")
 
 # save as .RData file
-save(isdb1, file="isdb.RData", compress = TRUE)
+save(isdb_sf, file="isdb.RData", compress = TRUE)
