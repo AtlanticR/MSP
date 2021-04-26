@@ -2,9 +2,22 @@ library(Mar.datawrangling)
 library(dplyr)
 library(lubridate)
 
-# this script can work from data stored locally or on the IN/MSP/Data/mar.wrangling folder
 
-data.dir <- "../../../MSP/Data/mar.wrangling"
+# THERE IS A PROBLEM SOMEWHERE IN THE isdb DATA.
+# THE ISCATCHES table has 842,417 records
+# but my final table when exported to CSV has 844,289. 
+# I think this table should have at most only the same
+# as ISCATCHES
+
+# Also, the SF object is larger than the original ISDB.Rdata
+# but it's got fewer columns!!
+#
+# Also, the MARFIS.Rdata file is now half (18MB vs 36)!
+#  Check that both these files are correct?
+
+# this script can work from data stored locally or on the IN/MSP/Data/mar.wrangling folder
+setwd("C:/BIO/20200306/GIT/R/MSP/Projects")
+data.dir <- "../Data/mar.wrangling"
 setwd(data.dir)
 
 
@@ -23,6 +36,11 @@ PRO_SPC_INFO <- PRO_SPC_INFO %>% filter(!is.na(LONGITUDE))
 self_filter(db= 'marfis',keep_nullsets = FALSE,quiet = TRUE)
 # save database as a csv file.  This command produces a file with more 
 # columnns than are needed.
+
+# Problem with this command.  I run out of memory
+# Error: memory exhausted (limit reached?)
+# Error during wrapup: cannot allocate vector of size 0 Kb
+
 save_data(db='marfis', formats = 'csv')  # this creates a timestamped csv 
 # of the clipped data.  Import the csv and delete unnecessary columns 
 # this produces a 5GB file
@@ -35,6 +53,8 @@ marfis1 <- read.csv(file.path(data.dir, file))
 
 # remove the CSV from the directory
 file.remove(file)
+
+setwd(data.dir)
 
 # Reduce the columnns down to only those needed
 # marfis1 <- dplyr::select(marfis1, 
@@ -74,6 +94,15 @@ isdb1 <- read.csv(file.path(data.dir, file), stringsAsFactors = FALSE)
 
 # remove the CSV from the directory
 file.remove(file)
+
+# THERE IS A PROBLEM SOMEWHERE IN THE isdb DATA.
+# THE ISCATCHES table has 842,417 records
+# but my final table when exported to CSV has 844,289. 
+# I think this table should have at most only the same
+# as ISCATCHES
+
+# Also, the SF object is larger than the original ISDB.Rdata
+# but it's got fewer columns!!
 
 # Reduce data file down to only the columnns necessary
 isdb1 <- dplyr::select(isdb1, 
