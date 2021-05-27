@@ -35,7 +35,7 @@ SelectRV_fn <- function(SurveyPrefix, File, minYear) {
     df <- df %>% tidyr::unite("MISSION_SET", MISSION:SETNO, remove = FALSE)
     # Keep only the columns necessary
     # ("MISSION_SET", "MISSION", "SETNO", "SDATE", "SLAT", "SLONG", "ELAT", "ELONG")
-    df <- dplyr::select(df,1:4,7:10)
+    df <- dplyr::select(df,1:4,7:10,12)
     # Add YEAR and SEASON to the table
     df$YEAR <- lubridate::year(df$SDATE)
     df$SEASON <- SurveyPrefix[i]
@@ -60,7 +60,11 @@ SelectRV_fn <- function(SurveyPrefix, File, minYear) {
   GSSPECIES <- rbind(tablelist[[1]],tablelist[[2]],tablelist[[3]],tablelist[[4]])
   # remove duplicate records
   GSSPECIES <- dplyr::distinct(GSSPECIES)
-  
+  GSSPECIES <- GSSPECIES %>% transmute(GSSPECIES, SPEC = str_to_sentence(SPEC))
+  GSSPECIES <- GSSPECIES %>% transmute(GSSPECIES, COMM = str_to_sentence(COMM))
+  GSSPECIES <- GSSPECIES %>% rename("Common Name"= COMM,
+                                              "Scientific Name" = SPEC)
+
   # Convert GSINF to sf object
   GSINF_sf = st_as_sf(GSINF, coords = c("SLONG", "SLAT"), crs = 4326) #WGS84
   
@@ -72,7 +76,8 @@ SelectRV_fn <- function(SurveyPrefix, File, minYear) {
   GSINF_sf <- left_join(GSINF_sf, GSCAT, by = "MISSION_SET")
   GSINF_sf <- left_join(GSINF_sf, GSSPECIES, by = "CODE")
   
-  return(GSINF_sf)
+  outList <- list(GSINF_sf, GSSPECIES)
+  return(outList)
 }
 
 ########## - Select MARFIS data and intersect with the study area #########################-

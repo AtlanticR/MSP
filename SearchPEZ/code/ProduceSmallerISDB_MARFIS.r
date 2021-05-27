@@ -16,8 +16,8 @@ library(lubridate)
 #  Check that both these files are correct?
 
 # this script can work from data stored locally or on the IN/MSP/Data/mar.wrangling folder
-setwd("C:/BIO/20200306/GIT/R/MSP/Projects")
-data.dir <- "../Data/mar.wrangling"
+setwd("C:/BIO/20200306/GIT/R/MSP/Data/mar.wrangling")
+data.dir <- getwd()
 setwd(data.dir)
 
 
@@ -67,7 +67,7 @@ marfis_sf <- sf::st_as_sf(marfis1, coords = c("LONGITUDE","LATITUDE"), crs = 432
 
 
 # save as .RData file
-save(marfis1, file="marfis.RData", compress = TRUE)
+save(marfis_sf, file="marfis.RData", compress = TRUE)
 
 
 #############################################3-
@@ -89,8 +89,9 @@ self_filter(keep_nullsets = FALSE,quiet = TRUE)
 save_data(db='isdb', formats = 'csv')  # this creates a csv of the data
 
 file <- list.files(data.dir,"*.csv")
+
 # Read in the CSV datafile
-isdb1 <- read.csv(file.path(data.dir, file), stringsAsFactors = FALSE)
+isdb1 <- read.csv(file.path(data.dir, file[1]), stringsAsFactors = FALSE)
 
 # remove the CSV from the directory
 file.remove(file)
