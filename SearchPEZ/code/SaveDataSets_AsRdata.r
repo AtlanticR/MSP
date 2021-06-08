@@ -51,8 +51,6 @@ listed_species <- listed_species %>% rename("SARA status"=Schedule.status,
                                             "Scientific Name"=Scientific_Name,
                                             "Common Name"=Common_Name)
 
-
-
 Legend <- read.csv("../Data/NaturalResources/Species/Cetaceans/CetaceanLegend.csv", stringsAsFactors = FALSE)
 Legend <- dplyr::rename(Legend,c("Scientific Name" = "Scientific_Name"))
 
@@ -71,6 +69,7 @@ obis <- read.csv("../Data/NaturalResources/Species/OBIS_GBIF_iNaturalist/OBIS_MA
 obis <- dplyr::select(obis,scientificName, decimalLatitude, decimalLongitude, year)
 obis <- obis %>% transmute(obis, scientificName = str_to_sentence(scientificName))
 obis <- obis %>% rename("Scientific Name"= scientificName, "YEAR" = year)
+obis <- obis %>% dplyr::filter(YEAR >= 2010)
 
 # OBIS fish and inverts
 obis_fish <- merge(obis, listed_fish_invert_species, by='Scientific Name')
@@ -79,9 +78,6 @@ obis_fish <- dplyr::select(obis_fish,"Scientific Name", YEAR, "Common Name", "CO
 obis_fish_sf <- st_as_sf(obis_fish, coords = c("decimalLongitude","decimalLatitude"), crs = 4326)
 
 # OBIS cetaceans
-# obis_cet <- merge(obis, listed_cetacean_species, by='Scientific Name')
-# obis_cet <- dplyr::select(obis_cet,"Scientific Name", YEAR, "Common Name", "COSEWIC listing",
-#                            "SARA status", decimalLatitude, decimalLongitude)
 obis_cet <- merge(obis, Legend, by='Scientific Name')
 obis_cet <- dplyr::select(obis_cet,"Scientific Name", YEAR, Legend, decimalLatitude, decimalLongitude)
 
@@ -98,9 +94,9 @@ RVGSSPECIES <- RVList[[2]]
 
 ClippedCritHab_sf <- st_read("../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/ClipCritHab.shp", stringsAsFactors = FALSE)
 
-#Northern Bottlenose Whale Critical Habitat
-NBNW_CritHab_sf <- st_read("../Data/NaturalResources/Species/Cetaceans/NorthernBottlenoseWhale/NorthernBottlenoseWhale_InterCanyonHabitat.shp", stringsAsFactors = FALSE)
-NBNW_CritHab_sf <- st_transform(NBNW_CritHab_sf, crs = 4326)
+#Northern Bottlenose Whale Important Habitat
+NBNW_ImpHab_sf <- st_read("../Data/NaturalResources/Species/Cetaceans/NorthernBottlenoseWhale/NorthernBottlenoseWhale_InterCanyonHabitat.shp", stringsAsFactors = FALSE)
+NBNW_ImpHab_sf <- st_transform(NBNW_ImpHab_sf, crs = 4326)
 
 
 # SDMs
@@ -127,57 +123,28 @@ Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/March to May"
 Blue_Whale_sf$months[Blue_Whale_sf$months == "December to February/June to August"] <- "Dec-Feb/Jun-Aug"
 Blue_Whale_sf$months[Blue_Whale_sf$months == "March to May/June to August"] <- "Mar-May/Jun-Aug"
 Blue_Whale_sf$Activity <- paste(Blue_Whale_sf$activity,"-",Blue_Whale_sf$months)
+BlueWhale_ImpHab_sf <- Blue_Whale_sf
 
 
 EBSA_sf <- st_read("../Data/Zones/DFO_EBSA_FGP/DFO_EBSA.shp")
 EBSA_sf <- st_transform(EBSA_sf, crs = 4326)
 EBSA_sf$Report_URL <- str_replace(EBSA_sf$Report_URL, ".pdf", ".html")
 
-# Save all objects to a single .Rdata file (originally 1 file)
-# save(Blue_Whale_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale, 
-#      harbour_porpoise, humpback_whale, land10m_sf, listed_species, 
-#      obis_sf, RVCatch_sf, sardist_sf, sei_whale,
-#      file = "../Data/Rdata/OpenData.RData")
+# Save all objects to a single .Rdata file 
 
-# Multiple files
-save(bioregion_sf, Blue_Whale_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale, 
+save(bioregion_sf, BlueWhale_ImpHab_sf, bounds_sf, ClippedCritHab_sf, EBSA_sf, fin_whale, 
      harbour_porpoise, humpback_whale, land10m_sf, land50k_sf, 
      listed_species, listed_cetacean_species, listed_other_species, listed_fish_invert_species,
-     NBNW_CritHab_sf, obis_cet_sf, obis_fish_sf, rockweed_sf, 
+     NBNW_ImpHab_sf, obis_cet_sf, obis_fish_sf, rockweed_sf, 
      RVCatch_sf, RVGSSPECIES, sei_whale, 
      file = "../Data/Rdata/OpenData.RData")
-	 
-saveRDS(mylist, file = "MYLIST.Rds")
-read.all <- readRDS("MYLIST.Rds")
+
 
 # Species at Risk distribution
 sardist_sf <- st_read("../Data/NaturalResources/Species/SpeciesAtRisk/clipped_layers/sardist_4326.shp", stringsAsFactors = FALSE)
 sardist_sf <- dplyr::select(sardist_sf,Common_Nam, Population, Scientific)
 
 save(sardist_sf, file = "../Data/Rdata/OpenData_sardist.RData")
-
-
-# save each object as a single .RData file to check size on disk
-save(Blue_Whale_sf,file = "../Data/Rdata/Blue_Whale_sf.RData")
-save(bounds_sf,file = "../Data/Rdata/bounds_sf.RData")
-save(ClippedCritHab_sf,file = "../Data/Rdata/ClippedCritHab_sf.RData")
-save(EBSA_sf,file = "../Data/Rdata/EBSA_sf.RData")
-save(fin_whale,file = "../Data/Rdata/fin_whale.RData")
-save(harbour_porpoise,file = "../Data/Rdata/harbour_porpoise.RData")
-save(humpback_whale,file = "../Data/Rdata/humpback_whale.RData")
-save(land10m_sf,file = "../Data/Rdata/land10m_sf.RData")
-save(land50k_sf,file = "../Data/Rdata/land50k_sf.RData")
-save(listed_cetacean_species,file = "../Data/Rdata/listed_cetacean_species.RData")
-save(listed_fish_invert_species,file = "../Data/Rdata/listed_fish_invert_species.RData")
-save(listed_other_species,file = "../Data/Rdata/listed_other_species.RData")
-save(listed_species,file = "../Data/Rdata/listed_species.RData")
-save(obis_sf,file = "../Data/Rdata/obis_sf.RData")
-save(other_species_list,file = "../Data/Rdata/other_species_list.RData")
-save(rockweed_sf,file = "../Data/Rdata/rockweed_sf.RData")
-save(RVCatch_sf,file = "../Data/Rdata/RVCatch_sf.RData")
-save(sardist_sf,file = "../Data/Rdata/sardist_sf.RData")
-save(sei_whale,file = "../Data/Rdata/sei_whale.RData")
-
 
 
 ########################################################################-
@@ -187,24 +154,14 @@ save(sei_whale,file = "../Data/Rdata/sei_whale.RData")
 Legend <- read.csv("../Data/NaturalResources/Species/Cetaceans/CetaceanLegend.csv", stringsAsFactors = FALSE)
 Legend <- dplyr::rename(Legend,c("Scientific Name" = "Scientific_Name"))
 
+# Cetacean point data  #########################
 #read wsdb file
-# point data  #########################
 wsdb <- read.csv("../Data/NaturalResources/Species/Cetaceans/WSDB/MarWSDB_20210407.csv", stringsAsFactors = FALSE)
 wsdb <- dplyr::select(wsdb,COMMONNAME,SCIENTIFICNAME,YEAR,LATITUDE,LONGITUDE)
 wsdb <- wsdb %>% dplyr::filter(YEAR >= 2010)
-# Rename common names for display in legend
-# wsdb$COMMONNAME[which(wsdb$COMMONNAME=="PORPOISE-HARBOUR")]= "Harbour Porpoise: Threatened (SARA) Special Concern (COSEWIC)"
-# wsdb$COMMONNAME[which(wsdb$COMMONNAME=="WHALE-FIN")]= "Fin Whale: Special Concern (SARA & COSEWIC)"
-# wsdb$COMMONNAME[which(wsdb$COMMONNAME=="WHALE-NORTH ATLANTIC RIGHT")]= "North Atlantic Right Whale: Endangered (SARA & COSEWIC)"
-# wsdb$COMMONNAME[which(wsdb$COMMONNAME=="WHALE-NORTHERN BOTTLENOSE")]= "Northern Bottlenose Whale: Endangered (SARA & COSEWIC)"
-# wsdb$COMMONNAME[which(wsdb$COMMONNAME=="WHALE-KILLER")]= "Killer Whale: No Status (SARA) & Special Concern (COSEWIC)"
-# wsdb$COMMONNAME[which(wsdb$COMMONNAME=="WHALE-BLUE")]= "Blue Whale: Endangered (SARA & COSEWIC)"
-# wsdb$COMMONNAME[which(wsdb$COMMONNAME=="WHALE-SEI")]= "Sei Whale: No Status (SARA) & Endangered (COSEWIC)"
-# wsdb$COMMONNAME[which(wsdb$COMMONNAME=="WHALE-SOWERBY'S BEAKED")]= "Sowerby's Beaked Whale: Special Concern (SARA & COSEWIC)"
 wsdb <- dplyr::rename(wsdb,c("Scientific Name" = "SCIENTIFICNAME",
                               "CNAME"= COMMONNAME))
 wsdb <- merge(wsdb, Legend, by='Scientific Name')
-# wsdb <- merge(wsdb, listed_cetacean_species, by='Scientific Name')
 wsdb <- dplyr::select(wsdb,CNAME,'Scientific Name',YEAR,Legend, LATITUDE,LONGITUDE)
 # wsdb <- dplyr::rename(wsdb,c("COMMONNAME" = "CNAME"))
 wsdb_sf <- st_as_sf(wsdb, coords = c("LONGITUDE","LATITUDE"), crs = 4326)
@@ -215,18 +172,18 @@ whitehead$YEAR <- lubridate::year(whitehead$Date)
 whitehead <- whitehead %>% dplyr::filter(YEAR >= 2010)
 whitehead <- whitehead %>% rename("Scientific Name"= species.name)
 whitehead <- merge(whitehead, Legend, by='Scientific Name')
-# whitehead <- merge(whitehead, listed_species, by = 'Scientific Name')
 whitehead <- dplyr::select(whitehead,'Scientific Name', YEAR, Legend, Lat, Long)
+# correct the longitude values to be negative
+whitehead$Long <- -1*whitehead$Long
 whitehead_sf <- st_as_sf(whitehead, coords = c("Long","Lat"), crs = 4326)
 
 #read narwc file - update 
 narwc <- read.csv("../Data/NaturalResources/Species/Cetaceans/NARWC/NARWC_09-18-2020.csv", stringsAsFactors = FALSE)
 narwcspecies <-  read.csv("../Data/NaturalResources/Species/Cetaceans/NARWC/NARWCSpeciesNames.csv", stringsAsFactors = FALSE)
-narwcspecies <- narwcspecies %>% rename("Scientific Name"= Scientific.Name)
+narwcspecies <- narwcspecies %>% rename("Scientific Name"= ScientificName)
 narwc <- merge(narwc, narwcspecies, by='SPECNAME')
 narwc <- narwc %>% dplyr::filter(YEAR >= 2010)
 narwc <- merge(narwc, Legend, by = 'Scientific Name')
-# narwc <- merge(narwc, listed_species, by = 'Scientific Name')
 narwc <- dplyr::select(narwc,'Scientific Name', YEAR, Legend, LATITUDE, LONGITUDE)
 narwc_sf <- st_as_sf(narwc, coords = c("LONGITUDE","LATITUDE"), crs = 4326)
 # END point data   #########################
@@ -235,14 +192,13 @@ narwc_sf <- st_as_sf(narwc, coords = c("LONGITUDE","LATITUDE"), crs = 4326)
 # read in turtle habitat
 leatherback_sf <- st_read("../Data/NaturalResources/Species/SpeciesAtRisk/LeatherBackTurtleCriticalHabitat/LBT_CH_2013.shp", stringsAsFactors = FALSE)
 
-# load("../../../Data/mar.wrangling/isdb.RData")
-# load("../../../Data/mar.wrangling/marfis.RData")
-
+# ISDB and MARFIS data
 load("../Data/mar.wrangling/isdb.RData")
 isdb_sf <- na.omit(isdb_sf) # remove NA values (some in SPECCID).  this is a bit slow
 
 load("../Data/mar.wrangling/marfis.RData")
 
+# Load the ISDB and MARFIS species tables
 load("../Data/mar.wrangling/MARFIS.SPECIES.RData")
 load("../Data/mar.wrangling/ISDB.ISSPECIESCODES.RData")
 
@@ -258,13 +214,9 @@ ISSPECIESCODES <- ISSPECIESCODES %>% rename("Common Name"= COMMON,
 
 MARFISSPECIESCODES <- SPECIES %>% rename("COMMONNAME"= SPECIES_NAME)
 
-# keep all names as upper
-#
-
-
 
 # Save all objects to a single .Rdata file
-save(isdb_sf,ISSPECIESCODES,leatherback_sf,marfis_sf,MARFISSPECIESCODES,narwc_sf, whitehead_sf, wsdb_sf,
+save(isdb_sf,ISSPECIESCODES,leatherback_sf,Legend, marfis_sf,MARFISSPECIESCODES,narwc_sf, whitehead_sf, wsdb_sf,
      file = "../Data/Rdata/SecureData.Rdata")
 
 ########################################################-
